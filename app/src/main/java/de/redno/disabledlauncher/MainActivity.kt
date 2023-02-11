@@ -14,7 +14,8 @@ import androidx.compose.foundation.lazy.items
 import androidx.compose.material.MaterialTheme
 import androidx.compose.material.Surface
 import androidx.compose.material.Text
-import androidx.compose.runtime.Composable
+import androidx.compose.material.TextField
+import androidx.compose.runtime.*
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
@@ -67,7 +68,7 @@ fun getDetailsForPackage(context: Context, packageName: String): AppEntryInList 
 
 @Composable
 fun MainComponent(installedApps: List<String>, modifier: Modifier = Modifier) {
-    AppList(appEntryList = installedApps)
+    AppList(packageNameList = installedApps)
 }
 
 @Composable
@@ -114,12 +115,22 @@ fun AppEntry(packageName: String, modifier: Modifier = Modifier) {
 }
 
 @Composable
-fun AppList(appEntryList: List<String>, modifier: Modifier = Modifier) {
-    LazyColumn {
-        items(items = appEntryList,
-            key = { appEntry -> appEntry }
-        ) { appEntry ->
-            AppEntry(appEntry)
+fun AppList(packageNameList: List<String>, modifier: Modifier = Modifier) {
+    var text by remember { mutableStateOf("") }
+
+    Column {
+        TextField( // TODO: https://developer.android.com/jetpack/compose/text#enter-modify-text
+            value = text,
+            onValueChange = { text = it },
+            placeholder = { Text("Search for apps...") },
+            modifier = Modifier.fillMaxWidth()
+        )
+        LazyColumn {
+            items(items = packageNameList.filter { it.contains(text) },
+                key = { it }
+            ) { packageName ->
+                AppEntry(packageName)
+            }
         }
     }
 }
