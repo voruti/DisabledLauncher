@@ -44,6 +44,8 @@ class MainActivity : ComponentActivity() {
 
 
 fun getDetailsForPackage(context: Context, packageName: String): AppEntryInList {
+    val packageManager = context.packageManager
+
     val appEntry = AppEntryInList(
         name = "App not found",
         packageName = packageName,
@@ -52,10 +54,10 @@ fun getDetailsForPackage(context: Context, packageName: String): AppEntryInList 
     )
 
     try {
-        context.packageManager.getPackageInfo(packageName, 0)?.let { packageInfo ->
-            appEntry.name = packageInfo.applicationInfo.loadLabel(context.packageManager).toString()
+        packageManager.getPackageInfo(packageName, 0)?.let { packageInfo ->
+            appEntry.name = packageInfo.applicationInfo.loadLabel(packageManager).toString()
             appEntry.packageName = packageInfo.packageName
-            appEntry.icon = packageInfo.applicationInfo.loadIcon(context.packageManager)
+            appEntry.icon = packageInfo.applicationInfo.loadIcon(packageManager)
             appEntry.isEnabled = packageInfo.applicationInfo.enabled
         }
     } catch (e: PackageManager.NameNotFoundException) {
@@ -67,8 +69,8 @@ fun getDetailsForPackage(context: Context, packageName: String): AppEntryInList 
 
 
 @Composable
-fun MainComponent(installedApps: List<String>, modifier: Modifier = Modifier) {
-    AppList(packageNameList = installedApps)
+fun MainComponent(packageNameList: List<String>, modifier: Modifier = Modifier) {
+    AppList(packageNameList = packageNameList)
 }
 
 @Composable
@@ -80,7 +82,7 @@ fun AppEntry(packageName: String, modifier: Modifier = Modifier) {
         modifier = Modifier.fillMaxWidth()
             .clickable {
                 // show toast:
-                Toast.makeText(context, packageName, Toast.LENGTH_SHORT).show()
+                Toast.makeText(context, appEntry.packageName, Toast.LENGTH_SHORT).show()
             }
     ) {
         Row(
@@ -104,7 +106,7 @@ fun AppEntry(packageName: String, modifier: Modifier = Modifier) {
                     style = MaterialTheme.typography.h6
                 )
                 Text(
-                    text = packageName,
+                    text = appEntry.packageName,
                     maxLines = 2, // maybe different design/layout
                     style = MaterialTheme.typography.body2,
                     color = Color(0xFF808080)
@@ -116,6 +118,8 @@ fun AppEntry(packageName: String, modifier: Modifier = Modifier) {
 
 @Composable
 fun AppList(packageNameList: List<String>, modifier: Modifier = Modifier) {
+    val context = LocalContext.current
+
     var text by remember { mutableStateOf("") }
 
     Column {
@@ -128,9 +132,7 @@ fun AppList(packageNameList: List<String>, modifier: Modifier = Modifier) {
         LazyColumn {
             items(items = packageNameList.filter { it.contains(text) },
                 key = { it }
-            ) { packageName ->
-                AppEntry(packageName)
-            }
+            ) { AppEntry(it) }
         }
     }
 }
