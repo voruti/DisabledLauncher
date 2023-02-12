@@ -21,6 +21,7 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.asImageBitmap
 import androidx.compose.ui.platform.LocalContext
+import androidx.compose.ui.text.font.FontStyle
 import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
@@ -78,6 +79,9 @@ fun MainComponent(packageNameList: List<String>, modifier: Modifier = Modifier) 
 fun AppEntry(appEntry: AppEntryInList, modifier: Modifier = Modifier) {
     val context = LocalContext.current
 
+//    val boxModifier = if (appEntry.isEnabled) Modifier else
+//        Modifier.background(MaterialTheme.colors.onSurface.copy(alpha = 0.12f))
+
     Box(
         modifier = Modifier.fillMaxWidth()
             .clickable {
@@ -103,7 +107,8 @@ fun AppEntry(appEntry: AppEntryInList, modifier: Modifier = Modifier) {
                     maxLines = 1,
                     overflow = TextOverflow.Ellipsis,
                     modifier = Modifier.padding(PaddingValues(bottom = 4.dp)),
-                    style = MaterialTheme.typography.h6
+                    style = MaterialTheme.typography.h6,
+                    fontStyle = if (appEntry.isEnabled) FontStyle.Normal else FontStyle.Italic
                 )
                 Text(
                     text = appEntry.packageName,
