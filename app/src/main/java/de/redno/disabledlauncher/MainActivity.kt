@@ -46,25 +46,25 @@ class MainActivity : ComponentActivity() {
 fun getDetailsForPackage(context: Context, packageName: String): AppEntryInList {
     val packageManager = context.packageManager
 
-    val appEntry = AppEntryInList(
-        name = "App not found",
-        packageName = packageName,
-        icon = context.getDrawable(R.drawable.ic_launcher_background),
-        isEnabled = false
-    )
-
     try {
         packageManager.getPackageInfo(packageName, 0)?.let { packageInfo ->
-            appEntry.name = packageInfo.applicationInfo.loadLabel(packageManager).toString()
-            appEntry.packageName = packageInfo.packageName
-            appEntry.icon = packageInfo.applicationInfo.loadIcon(packageManager)
-            appEntry.isEnabled = packageInfo.applicationInfo.enabled
+            return AppEntryInList(
+                packageInfo.applicationInfo.loadLabel(packageManager).toString(),
+                packageInfo.packageName,
+                packageInfo.applicationInfo.enabled,
+                packageInfo.applicationInfo.loadIcon(packageManager)
+            )
         }
     } catch (e: PackageManager.NameNotFoundException) {
         e.printStackTrace()
     }
 
-    return appEntry
+    return AppEntryInList(
+        name = "App not found",
+        packageName = packageName,
+        icon = context.getDrawable(R.drawable.ic_launcher_background),
+        isEnabled = false
+    )
 }
 
 
