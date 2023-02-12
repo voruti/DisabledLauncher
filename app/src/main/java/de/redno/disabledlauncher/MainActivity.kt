@@ -121,6 +121,7 @@ fun AppList(packageNameList: List<String>, modifier: Modifier = Modifier) {
     val context = LocalContext.current
 
     var text by remember { mutableStateOf("") }
+    val appEntryList = packageNameList.map { getDetailsForPackage(context, it) }
 
     Column {
         TextField( // TODO: https://developer.android.com/jetpack/compose/text#enter-modify-text
@@ -130,7 +131,13 @@ fun AppList(packageNameList: List<String>, modifier: Modifier = Modifier) {
             modifier = Modifier.fillMaxWidth()
         )
         LazyColumn {
-            items(items = packageNameList.filter { it.contains(text) },
+            items(items = appEntryList.filter {
+                val searchTerms = text.trim().lowercase().split(" ")
+                val searchReference = "${it.name.trim().lowercase()} ${it.packageName.trim().lowercase()}"
+
+                searchTerms.all { searchTerm -> searchReference.contains(searchTerm) }
+            }
+                .map { it.packageName },
                 key = { it }
             ) { AppEntry(it) }
         }
