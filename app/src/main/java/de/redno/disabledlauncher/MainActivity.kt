@@ -19,11 +19,12 @@ import androidx.compose.runtime.*
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.graphics.asImageBitmap
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
-import com.google.accompanist.drawablepainter.rememberDrawablePainter
+import androidx.core.graphics.drawable.toBitmap
 import de.redno.disabledlauncher.data.Datasource
 import de.redno.disabledlauncher.model.AppEntryInList
 import de.redno.disabledlauncher.ui.theme.DisabledLauncherTheme
@@ -52,7 +53,7 @@ fun getDetailsForPackage(context: Context, packageName: String): AppEntryInList 
                 packageInfo.applicationInfo.loadLabel(packageManager).toString(),
                 packageInfo.packageName,
                 packageInfo.applicationInfo.enabled,
-                packageInfo.applicationInfo.loadIcon(packageManager)
+                packageInfo.applicationInfo.loadIcon(packageManager).toBitmap()
             )
         }
     } catch (e: PackageManager.NameNotFoundException) {
@@ -62,7 +63,7 @@ fun getDetailsForPackage(context: Context, packageName: String): AppEntryInList 
     return AppEntryInList(
         name = "App not found",
         packageName = packageName,
-        icon = context.getDrawable(R.drawable.ic_launcher_background),
+        icon = context.getDrawable(R.drawable.ic_launcher_background)!!.toBitmap(),
         isEnabled = false
     )
 }
@@ -74,9 +75,8 @@ fun MainComponent(packageNameList: List<String>, modifier: Modifier = Modifier) 
 }
 
 @Composable
-fun AppEntry(packageName: String, modifier: Modifier = Modifier) {
+fun AppEntry(appEntry: AppEntryInList, modifier: Modifier = Modifier) {
     val context = LocalContext.current
-    val appEntry = getDetailsForPackage(context, packageName)
 
     Box(
         modifier = Modifier.fillMaxWidth()
@@ -91,7 +91,7 @@ fun AppEntry(packageName: String, modifier: Modifier = Modifier) {
         ) {
             // show app icon:
             Image(
-                painter = rememberDrawablePainter(appEntry.icon),
+                bitmap = appEntry.icon.asImageBitmap(),
                 contentDescription = "App Icon",
                 modifier = Modifier
                     .size(64.dp)
@@ -121,7 +121,8 @@ fun AppList(packageNameList: List<String>, modifier: Modifier = Modifier) {
     val context = LocalContext.current
 
     var text by remember { mutableStateOf("") }
-    val appEntryList = packageNameList.map { getDetailsForPackage(context, it) }
+    val appEntryList =
+        packageNameList.map { getDetailsForPackage(context, it) } // TODO: prevent being called on every text change
 
     Column {
         TextField( // TODO: https://developer.android.com/jetpack/compose/text#enter-modify-text
@@ -136,8 +137,7 @@ fun AppList(packageNameList: List<String>, modifier: Modifier = Modifier) {
                 val searchReference = "${it.name.trim().lowercase()} ${it.packageName.trim().lowercase()}"
 
                 searchTerms.all { searchTerm -> searchReference.contains(searchTerm) }
-            }
-                .map { it.packageName },
+            },
                 key = { it }
             ) { AppEntry(it) }
         }
