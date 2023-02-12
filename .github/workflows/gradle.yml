@@ -35,5 +35,5 @@ jobs:
     - name: Upload Build Artifact
       uses: actions/upload-artifact@v3.1.2
       with:
-        name: disabledlauncher-release-unsigned.apk
-        path: ./app/build/outputs/apk/release/app-release-unsigned.apk
+        name: disabledlauncher-debug.apk
+        path: ./app/build/outputs/apk/debug/app-debug.apk
