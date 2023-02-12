@@ -69,6 +69,11 @@ fun getDetailsForPackage(context: Context, packageName: String): AppEntryInList 
     )
 }
 
+fun startApp(context: Context, packageName: String) {
+    val launchIntent = context.packageManager.getLaunchIntentForPackage(packageName)
+    context.startActivity(launchIntent)
+}
+
 
 @Composable
 fun MainComponent(packageNameList: List<String>, modifier: Modifier = Modifier) {
@@ -85,8 +90,12 @@ fun AppEntry(appEntry: AppEntryInList, modifier: Modifier = Modifier) {
     Box(
         modifier = Modifier.fillMaxWidth()
             .clickable {
-                // show toast:
-                Toast.makeText(context, appEntry.packageName, Toast.LENGTH_SHORT).show()
+                if (appEntry.isEnabled) {
+                    startApp(context, appEntry.packageName)
+                } else {
+                    // show toast:
+                    Toast.makeText(context, appEntry.packageName, Toast.LENGTH_SHORT).show()
+                }
             }
     ) {
         Row(
