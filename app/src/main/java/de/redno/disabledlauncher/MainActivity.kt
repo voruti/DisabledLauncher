@@ -1,6 +1,7 @@
 package de.redno.disabledlauncher
 
 import android.content.Context
+import android.content.Intent
 import android.content.pm.PackageManager
 import android.os.Bundle
 import android.widget.Toast
@@ -69,8 +70,28 @@ fun getDetailsForPackage(context: Context, packageName: String): AppEntryInList 
     )
 }
 
+fun enableApp(context: Context, packageName: String): Boolean {
+    executeAdbShellCmd(context, "pm enable $packageName")
+
+    for (i in 0..25) {
+        if (getDetailsForPackage(context, packageName).isEnabled) {
+            return true
+        }
+        Thread.sleep(200)
+    }
+    return false
+}
+
+fun executeAdbShellCmd(context: Context, commandLine: String) {
+    val intent = Intent("de.redno.disabledlauncher.action.ADB_SHELL")
+        .putExtra("command_line", commandLine)
+
+    context.sendBroadcast(intent)
+}
+
 fun startApp(context: Context, packageName: String) {
     val launchIntent = context.packageManager.getLaunchIntentForPackage(packageName)
+        ?.addFlags(Intent.FLAG_ACTIVITY_REORDER_TO_FRONT)
     context.startActivity(launchIntent)
 }
 
@@ -90,11 +111,10 @@ fun AppEntry(appEntry: AppEntryInList, modifier: Modifier = Modifier) {
     Box(
         modifier = Modifier.fillMaxWidth()
             .clickable {
-                if (appEntry.isEnabled) {
+                if (appEntry.isEnabled || enableApp(context, appEntry.packageName)) {
                     startApp(context, appEntry.packageName)
                 } else {
-                    // show toast:
-                    Toast.makeText(context, appEntry.packageName, Toast.LENGTH_SHORT).show()
+                    Toast.makeText(context, "App can't be opened", Toast.LENGTH_SHORT).show()
                 }
             }
     ) {
