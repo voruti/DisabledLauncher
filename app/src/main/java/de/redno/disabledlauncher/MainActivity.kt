@@ -83,7 +83,7 @@ fun enableApp(context: Context, packageName: String): Boolean {
 }
 
 fun executeAdbShellCmd(context: Context, commandLine: String) {
-    val intent = Intent("de.redno.disabledlauncher.action.ADB_SHELL")
+    val intent = Intent("${context.packageName}.action.ADB_SHELL")
         .putExtra("command_line", commandLine)
 
     context.sendBroadcast(intent)
