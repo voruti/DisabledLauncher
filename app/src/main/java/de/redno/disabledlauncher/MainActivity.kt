@@ -27,6 +27,7 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.asImageBitmap
 import androidx.compose.ui.platform.LocalContext
+import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.font.FontStyle
 import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.tooling.preview.Preview
@@ -179,15 +180,12 @@ fun AppEntry(appEntry: AppEntryInList, modifier: Modifier = Modifier) {
 fun AppList(packageNameList: List<String>, modifier: Modifier = Modifier) {
     val context = LocalContext.current
 
-    var text by rememberSaveable { mutableStateOf("") }
-    val appEntryList =
-        packageNameList.map { getDetailsForPackage(context, it) } // TODO: prevent being called on every text change
-
     Column {
+        var text by rememberSaveable { mutableStateOf("") }
         TextField( // TODO: https://developer.android.com/jetpack/compose/text#enter-modify-text
-            value = text,
+            value = text, // TODO: put into toolbar
             onValueChange = { text = it },
-            label = { Text("Search") },
+            label = { Text(stringResource(id = R.string.search)) },
             singleLine = true,
             modifier = Modifier.fillMaxWidth(),
             trailingIcon = {
@@ -202,6 +200,9 @@ fun AppList(packageNameList: List<String>, modifier: Modifier = Modifier) {
             }
         )
         LazyColumn {
+            val appEntryList = packageNameList.map {
+                getDetailsForPackage(context, it)
+            } // TODO: prevent being called on every text change
             items(items = appEntryList.filter {
                 val searchTerms = text.trim().lowercase().split(" ")
                 val searchReference = "${it.name.trim().lowercase()} ${it.packageName.trim().lowercase()}"

@@ -1,3 +1,5 @@
 <resources>
-    <string name="app_name">DisabledLauncher</string>
+    <string name="app_name" translatable="false">Disabled Launcher</string>
+    <string name="settings">Settings</string>
+    <string name="search">Search</string>
 </resources>
