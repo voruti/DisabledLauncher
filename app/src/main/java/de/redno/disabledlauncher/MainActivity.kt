@@ -172,7 +172,7 @@ fun AppList(packageNameList: List<String>, modifier: Modifier = Modifier) {
 
                 searchTerms.all { searchTerm -> searchReference.contains(searchTerm) }
             },
-                key = { it }
+                key = { it.packageName }
             ) { AppEntry(it) }
         }
     }
