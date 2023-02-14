@@ -4,6 +4,8 @@ import android.content.Context
 import android.content.Intent
 import android.content.pm.PackageManager
 import android.os.Bundle
+import android.os.Handler
+import android.os.Looper
 import android.widget.Toast
 import androidx.activity.ComponentActivity
 import androidx.activity.compose.setContent
@@ -32,8 +34,17 @@ import de.redno.disabledlauncher.model.AppEntryInList
 import de.redno.disabledlauncher.ui.theme.DisabledLauncherTheme
 
 class MainActivity : ComponentActivity() {
+    companion object {
+        var lastObject: MainActivity? = null
+
+        fun exit() {
+            lastObject?.finishAndRemoveTask()
+        }
+    }
+
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
+        lastObject = this
         setContent {
             DisabledLauncherTheme {
                 // A surface container using the 'background' color from the theme
@@ -89,10 +100,16 @@ fun executeAdbShellCmd(context: Context, commandLine: String) {
     context.sendBroadcast(intent)
 }
 
-fun startApp(context: Context, packageName: String) {
-    val launchIntent = context.packageManager.getLaunchIntentForPackage(packageName)
-        ?.addFlags(Intent.FLAG_ACTIVITY_REORDER_TO_FRONT)
-    context.startActivity(launchIntent)
+fun startApp(context: Context, packageName: String): Boolean {
+    return try {
+        val launchIntent = context.packageManager.getLaunchIntentForPackage(packageName)
+            ?.addFlags(Intent.FLAG_ACTIVITY_REORDER_TO_FRONT)
+        context.startActivity(launchIntent)
+
+        true
+    } catch (e: Exception) {
+        false
+    }
 }
 
 fun asyncToastMakeText(context: Context, text: CharSequence, duration: Int) {
@@ -119,7 +136,9 @@ fun AppEntry(appEntry: AppEntryInList, modifier: Modifier = Modifier) {
             .clickable {
                 Thread {
                     if (appEntry.isEnabled || enableApp(context, appEntry.packageName)) {
-                        startApp(context, appEntry.packageName)
+                        if (startApp(context, appEntry.packageName)) {
+                            MainActivity.exit()
+                        }
                     } else {
                         asyncToastMakeText(context, "App can't be opened", Toast.LENGTH_SHORT)
                     }
