@@ -49,7 +49,7 @@ class MainActivity : ComponentActivity() {
             DisabledLauncherTheme {
                 // A surface container using the 'background' color from the theme
                 Surface(modifier = Modifier.fillMaxSize(), color = MaterialTheme.colors.background) {
-                    MainComponent(Datasource().loadAppList())
+                    AppList(Datasource().loadAppList())
                 }
             }
         }
@@ -118,11 +118,6 @@ fun asyncToastMakeText(context: Context, text: CharSequence, duration: Int) {
     }
 }
 
-
-@Composable
-fun MainComponent(packageNameList: List<String>, modifier: Modifier = Modifier) {
-    AppList(packageNameList = packageNameList)
-}
 
 @Composable
 fun AppEntry(appEntry: AppEntryInList, modifier: Modifier = Modifier) {
@@ -209,6 +204,6 @@ fun AppList(packageNameList: List<String>, modifier: Modifier = Modifier) {
 @Composable
 fun DefaultPreview() {
     DisabledLauncherTheme {
-        MainComponent(Datasource().loadAppList())
+        AppList(Datasource().loadAppList())
     }
 }
