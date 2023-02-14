@@ -73,7 +73,7 @@ fun getDetailsForPackage(context: Context, packageName: String): AppEntryInList 
 fun enableApp(context: Context, packageName: String): Boolean {
     executeAdbShellCmd(context, "pm enable $packageName")
 
-    for (i in 0..25) {
+    for (i in 0..15) {
         if (getDetailsForPackage(context, packageName).isEnabled) {
             return true
         }
@@ -95,6 +95,12 @@ fun startApp(context: Context, packageName: String) {
     context.startActivity(launchIntent)
 }
 
+fun asyncToastMakeText(context: Context, text: CharSequence, duration: Int) {
+    Handler(Looper.getMainLooper()).post {
+        Toast.makeText(context, text, duration).show()
+    }
+}
+
 
 @Composable
 fun MainComponent(packageNameList: List<String>, modifier: Modifier = Modifier) {
@@ -111,11 +117,13 @@ fun AppEntry(appEntry: AppEntryInList, modifier: Modifier = Modifier) {
     Box(
         modifier = Modifier.fillMaxWidth()
             .clickable {
-                if (appEntry.isEnabled || enableApp(context, appEntry.packageName)) {
-                    startApp(context, appEntry.packageName)
-                } else {
-                    Toast.makeText(context, "App can't be opened", Toast.LENGTH_SHORT).show()
-                }
+                Thread {
+                    if (appEntry.isEnabled || enableApp(context, appEntry.packageName)) {
+                        startApp(context, appEntry.packageName)
+                    } else {
+                        asyncToastMakeText(context, "App can't be opened", Toast.LENGTH_SHORT)
+                    }
+                }.start()
             }
     ) {
         Row(
