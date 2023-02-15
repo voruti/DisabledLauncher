@@ -14,7 +14,7 @@
 
             <meta-data android:name="android.app.lib_name" android:value="" />
         </activity>
-        <activity android:name=".MainActivity" android:exported="true" android:label="@string/app_name"
+        <activity android:name=".MainActivity" android:exported="true"
             android:theme="@style/Theme.DisabledLauncher">
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
