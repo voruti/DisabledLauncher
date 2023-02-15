@@ -17,6 +17,7 @@ import androidx.compose.foundation.lazy.items
 import androidx.compose.material.*
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Clear
+import androidx.compose.material.icons.filled.Settings
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
@@ -53,7 +54,7 @@ class MainActivity : ComponentActivity() {
             DisabledLauncherTheme {
                 // A surface container using the 'background' color from the theme
                 Surface(modifier = Modifier.fillMaxSize(), color = MaterialTheme.colors.background) {
-                    AppList(Datasource().loadAppList())
+                    ToolbarComponent(content = { AppList(Datasource().loadAppList(baseContext)) })
                 }
             }
         }
@@ -122,6 +123,24 @@ fun asyncToastMakeText(context: Context, text: CharSequence, duration: Int) {
     }
 }
 
+
+@Composable
+fun ToolbarComponent(content: @Composable () -> Unit, modifier: Modifier = Modifier) {
+    val context = LocalContext.current
+
+    Column {
+        TopAppBar(
+            title = { Text(text = stringResource(id = R.string.app_name)) },
+            actions = {
+                IconButton(
+                    onClick = { context.startActivity(Intent(context, SettingsActivity::class.java)) }) {
+                    Icon(Icons.Default.Settings, contentDescription = stringResource(id = R.string.settings))
+                }
+            }
+        )
+        content()
+    }
+}
 
 @Composable
 fun AppEntry(appEntry: AppEntryInList, modifier: Modifier = Modifier) {
@@ -218,7 +237,9 @@ fun AppList(packageNameList: List<String>, modifier: Modifier = Modifier) {
 @Preview(showBackground = true, showSystemUi = true)
 @Composable
 fun DefaultPreview() {
+    val context = LocalContext.current
+
     DisabledLauncherTheme {
-        AppList(Datasource().loadAppList())
+        ToolbarComponent(content = { AppList(Datasource().loadAppList(context)) })
     }
 }
