@@ -9,5 +9,6 @@ data class AppEntryInList(
     val name: String,
     val packageName: String,
     val isEnabled: Boolean,
+    val isInstalled: Boolean,
     val icon: Bitmap
 ) : Parcelable

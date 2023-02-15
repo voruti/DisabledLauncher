@@ -10,6 +10,7 @@ import android.widget.Toast
 import androidx.activity.ComponentActivity
 import androidx.activity.compose.setContent
 import androidx.compose.foundation.Image
+import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.lazy.LazyColumn
@@ -29,7 +30,9 @@ import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.asImageBitmap
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.stringResource
+import androidx.compose.ui.text.TextStyle
 import androidx.compose.ui.text.font.FontStyle
+import androidx.compose.ui.text.style.TextDecoration
 import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
@@ -71,6 +74,7 @@ fun getDetailsForPackage(context: Context, packageName: String): AppEntryInList 
                 packageInfo.applicationInfo.loadLabel(packageManager).toString(),
                 packageInfo.packageName,
                 packageInfo.applicationInfo.enabled,
+                true,
                 packageInfo.applicationInfo.loadIcon(packageManager).toBitmap()
             )
         }
@@ -82,7 +86,8 @@ fun getDetailsForPackage(context: Context, packageName: String): AppEntryInList 
         name = "App not found",
         packageName = packageName,
         icon = context.getDrawable(R.drawable.ic_launcher_background)!!.toBitmap(),
-        isEnabled = false
+        isEnabled = false,
+        isInstalled = false
     )
 }
 
@@ -146,11 +151,10 @@ fun ToolbarComponent(content: @Composable () -> Unit, modifier: Modifier = Modif
 fun AppEntry(appEntry: AppEntryInList, modifier: Modifier = Modifier) {
     val context = LocalContext.current
 
-//    val boxModifier = if (appEntry.isEnabled) Modifier else
-//        Modifier.background(MaterialTheme.colors.onSurface.copy(alpha = 0.12f))
-
+    val boxModifier = if (appEntry.isInstalled) Modifier else
+        Modifier.background(MaterialTheme.colors.onSurface.copy(alpha = 0.12f))
     Box(
-        modifier = Modifier.fillMaxWidth()
+        modifier = boxModifier.fillMaxWidth()
             .clickable {
                 Thread {
                     if (appEntry.isEnabled || enableApp(context, appEntry.packageName)) {
@@ -176,12 +180,16 @@ fun AppEntry(appEntry: AppEntryInList, modifier: Modifier = Modifier) {
                     .padding(PaddingValues(end = 16.dp))
             )
             Column {
+                val style = MaterialTheme.typography.h6.merge(
+                    if (appEntry.isInstalled) TextStyle() else
+                        TextStyle(textDecoration = TextDecoration.LineThrough)
+                )
                 Text(
                     text = appEntry.name,
                     maxLines = 1,
                     overflow = TextOverflow.Ellipsis,
                     modifier = Modifier.padding(PaddingValues(bottom = 4.dp)),
-                    style = MaterialTheme.typography.h6,
+                    style = style,
                     fontStyle = if (appEntry.isEnabled) FontStyle.Normal else FontStyle.Italic
                 )
                 Text(
@@ -222,12 +230,14 @@ fun AppList(packageNameList: List<String>, modifier: Modifier = Modifier) {
             val appEntryList = packageNameList.map {
                 getDetailsForPackage(context, it)
             } // TODO: prevent being called on every text change
-            items(items = appEntryList.filter {
-                val searchTerms = text.trim().lowercase().split(" ")
-                val searchReference = "${it.name.trim().lowercase()} ${it.packageName.trim().lowercase()}"
+            items(items = appEntryList
+                .filter {
+                    val searchTerms = text.trim().lowercase().split(" ")
+                    val searchReference = "${it.name.trim().lowercase()} ${it.packageName.trim().lowercase()}"
 
-                searchTerms.all { searchTerm -> searchReference.contains(searchTerm) }
-            },
+                    searchTerms.all { searchTerm -> searchReference.contains(searchTerm) }
+                }
+                .sortedBy { !it.isInstalled },
                 key = { it.packageName }
             ) { AppEntry(it) }
         }
