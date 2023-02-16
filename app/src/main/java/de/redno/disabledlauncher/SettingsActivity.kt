@@ -39,14 +39,20 @@ class SettingsActivity : ComponentActivity() {
 
     override fun onActivityResult(requestCode: Int, resultCode: Int, data: Intent?) {
         super.onActivityResult(requestCode, resultCode, data)
-        if (requestCode == PICK_LAUNCHABLE_APPS_FILE && resultCode == RESULT_OK) {
-            val uri = data?.data
+        if (resultCode == RESULT_OK) {
+            when (requestCode) {
+                PICK_LAUNCHABLE_APPS_FILE -> {
+                    val uri = data?.data
 
-            uri?.let {
-                baseContext.getSharedPreferences("de.redno.disabledlauncher", Context.MODE_PRIVATE)
-                    .edit()
-                    .putString("launchableAppsFile", it.toString())
-                    .apply()
+                    uri?.let {
+                        contentResolver.takePersistableUriPermission(it, Intent.FLAG_GRANT_READ_URI_PERMISSION)
+
+                        baseContext.getSharedPreferences("de.redno.disabledlauncher", Context.MODE_PRIVATE)
+                            .edit()
+                            .putString("launchableAppsFile", it.toString())
+                            .apply()
+                    }
+                }
             }
         }
     }
@@ -60,6 +66,7 @@ const val PICK_LAUNCHABLE_APPS_FILE = 1
 fun pickLaunchableAppsFile() {
     val intent = Intent(Intent.ACTION_OPEN_DOCUMENT).apply {
         addCategory(Intent.CATEGORY_OPENABLE)
+        addFlags(Intent.FLAG_GRANT_PERSISTABLE_URI_PERMISSION)
         type = "application/json"
     }
 
@@ -81,7 +88,7 @@ fun SettingsPreview() {
 fun SettingsList(modifier: Modifier = Modifier) {
     val context = LocalContext.current
 
-    Row {
+    Column {
         Box(
             modifier = Modifier.fillMaxWidth()
                 .clickable { pickLaunchableAppsFile() }
