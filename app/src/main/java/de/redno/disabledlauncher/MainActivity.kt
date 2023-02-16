@@ -9,10 +9,10 @@ import android.os.Looper
 import android.widget.Toast
 import androidx.activity.ComponentActivity
 import androidx.activity.compose.setContent
-import androidx.compose.foundation.Image
-import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
-import androidx.compose.foundation.layout.*
+import androidx.compose.foundation.layout.Column
+import androidx.compose.foundation.layout.fillMaxSize
+import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.items
 import androidx.compose.material.*
@@ -24,19 +24,13 @@ import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.saveable.rememberSaveable
 import androidx.compose.runtime.setValue
-import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.asImageBitmap
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.stringResource
-import androidx.compose.ui.text.TextStyle
-import androidx.compose.ui.text.font.FontStyle
-import androidx.compose.ui.text.style.TextDecoration
-import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.tooling.preview.Preview
-import androidx.compose.ui.unit.dp
 import androidx.core.graphics.drawable.toBitmap
+import de.redno.disabledlauncher.common.ListEntry
 import de.redno.disabledlauncher.data.Datasource
 import de.redno.disabledlauncher.model.AppEntryInList
 import de.redno.disabledlauncher.model.NoShizukuPermissionException
@@ -169,64 +163,32 @@ fun ToolbarComponent(content: @Composable () -> Unit, modifier: Modifier = Modif
 fun AppEntry(appEntry: AppEntryInList, modifier: Modifier = Modifier) {
     val context = LocalContext.current
 
-    val boxModifier = if (appEntry.isInstalled) Modifier else
-        Modifier.background(MaterialTheme.colors.onSurface.copy(alpha = 0.12f))
-    Box(
-        modifier = boxModifier.fillMaxWidth()
-            .clickable {
-                Thread {
-                    try {
-                        if (appEntry.isEnabled || enableApp(appEntry.packageName)) {
-                            if (startApp(context, appEntry.packageName)) {
-                                MainActivity.exit()
-                            }
-                        } else {
-                            asyncToastMakeText(context, "App can't be opened", Toast.LENGTH_SHORT)
+    ListEntry(
+        icon = appEntry.icon.asImageBitmap(),
+        title = appEntry.name,
+        description = appEntry.packageName,
+        italicStyle = !appEntry.isEnabled,
+        disabledStyle = !appEntry.isInstalled,
+        modifier = Modifier.clickable {
+            Thread {
+                try {
+                    if (appEntry.isEnabled || enableApp(appEntry.packageName)) {
+                        if (startApp(context, appEntry.packageName)) {
+                            MainActivity.exit()
                         }
-                    } catch (e: ShizukuUnavailableException) {
-                        asyncToastMakeText(context, "Can't connect to Shizuku", Toast.LENGTH_SHORT)
-                    } catch (e: NoShizukuPermissionException) {
-                        asyncToastMakeText(context, "Shizuku denied access", Toast.LENGTH_SHORT)
-                    } catch (e: ShizukuVersionNotSupportedException) {
-                        asyncToastMakeText(context, "Unsupported Shizuku version", Toast.LENGTH_SHORT)
+                    } else {
+                        asyncToastMakeText(context, "App can't be opened", Toast.LENGTH_SHORT)
                     }
-                }.start()
-            }
-    ) {
-        Row(
-            verticalAlignment = Alignment.CenterVertically,
-            modifier = Modifier.padding(PaddingValues(horizontal = 24.dp, vertical = 8.dp))
-        ) {
-            // show app icon:
-            Image(
-                bitmap = appEntry.icon.asImageBitmap(),
-                contentDescription = "App Icon",
-                modifier = Modifier
-                    .size(64.dp)
-                    .padding(PaddingValues(end = 16.dp))
-            )
-            Column {
-                val style = MaterialTheme.typography.h6.merge(
-                    if (appEntry.isInstalled) TextStyle() else
-                        TextStyle(textDecoration = TextDecoration.LineThrough)
-                )
-                Text(
-                    text = appEntry.name,
-                    maxLines = 1,
-                    overflow = TextOverflow.Ellipsis,
-                    modifier = Modifier.padding(PaddingValues(bottom = 4.dp)),
-                    style = style,
-                    fontStyle = if (appEntry.isEnabled) FontStyle.Normal else FontStyle.Italic
-                )
-                Text(
-                    text = appEntry.packageName,
-                    maxLines = 2, // maybe different design/layout
-                    style = MaterialTheme.typography.body2,
-                    color = Color(0xFF808080)
-                )
-            }
+                } catch (e: ShizukuUnavailableException) {
+                    asyncToastMakeText(context, "Can't connect to Shizuku", Toast.LENGTH_SHORT)
+                } catch (e: NoShizukuPermissionException) {
+                    asyncToastMakeText(context, "Shizuku denied access", Toast.LENGTH_SHORT)
+                } catch (e: ShizukuVersionNotSupportedException) {
+                    asyncToastMakeText(context, "Unsupported Shizuku version", Toast.LENGTH_SHORT)
+                }
+            }.start()
         }
-    }
+    )
 }
 
 @Composable
@@ -273,9 +235,7 @@ fun AppList(packageNameList: List<String>, modifier: Modifier = Modifier) {
 @Preview(showBackground = true, showSystemUi = true)
 @Composable
 fun DefaultPreview() {
-    val context = LocalContext.current
-
     DisabledLauncherTheme {
-        ToolbarComponent(content = { AppList(Datasource().loadAppList(context)) })
+        ToolbarComponent(content = { AppList(listOf("de.test.1", "de.test.2", "de.test.3")) })
     }
 }

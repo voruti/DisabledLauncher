@@ -6,17 +6,16 @@ import android.os.Bundle
 import androidx.activity.ComponentActivity
 import androidx.activity.compose.setContent
 import androidx.compose.foundation.clickable
-import androidx.compose.foundation.layout.*
+import androidx.compose.foundation.layout.Column
+import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.material.MaterialTheme
 import androidx.compose.material.Surface
-import androidx.compose.material.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.tooling.preview.Preview
-import androidx.compose.ui.unit.dp
 import androidx.core.app.ActivityCompat.startActivityForResult
+import de.redno.disabledlauncher.common.ListEntry
 import de.redno.disabledlauncher.ui.theme.DisabledLauncherTheme
 
 class SettingsActivity : ComponentActivity() {
@@ -89,25 +88,13 @@ fun SettingsList(modifier: Modifier = Modifier) {
     val context = LocalContext.current
 
     Column {
-        Box(
-            modifier = Modifier.fillMaxWidth()
-                .clickable { pickLaunchableAppsFile() }
-        ) {
-            Column(modifier = Modifier.padding(PaddingValues(horizontal = 24.dp, vertical = 8.dp))) {
-                Text(
-                    text = "Launchable apps file",
-                    modifier = Modifier.padding(PaddingValues(bottom = 4.dp)),
-                    style = MaterialTheme.typography.h6
-                )
-                val currentUri = context.getSharedPreferences("de.redno.disabledlauncher", Context.MODE_PRIVATE)
-                    .getString("launchableAppsFile", null)
-                    ?: "Click to choose a file"
-                Text(
-                    text = currentUri,
-                    style = MaterialTheme.typography.body2,
-                    color = Color(0xFF808080)
-                )
-            }
-        }
+        val currentUri = context.getSharedPreferences("de.redno.disabledlauncher", Context.MODE_PRIVATE)
+            .getString("launchableAppsFile", null)
+            ?: "Click to choose a file"
+        ListEntry(
+            title = "Launchable apps file",
+            description = currentUri,
+            modifier = Modifier.clickable { pickLaunchableAppsFile() }
+        )
     }
 }
