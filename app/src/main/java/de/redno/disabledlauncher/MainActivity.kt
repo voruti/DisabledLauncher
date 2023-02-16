@@ -39,7 +39,11 @@ import androidx.compose.ui.unit.dp
 import androidx.core.graphics.drawable.toBitmap
 import de.redno.disabledlauncher.data.Datasource
 import de.redno.disabledlauncher.model.AppEntryInList
+import de.redno.disabledlauncher.model.NoShizukuPermissionException
+import de.redno.disabledlauncher.model.ShizukuUnavailableException
+import de.redno.disabledlauncher.model.ShizukuVersionNotSupportedException
 import de.redno.disabledlauncher.ui.theme.DisabledLauncherTheme
+import rikka.shizuku.Shizuku
 
 class MainActivity : ComponentActivity() {
     companion object {
@@ -64,6 +68,27 @@ class MainActivity : ComponentActivity() {
     }
 }
 
+
+fun checkShizukuPermission(): Boolean {
+    try {
+        if (Shizuku.isPreV11()) {
+            // Pre-v11 is unsupported
+            throw ShizukuVersionNotSupportedException()
+        } else if (Shizuku.checkSelfPermission() == PackageManager.PERMISSION_GRANTED) {
+            // Granted
+            return true
+        } else if (!Shizuku.shouldShowRequestPermissionRationale()) {
+            // Users choose "Deny and don't ask again"
+            throw NoShizukuPermissionException()
+        } else {
+            // Request the permission
+            Shizuku.requestPermission(0)
+            throw NoShizukuPermissionException()
+        }
+    } catch (e: IllegalStateException) {
+        throw ShizukuUnavailableException()
+    }
+}
 
 fun getDetailsForPackage(context: Context, packageName: String): AppEntryInList {
     val packageManager = context.packageManager
@@ -91,23 +116,16 @@ fun getDetailsForPackage(context: Context, packageName: String): AppEntryInList 
     )
 }
 
-fun enableApp(context: Context, packageName: String): Boolean {
-    executeAdbShellCmd(context, "pm enable $packageName")
-
-    for (i in 0..15) {
-        if (getDetailsForPackage(context, packageName).isEnabled) {
-            return true
-        }
-        Thread.sleep(200)
-    }
-    return false
+fun enableApp(packageName: String): Boolean {
+    return executeAdbCommand("pm enable $packageName")
 }
 
-fun executeAdbShellCmd(context: Context, commandLine: String) {
-    val intent = Intent("${context.packageName}.action.ADB_SHELL")
-        .putExtra("command_line", commandLine)
+fun executeAdbCommand(command: String): Boolean {
+    if (!checkShizukuPermission()) {
+        return false
+    }
 
-    context.sendBroadcast(intent)
+    return Shizuku.newProcess(arrayOf("sh", "-c", command), null, null).waitFor() == 0
 }
 
 fun startApp(context: Context, packageName: String): Boolean {
@@ -157,12 +175,20 @@ fun AppEntry(appEntry: AppEntryInList, modifier: Modifier = Modifier) {
         modifier = boxModifier.fillMaxWidth()
             .clickable {
                 Thread {
-                    if (appEntry.isEnabled || enableApp(context, appEntry.packageName)) {
-                        if (startApp(context, appEntry.packageName)) {
-                            MainActivity.exit()
+                    try {
+                        if (appEntry.isEnabled || enableApp(appEntry.packageName)) {
+                            if (startApp(context, appEntry.packageName)) {
+                                MainActivity.exit()
+                            }
+                        } else {
+                            asyncToastMakeText(context, "App can't be opened", Toast.LENGTH_SHORT)
                         }
-                    } else {
-                        asyncToastMakeText(context, "App can't be opened", Toast.LENGTH_SHORT)
+                    } catch (e: ShizukuUnavailableException) {
+                        asyncToastMakeText(context, "Can't connect to Shizuku", Toast.LENGTH_SHORT)
+                    } catch (e: NoShizukuPermissionException) {
+                        asyncToastMakeText(context, "Shizuku denied access", Toast.LENGTH_SHORT)
+                    } catch (e: ShizukuVersionNotSupportedException) {
+                        asyncToastMakeText(context, "Unsupported Shizuku version", Toast.LENGTH_SHORT)
                     }
                 }.start()
             }
