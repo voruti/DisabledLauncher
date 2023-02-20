@@ -8,7 +8,9 @@ import androidx.activity.compose.setContent
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.fillMaxSize
+import androidx.compose.foundation.layout.padding
 import androidx.compose.material.MaterialTheme
+import androidx.compose.material.Scaffold
 import androidx.compose.material.Surface
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
@@ -30,7 +32,12 @@ class SettingsActivity : ComponentActivity() {
             DisabledLauncherTheme {
                 // A surface container using the 'background' color from the theme
                 Surface(modifier = Modifier.fillMaxSize(), color = MaterialTheme.colors.background) {
-                    ToolbarComponent(content = { SettingsList() })
+                    Scaffold(
+                        topBar = { ToolbarComponent() },
+                        content = { padding ->
+                            SettingsList(Modifier.padding(padding))
+                        }
+                    )
                 }
             }
         }
@@ -79,7 +86,12 @@ fun pickLaunchableAppsFile() {
 @Composable
 fun SettingsPreview() {
     DisabledLauncherTheme {
-        ToolbarComponent(content = { SettingsList() })
+        Scaffold(
+            topBar = { ToolbarComponent() },
+            content = { padding ->
+                SettingsList(Modifier.padding(padding))
+            }
+        )
     }
 }
 
@@ -87,7 +99,7 @@ fun SettingsPreview() {
 fun SettingsList(modifier: Modifier = Modifier) {
     val context = LocalContext.current
 
-    Column {
+    Column(modifier = modifier) {
         val currentUri = context.getSharedPreferences("de.redno.disabledlauncher", Context.MODE_PRIVATE)
             .getString("launchableAppsFile", null)
             ?: "Click to choose a file"

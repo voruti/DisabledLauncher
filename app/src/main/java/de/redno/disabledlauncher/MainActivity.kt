@@ -13,10 +13,12 @@ import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
+import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.items
 import androidx.compose.material.*
 import androidx.compose.material.icons.Icons
+import androidx.compose.material.icons.filled.AppBlocking
 import androidx.compose.material.icons.filled.Clear
 import androidx.compose.material.icons.filled.Settings
 import androidx.compose.runtime.Composable
@@ -55,7 +57,23 @@ class MainActivity : ComponentActivity() {
             DisabledLauncherTheme {
                 // A surface container using the 'background' color from the theme
                 Surface(modifier = Modifier.fillMaxSize(), color = MaterialTheme.colors.background) {
-                    ToolbarComponent(content = { AppList(Datasource().loadAppList(baseContext)) })
+                    Scaffold(
+                        topBar = { ToolbarComponent() },
+                        floatingActionButton = {
+                            FloatingActionButton(onClick = {
+                                Thread {
+                                    if (!disableAllApps(baseContext)) {
+                                        asyncToastMakeText(baseContext, "Couldn't disable all apps", Toast.LENGTH_LONG)
+                                    }
+                                }.start()
+                            }) {
+                                Icon(Icons.Default.AppBlocking, contentDescription = "Disable all apps")
+                            }
+                        },
+                        content = { padding ->
+                            AppList(Datasource().loadAppList(baseContext), Modifier.padding(padding))
+                        }
+                    )
                 }
             }
         }
@@ -114,6 +132,29 @@ fun enableApp(packageName: String): Boolean {
     return executeAdbCommand("pm enable $packageName")
 }
 
+fun disableAllApps(context: Context): Boolean {
+    val packagesToDisable = Datasource().loadAppList(context)
+        .filter { packageName -> getDetailsForPackage(context, packageName).isEnabled }
+
+    for (packageName in packagesToDisable) {
+        if (!disableApp(context, packageName)) {
+            return false
+        }
+    }
+
+    return true
+}
+
+fun disableApp(context: Context, packageName: String): Boolean {
+    val success = executeAdbCommand("pm disable-user --user 0 $packageName")
+
+    if (success) {
+        asyncToastMakeText(context, "Disabled $packageName", Toast.LENGTH_SHORT)
+    }
+
+    return success
+}
+
 fun executeAdbCommand(command: String): Boolean {
     if (!checkShizukuPermission()) {
         return false
@@ -142,21 +183,19 @@ fun asyncToastMakeText(context: Context, text: CharSequence, duration: Int) {
 
 
 @Composable
-fun ToolbarComponent(content: @Composable () -> Unit, modifier: Modifier = Modifier) {
+fun ToolbarComponent(modifier: Modifier = Modifier) {
     val context = LocalContext.current
 
-    Column {
-        TopAppBar(
-            title = { Text(text = stringResource(id = R.string.app_name)) },
-            actions = {
-                IconButton(
-                    onClick = { context.startActivity(Intent(context, SettingsActivity::class.java)) }) {
-                    Icon(Icons.Default.Settings, contentDescription = stringResource(id = R.string.settings))
-                }
+    TopAppBar(
+        modifier = modifier,
+        title = { Text(text = stringResource(id = R.string.app_name)) },
+        actions = {
+            IconButton(
+                onClick = { context.startActivity(Intent(context, SettingsActivity::class.java)) }) {
+                Icon(Icons.Default.Settings, contentDescription = stringResource(id = R.string.settings))
             }
-        )
-        content()
-    }
+        }
+    )
 }
 
 @Composable
@@ -169,7 +208,7 @@ fun AppEntry(appEntry: AppEntryInList, modifier: Modifier = Modifier) {
         description = appEntry.packageName,
         italicStyle = !appEntry.isEnabled,
         disabledStyle = !appEntry.isInstalled,
-        modifier = Modifier.clickable {
+        modifier = modifier.clickable {
             Thread {
                 try {
                     if (appEntry.isEnabled || enableApp(appEntry.packageName)) {
@@ -184,7 +223,7 @@ fun AppEntry(appEntry: AppEntryInList, modifier: Modifier = Modifier) {
                 } catch (e: NoShizukuPermissionException) {
                     asyncToastMakeText(context, "Shizuku denied access", Toast.LENGTH_SHORT)
                 } catch (e: ShizukuVersionNotSupportedException) {
-                    asyncToastMakeText(context, "Unsupported Shizuku version", Toast.LENGTH_SHORT)
+                    asyncToastMakeText(context, "Unsupported Shizuku version", Toast.LENGTH_LONG)
                 }
             }.start()
         }
@@ -195,7 +234,7 @@ fun AppEntry(appEntry: AppEntryInList, modifier: Modifier = Modifier) {
 fun AppList(packageNameList: List<String>, modifier: Modifier = Modifier) {
     val context = LocalContext.current
 
-    Column {
+    Column(modifier = modifier) {
         var text by rememberSaveable { mutableStateOf("") }
         TextField( // TODO: https://developer.android.com/jetpack/compose/text#enter-modify-text
             value = text, // TODO: put into toolbar
@@ -236,6 +275,16 @@ fun AppList(packageNameList: List<String>, modifier: Modifier = Modifier) {
 @Composable
 fun DefaultPreview() {
     DisabledLauncherTheme {
-        ToolbarComponent(content = { AppList(listOf("de.test.1", "de.test.2", "de.test.3")) })
+        Scaffold(
+            topBar = { ToolbarComponent() },
+            floatingActionButton = {
+                FloatingActionButton(onClick = {}) {
+                    Icon(Icons.Default.AppBlocking, contentDescription = "Disable all apps")
+                }
+            },
+            content = { padding ->
+                AppList(listOf("de.test.1", "de.test.2", "de.test.3"), Modifier.padding(padding))
+            }
+        )
     }
 }
