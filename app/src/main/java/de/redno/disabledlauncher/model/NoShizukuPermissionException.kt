@@ -1,3 +1,3 @@
 package de.redno.disabledlauncher.model
 
-class NoShizukuPermissionException : Exception()
+class NoShizukuPermissionException : ShizukuException()

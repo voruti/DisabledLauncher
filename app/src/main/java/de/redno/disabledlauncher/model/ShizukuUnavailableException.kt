@@ -1,3 +1,3 @@
 package de.redno.disabledlauncher.model
 
-class ShizukuUnavailableException : Exception()
+class ShizukuUnavailableException : ShizukuException()
