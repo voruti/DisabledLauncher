@@ -56,7 +56,7 @@ class SettingsActivity : ComponentActivity() {
                     uri?.let {
                         contentResolver.takePersistableUriPermission(it, Intent.FLAG_GRANT_READ_URI_PERMISSION)
 
-                        baseContext.getSharedPreferences("de.redno.disabledlauncher", Context.MODE_PRIVATE)
+                        baseContext.getSharedPreferences(baseContext.packageName, Context.MODE_PRIVATE)
                             .edit()
                             .putString("launchableAppsFile", it.toString())
                             .apply()
@@ -101,7 +101,7 @@ fun SettingsPreview() {
 @Composable
 fun SettingsList(modifier: Modifier = Modifier) {
     val context = LocalContext.current
-    val sharedPreferences = context.getSharedPreferences("de.redno.disabledlauncher", Context.MODE_PRIVATE)
+    val sharedPreferences = context.getSharedPreferences(context.packageName, Context.MODE_PRIVATE)
 
     Column(modifier = modifier) {
         val currentUri = sharedPreferences.getString("launchableAppsFile", null)

@@ -7,7 +7,7 @@ import org.json.JSONObject
 class Datasource {
 
     fun loadAppList(context: Context): List<String> {
-        context.getSharedPreferences("de.redno.disabledlauncher", Context.MODE_PRIVATE)
+        context.getSharedPreferences(context.packageName, Context.MODE_PRIVATE)
             .getString("launchableAppsFile", null)?.let { uri ->
 
                 val inputStream = context.contentResolver.openInputStream(Uri.parse(uri))
