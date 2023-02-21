@@ -12,6 +12,7 @@ import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.selection.toggleable
 import androidx.compose.material.*
 import androidx.compose.material.icons.Icons
+import androidx.compose.material.icons.filled.Description
 import androidx.compose.material.icons.filled.Shop
 import androidx.compose.runtime.*
 import androidx.compose.ui.Modifier
@@ -106,6 +107,7 @@ fun SettingsList(modifier: Modifier = Modifier) {
         val currentUri = sharedPreferences.getString("launchableAppsFile", null)
             ?: "Click to choose a file"
         ListEntry(
+            icon = { Icon(Icons.Default.Description, "File icon") },
             title = "Launchable apps file",
             description = currentUri,
             modifier = Modifier.clickable { pickLaunchableAppsFile() }
