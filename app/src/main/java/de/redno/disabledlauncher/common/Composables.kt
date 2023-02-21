@@ -4,8 +4,9 @@ import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.*
 import androidx.compose.material.MaterialTheme
+import androidx.compose.material.Switch
 import androidx.compose.material.Text
-import androidx.compose.runtime.Composable
+import androidx.compose.runtime.*
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
@@ -22,7 +23,14 @@ import de.redno.disabledlauncher.ui.theme.DisabledLauncherTheme
 @Composable
 fun DefaultPreview() {
     DisabledLauncherTheme {
-        ListEntry(title = "Titel", description = "Desc")
+        var test by remember { mutableStateOf(true) }
+        ListEntry(
+            title = "Title",
+            description = "Desc",
+            endContent = {
+                Switch(checked = test, onCheckedChange = null)
+            }
+        )
     }
 }
 
@@ -58,7 +66,7 @@ fun ListEntry(
                 // empty placeholder:
                 Box(modifier = iconModifier)
             }
-            Column {
+            Column(modifier = Modifier.weight(1F)) {
                 val titleStyle = MaterialTheme.typography.h6.merge(
                     if (disabledStyle)
                         TextStyle(textDecoration = TextDecoration.LineThrough) else
@@ -79,6 +87,11 @@ fun ListEntry(
                     style = MaterialTheme.typography.body2,
                     color = Color(0xFF808080)
                 )
+            }
+            endContent?.let {
+                Box(modifier = Modifier.padding(PaddingValues(start = 16.dp))) {
+                    endContent()
+                }
             }
         }
     }
