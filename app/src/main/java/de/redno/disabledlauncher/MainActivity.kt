@@ -139,10 +139,9 @@ fun enableApp(context: Context, packageName: String): Boolean {
                 data = Uri.parse("https://play.google.com/store/apps/details?id=$packageName")
             }
             context.startActivity(intent)
-            return true
-        } else {
-            throw e
         }
+
+        throw e
     }
 }
 
