@@ -1,6 +1,5 @@
 package de.redno.disabledlauncher.common
 
-import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.*
 import androidx.compose.material.MaterialTheme
@@ -10,7 +9,6 @@ import androidx.compose.runtime.*
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
-import androidx.compose.ui.graphics.ImageBitmap
 import androidx.compose.ui.text.TextStyle
 import androidx.compose.ui.text.font.FontStyle
 import androidx.compose.ui.text.style.TextDecoration
@@ -39,7 +37,7 @@ fun ListEntry(
     title: String,
     description: String,
     modifier: Modifier = Modifier,
-    icon: ImageBitmap? = null,
+    icon: (@Composable (() -> Unit))? = null,
     endContent: (@Composable (() -> Unit))? = null,
     italicStyle: Boolean = false,
     disabledStyle: Boolean = false,
@@ -54,17 +52,14 @@ fun ListEntry(
             verticalAlignment = Alignment.CenterVertically,
             modifier = Modifier.padding(PaddingValues(horizontal = 24.dp, vertical = 8.dp))
         ) {
-            val iconModifier = Modifier.size(64.dp)
-                .padding(PaddingValues(end = 16.dp))
-            if (icon != null) {
-                Image(
-                    bitmap = icon,
-                    contentDescription = "Icon",
-                    modifier = iconModifier
-                )
-            } else {
-                // empty placeholder:
-                Box(modifier = iconModifier)
+            Box(
+                modifier = Modifier.size(64.dp)
+                    .padding(PaddingValues(end = 16.dp)),
+                contentAlignment = Alignment.Center
+            ) {
+                icon?.let {
+                    icon()
+                }
             }
             Column(modifier = Modifier.weight(1F)) {
                 val titleStyle = MaterialTheme.typography.h6.merge(

@@ -9,6 +9,7 @@ import android.os.Looper
 import android.widget.Toast
 import androidx.activity.ComponentActivity
 import androidx.activity.compose.setContent
+import androidx.compose.foundation.Image
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.fillMaxSize
@@ -203,7 +204,7 @@ fun AppEntry(appEntry: AppEntryInList, modifier: Modifier = Modifier) {
     val context = LocalContext.current
 
     ListEntry(
-        icon = appEntry.icon.asImageBitmap(),
+        icon = { Image(appEntry.icon.asImageBitmap(), "App icon") },
         title = appEntry.name,
         description = appEntry.packageName,
         italicStyle = !appEntry.isEnabled,
