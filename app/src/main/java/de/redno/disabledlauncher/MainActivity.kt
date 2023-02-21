@@ -3,6 +3,7 @@ package de.redno.disabledlauncher
 import android.content.Context
 import android.content.Intent
 import android.content.pm.PackageManager
+import android.net.Uri
 import android.os.Bundle
 import android.os.Handler
 import android.os.Looper
@@ -35,10 +36,7 @@ import androidx.compose.ui.tooling.preview.Preview
 import androidx.core.graphics.drawable.toBitmap
 import de.redno.disabledlauncher.common.ListEntry
 import de.redno.disabledlauncher.data.Datasource
-import de.redno.disabledlauncher.model.AppEntryInList
-import de.redno.disabledlauncher.model.NoShizukuPermissionException
-import de.redno.disabledlauncher.model.ShizukuUnavailableException
-import de.redno.disabledlauncher.model.ShizukuVersionNotSupportedException
+import de.redno.disabledlauncher.model.*
 import de.redno.disabledlauncher.ui.theme.DisabledLauncherTheme
 import rikka.shizuku.Shizuku
 
@@ -129,8 +127,23 @@ fun getDetailsForPackage(context: Context, packageName: String): AppEntryInList 
     )
 }
 
-fun enableApp(packageName: String): Boolean {
-    return executeAdbCommand("pm enable $packageName")
+fun enableApp(context: Context, packageName: String): Boolean {
+    try {
+        return executeAdbCommand("pm enable $packageName")
+    } catch (e: ShizukuException) {
+        val sharedPreferences = context.getSharedPreferences(context.packageName, Context.MODE_PRIVATE)
+        val fallbackToGooglePlay = sharedPreferences.getBoolean("fallbackToGooglePlay", false)
+
+        if (fallbackToGooglePlay) {
+            val intent = Intent(Intent.ACTION_VIEW).apply {
+                data = Uri.parse("https://play.google.com/store/apps/details?id=$packageName")
+            }
+            context.startActivity(intent)
+            return true
+        } else {
+            throw e
+        }
+    }
 }
 
 fun disableAllApps(context: Context): Boolean {
@@ -212,7 +225,7 @@ fun AppEntry(appEntry: AppEntryInList, modifier: Modifier = Modifier) {
         modifier = modifier.clickable {
             Thread {
                 try {
-                    if (appEntry.isEnabled || enableApp(appEntry.packageName)) {
+                    if (appEntry.isEnabled || enableApp(context, appEntry.packageName)) {
                         if (startApp(context, appEntry.packageName)) {
                             MainActivity.exit()
                         }
