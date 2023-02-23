@@ -39,6 +39,7 @@ fun ListEntry(
     modifier: Modifier = Modifier,
     icon: (@Composable (() -> Unit))? = null,
     endContent: (@Composable (() -> Unit))? = null,
+    contextContent: (@Composable (() -> Unit))? = null,
     italicStyle: Boolean = false,
     disabledStyle: Boolean = false,
 ) {
@@ -88,6 +89,9 @@ fun ListEntry(
                     endContent()
                 }
             }
+        }
+        contextContent?.let {
+            contextContent()
         }
     }
 }

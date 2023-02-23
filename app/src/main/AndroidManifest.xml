@@ -17,6 +17,19 @@
         android:theme="@style/Theme.DisabledLauncher"
         tools:targetApi="31">
         <activity
+            android:name=".OpenAppActivity"
+            android:exported="false">
+            <intent-filter>
+                <action android:name="${applicationId}.action.OPEN_APP" />
+
+                <category android:name="android.intent.category.DEFAULT" />
+            </intent-filter>
+
+            <meta-data
+                android:name="android.app.lib_name"
+                android:value="" />
+        </activity>
+        <activity
             android:name=".SettingsActivity"
             android:exported="false"
             android:label="@string/settings"

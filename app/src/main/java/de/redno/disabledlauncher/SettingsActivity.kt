@@ -56,7 +56,7 @@ class SettingsActivity : ComponentActivity() {
                     uri?.let {
                         contentResolver.takePersistableUriPermission(it, Intent.FLAG_GRANT_READ_URI_PERMISSION)
 
-                        baseContext.getSharedPreferences(baseContext.packageName, Context.MODE_PRIVATE)
+                        getSharedPreferences(packageName, Context.MODE_PRIVATE)
                             .edit()
                             .putString("launchableAppsFile", it.toString())
                             .apply()

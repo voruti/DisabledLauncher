@@ -10,8 +10,9 @@ import android.os.Looper
 import android.widget.Toast
 import androidx.activity.ComponentActivity
 import androidx.activity.compose.setContent
+import androidx.compose.foundation.ExperimentalFoundationApi
 import androidx.compose.foundation.Image
-import androidx.compose.foundation.clickable
+import androidx.compose.foundation.combinedClickable
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
@@ -23,24 +24,27 @@ import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.AppBlocking
 import androidx.compose.material.icons.filled.Clear
 import androidx.compose.material.icons.filled.Settings
-import androidx.compose.runtime.Composable
-import androidx.compose.runtime.getValue
-import androidx.compose.runtime.mutableStateOf
+import androidx.compose.runtime.*
 import androidx.compose.runtime.saveable.rememberSaveable
-import androidx.compose.runtime.setValue
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.graphics.asAndroidBitmap
 import androidx.compose.ui.graphics.asImageBitmap
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.tooling.preview.Preview
+import androidx.core.content.pm.ShortcutInfoCompat
+import androidx.core.content.pm.ShortcutManagerCompat.isRequestPinShortcutSupported
+import androidx.core.content.pm.ShortcutManagerCompat.requestPinShortcut
+import androidx.core.graphics.drawable.IconCompat
 import androidx.core.graphics.drawable.toBitmap
 import de.redno.disabledlauncher.common.ListEntry
+import de.redno.disabledlauncher.common.Util
 import de.redno.disabledlauncher.data.Datasource
 import de.redno.disabledlauncher.model.*
 import de.redno.disabledlauncher.ui.theme.DisabledLauncherTheme
 import rikka.shizuku.Shizuku
 
-class MainActivity : ComponentActivity() {
+class MainActivity : ComponentActivity() { // TODO: faster startup somehow?
     companion object {
         var lastObject: MainActivity? = null
 
@@ -61,8 +65,8 @@ class MainActivity : ComponentActivity() {
                         floatingActionButton = {
                             FloatingActionButton(onClick = {
                                 Thread {
-                                    if (!disableAllApps(baseContext)) {
-                                        asyncToastMakeText(baseContext, "Couldn't disable all apps", Toast.LENGTH_LONG)
+                                    if (!disableAllApps(this)) {
+                                        asyncToastMakeText(this, "Couldn't disable all apps", Toast.LENGTH_LONG)
                                     }
                                 }.start()
                             }) {
@@ -70,7 +74,7 @@ class MainActivity : ComponentActivity() {
                             }
                         },
                         content = { padding ->
-                            AppList(Datasource().loadAppList(baseContext), Modifier.padding(padding))
+                            AppList(Datasource().loadAppList(this), Modifier.padding(padding))
                         }
                     )
                 }
@@ -135,6 +139,7 @@ fun enableApp(context: Context, packageName: String): Boolean {
         val fallbackToGooglePlay = sharedPreferences.getBoolean("fallbackToGooglePlay", false)
 
         if (fallbackToGooglePlay) {
+            // TODO: not working when started from shortcut
             val intent = Intent(Intent.ACTION_VIEW).apply {
                 data = Uri.parse("https://play.google.com/store/apps/details?id=$packageName")
             }
@@ -176,6 +181,28 @@ fun executeAdbCommand(command: String): Boolean {
     return Shizuku.newProcess(arrayOf("sh", "-c", command), null, null).waitFor() == 0
 }
 
+/**
+ * @return null if everything worked as expected, error message string on failure
+ */
+fun openAppLogic(context: Context, appEntry: AppEntryInList): String? {
+    try {
+        if (
+            (appEntry.isEnabled || enableApp(context, appEntry.packageName))
+            && startApp(context, appEntry.packageName)
+        ) {
+            return null
+        }
+    } catch (e: ShizukuUnavailableException) {
+        return "Can't connect to Shizuku"
+    } catch (e: NoShizukuPermissionException) {
+        return "Shizuku denied access"
+    } catch (e: ShizukuVersionNotSupportedException) {
+        return "Unsupported Shizuku version"
+    }
+
+    return "App can't be opened"
+}
+
 fun startApp(context: Context, packageName: String): Boolean {
     return try {
         val launchIntent = context.packageManager.getLaunchIntentForPackage(packageName)
@@ -211,35 +238,60 @@ fun ToolbarComponent(modifier: Modifier = Modifier) {
     )
 }
 
+@OptIn(ExperimentalFoundationApi::class)
 @Composable
 fun AppEntry(appEntry: AppEntryInList, modifier: Modifier = Modifier) {
     val context = LocalContext.current
 
+    var dropdownExpanded by remember { mutableStateOf(false) }
     ListEntry(
         icon = { Image(appEntry.icon.asImageBitmap(), "App icon") },
         title = appEntry.name,
         description = appEntry.packageName,
         italicStyle = !appEntry.isEnabled,
         disabledStyle = !appEntry.isInstalled,
-        modifier = modifier.clickable {
-            Thread {
-                try {
-                    if (appEntry.isEnabled || enableApp(context, appEntry.packageName)) {
-                        if (startApp(context, appEntry.packageName)) {
-                            MainActivity.exit()
-                        }
+        contextContent = {
+            DropdownMenu(
+                expanded = dropdownExpanded,
+                onDismissRequest = { dropdownExpanded = false }
+            ) {
+                DropdownMenuItem(onClick = {
+                    if (isRequestPinShortcutSupported(context)) {
+                        val intent = Intent(context, OpenAppActivity::class.java)
+                            .setFlags(Intent.FLAG_ACTIVITY_NEW_TASK)
+                            .setAction("${context.packageName}.action.OPEN_APP")
+                            .putExtra("package_name", appEntry.packageName)
+                        val shortcutInfo = ShortcutInfoCompat.Builder(context, appEntry.packageName)
+                            .setShortLabel(appEntry.name)
+                            .setLongLabel(appEntry.name)
+                            .setIcon(IconCompat.createWithBitmap(appEntry.icon.asImageBitmap().asAndroidBitmap()))
+                            .setIntent(intent)
+                            .build()
+                        requestPinShortcut(context, shortcutInfo, null)
                     } else {
-                        asyncToastMakeText(context, "App can't be opened", Toast.LENGTH_SHORT)
+                        Toast.makeText(context, "Launcher doesn't support pinned shortcuts", Toast.LENGTH_LONG)
+                            .show()
                     }
-                } catch (e: ShizukuUnavailableException) {
-                    asyncToastMakeText(context, "Can't connect to Shizuku", Toast.LENGTH_SHORT)
-                } catch (e: NoShizukuPermissionException) {
-                    asyncToastMakeText(context, "Shizuku denied access", Toast.LENGTH_SHORT)
-                } catch (e: ShizukuVersionNotSupportedException) {
-                    asyncToastMakeText(context, "Unsupported Shizuku version", Toast.LENGTH_LONG)
+
+                    dropdownExpanded = false
+                }) {
+                    Text("Add shortcut to home screen")
                 }
-            }.start()
-        }
+            }
+        },
+        modifier = modifier.combinedClickable(
+            onClick = {
+                Thread {
+                    val errorMessage = openAppLogic(context, appEntry)
+                    if (errorMessage != null) {
+                        asyncToastMakeText(context, errorMessage, Toast.LENGTH_SHORT)
+                    } else {
+                        MainActivity.exit()
+                    }
+                }.start()
+            },
+            onLongClick = { dropdownExpanded = true }
+        )
     )
 }
 
