@@ -19,6 +19,7 @@
         <activity
             android:name=".OpenAppActivity"
             android:exported="false"
+            android:launchMode="singleInstance"
             android:theme="@android:style/Theme.Translucent">
             <intent-filter>
                 <action android:name="${applicationId}.action.OPEN_APP" />
@@ -34,6 +35,7 @@
             android:name=".SettingsActivity"
             android:exported="false"
             android:label="@string/settings"
+            android:launchMode="singleInstance"
             android:theme="@style/Theme.DisabledLauncher">
 
             <meta-data
