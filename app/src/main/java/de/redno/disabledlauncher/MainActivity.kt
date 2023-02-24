@@ -40,6 +40,7 @@ import androidx.core.graphics.drawable.toBitmap
 import de.redno.disabledlauncher.common.ListEntry
 import de.redno.disabledlauncher.data.Datasource
 import de.redno.disabledlauncher.model.*
+import de.redno.disabledlauncher.model.exception.*
 import de.redno.disabledlauncher.ui.theme.DisabledLauncherTheme
 import rikka.shizuku.Shizuku
 
@@ -138,11 +139,11 @@ fun enableApp(context: Context, packageName: String): Boolean {
         val fallbackToGooglePlay = sharedPreferences.getBoolean("fallbackToGooglePlay", false)
 
         if (fallbackToGooglePlay) {
-            // TODO: not working when started from shortcut
             val intent = Intent(Intent.ACTION_VIEW).apply {
                 data = Uri.parse("https://play.google.com/store/apps/details?id=$packageName")
             }
             context.startActivity(intent)
+            throw RedirectedToGooglePlayException(e.message)
         }
 
         throw e
@@ -180,26 +181,15 @@ fun executeAdbCommand(command: String): Boolean {
     return Shizuku.newProcess(arrayOf("sh", "-c", command), null, null).waitFor() == 0
 }
 
-/**
- * @return null if everything worked as expected, error message string on failure
- */
-fun openAppLogic(context: Context, appEntry: AppEntryInList): String? {
-    try {
-        if (
-            (appEntry.isEnabled || enableApp(context, appEntry.packageName))
-            && startApp(context, appEntry.packageName)
-        ) {
-            return null
-        }
-    } catch (e: ShizukuUnavailableException) {
-        return "Can't connect to Shizuku"
-    } catch (e: NoShizukuPermissionException) {
-        return "Shizuku denied access"
-    } catch (e: ShizukuVersionNotSupportedException) {
-        return "Unsupported Shizuku version"
+fun openAppLogic(context: Context, appEntry: AppEntryInList) {
+    if (
+        (appEntry.isEnabled || enableApp(context, appEntry.packageName))
+        && startApp(context, appEntry.packageName)
+    ) {
+        return
     }
 
-    return "App can't be opened"
+    throw DisabledLauncherException("App can't be opened")
 }
 
 fun startApp(context: Context, packageName: String): Boolean {
@@ -281,11 +271,13 @@ fun AppEntry(appEntry: AppEntryInList, modifier: Modifier = Modifier) {
         modifier = modifier.combinedClickable(
             onClick = {
                 Thread {
-                    val errorMessage = openAppLogic(context, appEntry)
-                    if (errorMessage != null) {
-                        asyncToastMakeText(context, errorMessage, Toast.LENGTH_SHORT)
-                    } else {
+                    try {
+                        openAppLogic(context, appEntry)
                         MainActivity.exit()
+                    } catch (e: DisabledLauncherException) {
+                        e.message?.let {
+                            asyncToastMakeText(context, it, Toast.LENGTH_SHORT)
+                        }
                     }
                 }.start()
             },

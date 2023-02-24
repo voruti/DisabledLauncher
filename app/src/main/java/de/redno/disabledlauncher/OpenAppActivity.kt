@@ -4,6 +4,8 @@ import android.content.Intent
 import android.os.Bundle
 import android.widget.Toast
 import androidx.activity.ComponentActivity
+import de.redno.disabledlauncher.model.exception.DisabledLauncherException
+import de.redno.disabledlauncher.model.exception.RedirectedToGooglePlayException
 
 class OpenAppActivity : ComponentActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {
@@ -13,8 +15,12 @@ class OpenAppActivity : ComponentActivity() {
         if (intent.action == "${packageName}.action.OPEN_APP") {
             val packageNameToOpen = intent.getStringExtra("package_name")
             if (packageNameToOpen != null) {
-                openAppLogic(this, getDetailsForPackage(this, packageNameToOpen))?.let {
-                    error(it)
+                try {
+                    openAppLogic(this, getDetailsForPackage(this, packageNameToOpen))
+                } catch (e: DisabledLauncherException) {
+                    e.message?.let {
+                        error(it, e !is RedirectedToGooglePlayException)
+                    }
                 }
             } else {
                 error("Intent extras incorrect")
@@ -27,10 +33,13 @@ class OpenAppActivity : ComponentActivity() {
         finish()
     }
 
-    private fun error(message: String) {
+    private fun error(message: String, openMainActivity: Boolean = true) {
         Toast.makeText(this, message, Toast.LENGTH_LONG).show()
+
         // switch to main activity:
-        val intent = Intent(this, MainActivity::class.java)
-        startActivity(intent)
+        if (openMainActivity) {
+            val intent = Intent(this, MainActivity::class.java)
+            startActivity(intent)
+        }
     }
 }
