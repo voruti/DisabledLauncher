@@ -5,32 +5,32 @@ import android.os.Bundle
 import android.widget.Toast
 import androidx.activity.ComponentActivity
 
-class OpenAppActivity : ComponentActivity() { // TODO: open activity invisible or something?
+class OpenAppActivity : ComponentActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
 
-        var error = "Intent action incorrect"
+        // open app:
         if (intent.action == "${packageName}.action.OPEN_APP") {
             val packageNameToOpen = intent.getStringExtra("package_name")
-            error = if (packageNameToOpen == null) {
-                "Intent extras incorrect"
-            } else {
-                val errorMessage = openAppLogic(this, getDetailsForPackage(this, packageNameToOpen))
-                if (errorMessage != null) {
-                    errorMessage
-                } else {
-                    // close self after successful opening:
-                    finish()
-                    return
+            if (packageNameToOpen != null) {
+                openAppLogic(this, getDetailsForPackage(this, packageNameToOpen))?.let {
+                    error(it)
                 }
+            } else {
+                error("Intent extras incorrect")
             }
+        } else {
+            error("Intent action incorrect")
         }
 
-        // show error:
-        Toast.makeText(this, error, Toast.LENGTH_LONG).show()
+        // close again:
+        finish()
+    }
+
+    private fun error(message: String) {
+        Toast.makeText(this, message, Toast.LENGTH_LONG).show()
         // switch to main activity:
         val intent = Intent(this, MainActivity::class.java)
         startActivity(intent)
-        finish()
     }
 }
