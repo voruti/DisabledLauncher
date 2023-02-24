@@ -38,9 +38,9 @@ import androidx.core.content.pm.ShortcutManagerCompat.requestPinShortcut
 import androidx.core.graphics.drawable.IconCompat
 import androidx.core.graphics.drawable.toBitmap
 import de.redno.disabledlauncher.common.ListEntry
-import de.redno.disabledlauncher.data.Datasource
 import de.redno.disabledlauncher.model.*
 import de.redno.disabledlauncher.model.exception.*
+import de.redno.disabledlauncher.service.Datasource
 import de.redno.disabledlauncher.ui.theme.DisabledLauncherTheme
 import rikka.shizuku.Shizuku
 
@@ -74,7 +74,7 @@ class MainActivity : ComponentActivity() { // TODO: faster startup somehow?
                             }
                         },
                         content = { padding ->
-                            AppList(Datasource().loadAppList(this), Modifier.padding(padding))
+                            AppList(Datasource.loadAppList(this), Modifier.padding(padding))
                         }
                     )
                 }
@@ -151,7 +151,7 @@ fun enableApp(context: Context, packageName: String): Boolean {
 }
 
 fun disableAllApps(context: Context): Boolean {
-    val packagesToDisable = Datasource().loadAppList(context)
+    val packagesToDisable = Datasource.loadAppList(context)
         .filter { packageName -> getDetailsForPackage(context, packageName).isEnabled }
 
     if (packagesToDisable.isEmpty()) {
