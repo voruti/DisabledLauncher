@@ -38,7 +38,6 @@ import androidx.core.content.pm.ShortcutManagerCompat.requestPinShortcut
 import androidx.core.graphics.drawable.IconCompat
 import androidx.core.graphics.drawable.toBitmap
 import de.redno.disabledlauncher.common.ListEntry
-import de.redno.disabledlauncher.common.Util
 import de.redno.disabledlauncher.data.Datasource
 import de.redno.disabledlauncher.model.*
 import de.redno.disabledlauncher.ui.theme.DisabledLauncherTheme
