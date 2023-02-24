@@ -4,7 +4,6 @@ import android.content.Intent
 import android.os.Bundle
 import android.widget.Toast
 import androidx.activity.ComponentActivity
-import kotlin.system.exitProcess
 
 class OpenAppActivity : ComponentActivity() { // TODO: open activity invisible or something?
     override fun onCreate(savedInstanceState: Bundle?) {
@@ -22,7 +21,7 @@ class OpenAppActivity : ComponentActivity() { // TODO: open activity invisible o
                 } else {
                     // close self after successful opening:
                     finish()
-                    exitProcess(0)
+                    return
                 }
             }
         }
