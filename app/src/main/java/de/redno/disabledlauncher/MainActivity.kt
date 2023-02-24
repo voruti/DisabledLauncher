@@ -154,6 +154,11 @@ fun disableAllApps(context: Context): Boolean {
     val packagesToDisable = Datasource().loadAppList(context)
         .filter { packageName -> getDetailsForPackage(context, packageName).isEnabled }
 
+    if (packagesToDisable.isEmpty()) {
+        asyncToastMakeText(context, "Nothing to disable", Toast.LENGTH_SHORT)
+        return true
+    }
+
     for (packageName in packagesToDisable) {
         if (!disableApp(context, packageName)) {
             return false
