@@ -2,11 +2,13 @@ package de.redno.disabledlauncher.service
 
 import android.content.Context
 import android.net.Uri
+import com.fasterxml.jackson.databind.SerializationFeature
 import com.fasterxml.jackson.module.kotlin.jacksonObjectMapper
 import java.io.IOException
 
 object FileService {
     private val objectMapper = jacksonObjectMapper()
+        .enable(SerializationFeature.INDENT_OUTPUT)
 
     fun <T> readFile(context: Context, uri: String, clazz: Class<T>): T? {
         try {
