@@ -22,4 +22,23 @@ object FileService {
             return null
         }
     }
+
+    fun <T> writeFile(context: Context, uri: String, obj: T): Boolean {
+        try {
+            // serialize object:
+            val jsonString = objectMapper.writeValueAsString(obj)
+
+            // open & write file:
+            context.contentResolver.openOutputStream(Uri.parse(uri), "wt")?.use {
+                it.bufferedWriter().use {
+                    it.write(jsonString)
+                    return true
+                }
+            }
+        } catch (_: IOException) {
+            // returning below
+        }
+
+        return false
+    }
 }

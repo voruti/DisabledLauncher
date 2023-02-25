@@ -271,6 +271,15 @@ fun AppEntry(appEntry: AppEntryInList, modifier: Modifier = Modifier) {
                 }) {
                     Text("Add shortcut to home screen")
                 }
+                DropdownMenuItem(onClick = {
+                    if (Datasource.removePackage(context, appEntry.packageName)) {
+                        dropdownExpanded = false
+                    } else {
+                        Toast.makeText(context, "Couldn't remove app", Toast.LENGTH_LONG).show()
+                    }
+                }) {
+                    Text("Remove app")
+                }
             }
         },
         modifier = modifier.combinedClickable(
@@ -278,6 +287,7 @@ fun AppEntry(appEntry: AppEntryInList, modifier: Modifier = Modifier) {
                 Thread {
                     try {
                         openAppLogic(context, appEntry)
+                        Datasource.raisePackage(context, appEntry.packageName)
                         MainActivity.exit()
                     } catch (e: DisabledLauncherException) {
                         e.message?.let {
