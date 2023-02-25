@@ -236,6 +236,7 @@ fun ToolbarComponent(modifier: Modifier = Modifier) {
 @Composable
 fun AppEntry(appEntry: AppEntryInList, modifier: Modifier = Modifier) {
     val context = LocalContext.current
+    val sharedPreferences = context.getSharedPreferences(context.packageName, Context.MODE_PRIVATE)
 
     var dropdownExpanded by remember { mutableStateOf(false) }
     ListEntry(
@@ -287,7 +288,9 @@ fun AppEntry(appEntry: AppEntryInList, modifier: Modifier = Modifier) {
                 Thread {
                     try {
                         openAppLogic(context, appEntry)
-                        Datasource.raisePackage(context, appEntry.packageName)
+                        if (sharedPreferences.getBoolean("sortAppsByUsage", false)) {
+                            Datasource.raisePackage(context, appEntry.packageName)
+                        }
                         MainActivity.exit()
                     } catch (e: DisabledLauncherException) {
                         e.message?.let {

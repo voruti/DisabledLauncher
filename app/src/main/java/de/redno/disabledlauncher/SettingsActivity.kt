@@ -14,6 +14,7 @@ import androidx.compose.material.*
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Description
 import androidx.compose.material.icons.filled.Shop
+import androidx.compose.material.icons.filled.Sort
 import androidx.compose.runtime.*
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.platform.LocalContext
@@ -110,6 +111,7 @@ fun SettingsList(modifier: Modifier = Modifier) {
             description = currentUri,
             modifier = Modifier.clickable { pickLaunchableAppsFile() }
         )
+
         val initialFallbackToGooglePlay = sharedPreferences.getBoolean("fallbackToGooglePlay", false)
         var fallbackToGooglePlay by remember { mutableStateOf(initialFallbackToGooglePlay) }
         ListEntry(
@@ -126,6 +128,26 @@ fun SettingsList(modifier: Modifier = Modifier) {
                         .apply()
 
                     fallbackToGooglePlay = it
+                }
+            )
+        )
+
+        val initialSortAppsByUsage = sharedPreferences.getBoolean("sortAppsByUsage", false)
+        var sortAppsByUsage by remember { mutableStateOf(initialSortAppsByUsage) }
+        ListEntry(
+            icon = { Icon(Icons.Default.Sort, "Sort icon") },
+            title = "Sort apps by usage",
+            description = "Move apps up in the list when they are opened",
+            endContent = { Switch(checked = sortAppsByUsage, onCheckedChange = null) },
+            modifier = Modifier.toggleable(
+                role = Role.Switch,
+                value = sortAppsByUsage,
+                onValueChange = {
+                    sharedPreferences.edit()
+                        .putBoolean("sortAppsByUsage", it)
+                        .apply()
+
+                    sortAppsByUsage = it
                 }
             )
         )
