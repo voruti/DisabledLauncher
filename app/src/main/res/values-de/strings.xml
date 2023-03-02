@@ -2,4 +2,5 @@
 <resources>
     <string name="settings">Einstellungen</string>
     <string name="search">Suche</string>
+    <string name="disable_all_apps">Alle Apps deaktivieren</string>
 </resources>

@@ -17,8 +17,8 @@
         android:theme="@style/Theme.DisabledLauncher"
         tools:targetApi="31">
         <activity
-            android:name=".OpenAppActivity"
-            android:exported="false"
+            android:name=".ActionReceiverActivity"
+            android:exported="true"
             android:launchMode="singleInstance"
             android:theme="@android:style/Theme.Translucent">
             <intent-filter>
@@ -55,6 +55,9 @@
             <meta-data
                 android:name="android.app.lib_name"
                 android:value="" />
+            <meta-data
+                android:name="android.app.shortcuts"
+                android:resource="@xml/shortcuts" />
         </activity>
 
         <provider

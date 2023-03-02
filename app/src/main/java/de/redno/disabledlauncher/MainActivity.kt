@@ -252,7 +252,7 @@ fun AppEntry(appEntry: AppEntryInList, modifier: Modifier = Modifier) {
             ) {
                 DropdownMenuItem(onClick = {
                     if (isRequestPinShortcutSupported(context)) {
-                        val intent = Intent(context, OpenAppActivity::class.java)
+                        val intent = Intent(context, ActionReceiverActivity::class.java)
                             .setFlags(Intent.FLAG_ACTIVITY_NEW_TASK)
                             .setAction("${context.packageName}.action.OPEN_APP")
                             .putExtra("package_name", appEntry.packageName)

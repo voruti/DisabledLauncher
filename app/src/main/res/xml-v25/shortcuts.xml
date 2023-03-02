@@ -1,0 +1,12 @@
+<shortcuts xmlns:android="http://schemas.android.com/apk/res/android">
+    <shortcut
+        android:icon="@drawable/ic_launcher_foreground"
+        android:shortcutId="disableallapps"
+        android:shortcutLongLabel="@string/disable_all_apps"
+        android:shortcutShortLabel="@string/disable_all_apps">
+        <intent
+            android:action="de.redno.disabledlauncher.action.DISABLE_ALL_APPS"
+            android:targetClass="de.redno.disabledlauncher.ActionReceiverActivity"
+            android:targetPackage="de.redno.disabledlauncher" />
+    </shortcut>
+</shortcuts>
