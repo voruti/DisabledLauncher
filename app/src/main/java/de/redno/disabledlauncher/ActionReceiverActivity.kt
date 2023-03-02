@@ -28,8 +28,12 @@ class ActionReceiverActivity : ComponentActivity() {
             }
 
             "${packageName}.action.DISABLE_ALL_APPS" -> {
-                if (!disableAllApps(this)) {
-                    error("Error on disabling all apps")
+                try {
+                    disableAllApps(this)
+                } catch (e: DisabledLauncherException) {
+                    e.message?.let {
+                        error(it)
+                    }
                 }
             }
 

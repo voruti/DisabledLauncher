@@ -65,8 +65,12 @@ class MainActivity : ComponentActivity() { // TODO: faster startup somehow?
                         floatingActionButton = {
                             FloatingActionButton(onClick = {
                                 Thread {
-                                    if (!disableAllApps(this)) {
-                                        asyncToastMakeText(this, "Couldn't disable all apps", Toast.LENGTH_LONG)
+                                    try {
+                                        disableAllApps(this)
+                                    } catch (e: DisabledLauncherException) {
+                                        e.message?.let {
+                                            asyncToastMakeText(this, it, Toast.LENGTH_SHORT)
+                                        }
                                     }
                                 }.start()
                             }) {
@@ -84,14 +88,15 @@ class MainActivity : ComponentActivity() { // TODO: faster startup somehow?
 }
 
 
-fun checkShizukuPermission(): Boolean {
+@Throws(ShizukuException::class)
+fun checkShizukuPermission() {
     try {
         if (Shizuku.isPreV11()) {
             // Pre-v11 is unsupported
             throw ShizukuVersionNotSupportedException()
         } else if (Shizuku.checkSelfPermission() == PackageManager.PERMISSION_GRANTED) {
             // Granted
-            return true
+            return
         } else if (!Shizuku.shouldShowRequestPermissionRationale()) {
             // Users choose "Deny and don't ask again"
             throw NoShizukuPermissionException()
@@ -131,10 +136,11 @@ fun getDetailsForPackage(context: Context, packageName: String): AppEntryInList 
     )
 }
 
-fun enableApp(context: Context, packageName: String): Boolean {
+@Throws(DisabledLauncherException::class)
+fun enableApp(context: Context, packageName: String) {
     try {
-        return executeAdbCommand("pm enable $packageName")
-    } catch (e: ShizukuException) {
+        executeAdbCommand("pm enable $packageName")
+    } catch (e: DisabledLauncherException) {
         val sharedPreferences = context.getSharedPreferences(context.packageName, Context.MODE_PRIVATE)
         val fallbackToGooglePlay = sharedPreferences.getBoolean("fallbackToGooglePlay", false)
 
@@ -150,62 +156,54 @@ fun enableApp(context: Context, packageName: String): Boolean {
     }
 }
 
-fun disableAllApps(context: Context): Boolean {
+@Throws(DisabledLauncherException::class)
+fun disableAllApps(context: Context) {
     val packagesToDisable = Datasource.loadAppList(context)
         .filter { packageName -> getDetailsForPackage(context, packageName).isEnabled }
 
     if (packagesToDisable.isEmpty()) {
         asyncToastMakeText(context, "Nothing to disable", Toast.LENGTH_SHORT)
-        return true
-    }
-
-    for (packageName in packagesToDisable) {
-        if (!disableApp(context, packageName)) {
-            return false
-        }
-    }
-
-    return true
-}
-
-fun disableApp(context: Context, packageName: String): Boolean {
-    val success = executeAdbCommand("pm disable-user --user 0 $packageName")
-
-    if (success) {
-        asyncToastMakeText(context, "Disabled $packageName", Toast.LENGTH_SHORT)
-    }
-
-    return success
-}
-
-fun executeAdbCommand(command: String): Boolean {
-    if (!checkShizukuPermission()) {
-        return false
-    }
-
-    return Shizuku.newProcess(arrayOf("sh", "-c", command), null, null).waitFor() == 0
-}
-
-fun openAppLogic(context: Context, appEntry: AppEntryInList) {
-    if (
-        (appEntry.isEnabled || enableApp(context, appEntry.packageName))
-        && startApp(context, appEntry.packageName)
-    ) {
         return
     }
 
-    throw DisabledLauncherException("App can't be opened")
+    for (packageName in packagesToDisable) {
+        disableApp(context, packageName)
+    }
 }
 
-fun startApp(context: Context, packageName: String): Boolean {
-    return try {
+@Throws(DisabledLauncherException::class)
+fun disableApp(context: Context, packageName: String) {
+    executeAdbCommand("pm disable-user --user 0 $packageName")
+
+    asyncToastMakeText(context, "Disabled $packageName", Toast.LENGTH_SHORT)
+}
+
+@Throws(DisabledLauncherException::class)
+fun executeAdbCommand(command: String) {
+    checkShizukuPermission()
+
+    if (Shizuku.newProcess(arrayOf("sh", "-c", command), null, null).waitFor() != 0) {
+        throw DisabledLauncherException("Process failure")
+    }
+}
+
+@Throws(DisabledLauncherException::class)
+fun openAppLogic(context: Context, appEntry: AppEntryInList) {
+    if (!appEntry.isEnabled) {
+        enableApp(context, appEntry.packageName)
+    }
+
+    startApp(context, appEntry.packageName)
+}
+
+@Throws(DisabledLauncherException::class)
+fun startApp(context: Context, packageName: String) {
+    try {
         val launchIntent = context.packageManager.getLaunchIntentForPackage(packageName)
             ?.addFlags(Intent.FLAG_ACTIVITY_REORDER_TO_FRONT)
         context.startActivity(launchIntent)
-
-        true
     } catch (e: Exception) {
-        false
+        throw DisabledLauncherException("App can't be opened")
     }
 }
 
