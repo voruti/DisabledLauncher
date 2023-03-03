@@ -284,15 +284,17 @@ fun AppEntry(appEntry: AppEntryInList, modifier: Modifier = Modifier) {
         modifier = modifier.combinedClickable(
             onClick = {
                 Thread {
-                    try {
-                        openAppLogic(context, appEntry)
-                        if (sharedPreferences.getBoolean("sortAppsByUsage", false)) {
-                            Datasource.raisePackage(context, appEntry.packageName)
-                        }
-                        MainActivity.exit()
-                    } catch (e: DisabledLauncherException) {
-                        e.message?.let {
-                            asyncToastMakeText(context, it, Toast.LENGTH_SHORT)
+                    if (appEntry.isInstalled) {
+                        try {
+                            openAppLogic(context, appEntry)
+                            if (sharedPreferences.getBoolean("sortAppsByUsage", false)) {
+                                Datasource.raisePackage(context, appEntry.packageName)
+                            }
+                            MainActivity.exit()
+                        } catch (e: DisabledLauncherException) {
+                            e.message?.let {
+                                asyncToastMakeText(context, it, Toast.LENGTH_SHORT)
+                            }
                         }
                     }
                 }.start()
