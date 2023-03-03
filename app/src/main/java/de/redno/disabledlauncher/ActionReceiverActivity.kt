@@ -14,7 +14,7 @@ class ActionReceiverActivity : ComponentActivity() {
         when (intent.action) {
             "${packageName}.action.OPEN_APP" -> {
                 val packageNameToOpen = intent.getStringExtra("package_name")
-                if (packageNameToOpen != null) {
+                if (packageNameToOpen != null && packageNameToOpen.matches(Regex("^\\w+\\.[\\w.]*\\w+$"))) {
                     try {
                         openAppLogic(this, getDetailsForPackage(this, packageNameToOpen))
                     } catch (e: DisabledLauncherException) {
