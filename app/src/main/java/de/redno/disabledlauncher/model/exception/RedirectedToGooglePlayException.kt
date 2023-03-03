@@ -1,3 +1,3 @@
 package de.redno.disabledlauncher.model.exception
 
-class RedirectedToGooglePlayException(message: String?) : DisabledLauncherException(message)
+class RedirectedToGooglePlayException(cause: Throwable) : DisabledLauncherException(cause.message, cause)

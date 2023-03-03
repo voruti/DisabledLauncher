@@ -149,7 +149,7 @@ fun enableApp(context: Context, packageName: String) {
                 data = Uri.parse("https://play.google.com/store/apps/details?id=$packageName")
             }
             context.startActivity(intent)
-            throw RedirectedToGooglePlayException(e.message)
+            throw RedirectedToGooglePlayException(e)
         }
 
         throw e
