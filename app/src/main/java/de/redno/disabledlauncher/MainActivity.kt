@@ -134,7 +134,8 @@ fun getDetailsForPackage(context: Context, packageName: String): AppEntryInList 
     return AppEntryInList(
         name = context.getString(R.string.app_not_found),
         packageName = packageName,
-        icon = context.getDrawable(R.drawable.ic_launcher_background)!!.toBitmap(),
+        icon = context.getDrawable(R.drawable.ic_launcher_background)!!
+            .toBitmap(), // TODO: add proper app icons (+ for static shortcut, etc.)
         isEnabled = false,
         isInstalled = false
     )
@@ -289,6 +290,7 @@ fun AppEntry(appEntry: AppEntryInList, modifier: Modifier = Modifier) {
                 DropdownMenuItem(onClick = {
                     if (Datasource.removePackage(context, appEntry.packageName)) {
                         dropdownExpanded = false
+                        // TODO: refresh app list (+ there are other actions/code locations that need to trigger a list refresh)
                     } else {
                         Toast.makeText(context, context.getString(R.string.couldnt_remove_app), Toast.LENGTH_LONG)
                             .show()
