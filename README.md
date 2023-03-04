@@ -1,5 +1,4 @@
 # Disabled Launcher
 
-Concept/WIP repo
-
-- <https://github.com/RikkaApps/Shizuku>
+An Android app that disables other unused apps by using ADB/[Shizuku](https://github.com/RikkaApps/Shizuku), while still
+allowing convenient access to them when they are needed.
