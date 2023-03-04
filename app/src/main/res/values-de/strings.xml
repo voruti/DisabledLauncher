@@ -35,4 +35,5 @@
     <string name="sort_by_usage_title">Sortiere Apps nach Nutzung</string>
     <string name="sort_by_usage_description">Apps in der Liste nach oben verschieben, wenn sie geöffnet werden</string>
     <string name="couldnt_load_app_list">App-Liste konnte nicht geladen werden</string>
+    <string name="success_added_x_apps">Erfolgreich %s Apps hinzugefügt</string>
 </resources>

@@ -70,7 +70,7 @@ object Datasource {
         getLaunchableAppsFileUri(context).let { uri ->
 
             FileService.readFile(context, uri, MainFile::class.java)?.let {
-                return FileService.writeFile(
+                val success = FileService.writeFile(
                     context, uri, MainFile(
                         it.packages.toMutableList()
                             .also {
@@ -78,6 +78,16 @@ object Datasource {
                             }
                     )
                 )
+
+                if (success) {
+                    asyncToastMakeText(
+                        context,
+                        String.format(context.getString(R.string.success_added_x_apps), packageNameList.size),
+                        Toast.LENGTH_SHORT
+                    )
+                }
+
+                return success
             }
         }
 
