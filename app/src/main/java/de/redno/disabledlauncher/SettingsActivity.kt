@@ -12,6 +12,7 @@ import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.selection.toggleable
 import androidx.compose.material.*
 import androidx.compose.material.icons.Icons
+import androidx.compose.material.icons.filled.AppRegistration
 import androidx.compose.material.icons.filled.Description
 import androidx.compose.material.icons.filled.Shop
 import androidx.compose.material.icons.filled.Sort
@@ -111,6 +112,17 @@ fun SettingsList(modifier: Modifier = Modifier) {
             description = currentUri,
             modifier = Modifier.clickable { pickLaunchableAppsFile() }
         )
+
+        ListEntry(
+            icon = { Icon(Icons.Default.AppRegistration, "Apps edit icon") },
+            title = "Add apps",
+            description = "Add apps to the launchable apps file",
+            modifier = Modifier.clickable {
+                context.startActivity(Intent(context, AddAppsActivity::class.java))
+            }
+        )
+
+        Divider()
 
         val initialFallbackToGooglePlay = sharedPreferences.getBoolean("fallbackToGooglePlay", false)
         var fallbackToGooglePlay by remember { mutableStateOf(initialFallbackToGooglePlay) }

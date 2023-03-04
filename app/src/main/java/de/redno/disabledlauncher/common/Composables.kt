@@ -2,6 +2,7 @@ package de.redno.disabledlauncher.common
 
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.*
+import androidx.compose.material.Checkbox
 import androidx.compose.material.MaterialTheme
 import androidx.compose.material.Switch
 import androidx.compose.material.Text
@@ -25,6 +26,9 @@ fun DefaultPreview() {
         ListEntry(
             title = "Title",
             description = "Desc",
+            startContent = {
+                Checkbox(checked = false, onCheckedChange = null)
+            },
             endContent = {
                 Switch(checked = test, onCheckedChange = null)
             }
@@ -38,6 +42,7 @@ fun ListEntry(
     description: String,
     modifier: Modifier = Modifier,
     icon: (@Composable (() -> Unit))? = null,
+    startContent: (@Composable (() -> Unit))? = null,
     endContent: (@Composable (() -> Unit))? = null,
     contextContent: (@Composable (() -> Unit))? = null,
     italicStyle: Boolean = false,
@@ -53,6 +58,11 @@ fun ListEntry(
             verticalAlignment = Alignment.CenterVertically,
             modifier = Modifier.padding(PaddingValues(horizontal = 24.dp, vertical = 8.dp))
         ) {
+            startContent?.let {
+                Box(modifier = Modifier.padding(PaddingValues(end = 16.dp))) {
+                    startContent()
+                }
+            }
             Box(
                 modifier = Modifier.size(64.dp)
                     .padding(PaddingValues(end = 16.dp)),

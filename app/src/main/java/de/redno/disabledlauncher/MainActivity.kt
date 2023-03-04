@@ -353,7 +353,7 @@ fun DefaultPreview() {
             topBar = { ToolbarComponent() },
             floatingActionButton = {
                 FloatingActionButton(onClick = {}) {
-                    Icon(Icons.Default.AppBlocking, contentDescription = "Disable all apps")
+                    Icon(Icons.Default.AppBlocking, contentDescription = null)
                 }
             },
             content = { padding ->

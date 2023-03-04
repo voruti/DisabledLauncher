@@ -56,6 +56,24 @@ object Datasource {
         return false
     }
 
+    fun addPackages(context: Context, packageNameList: List<String>): Boolean {
+        getLaunchableAppsFileUri(context)?.let { uri ->
+
+            FileService.readFile(context, uri, MainFile::class.java)?.let {
+                return FileService.writeFile(
+                    context, uri, MainFile(
+                        it.packages.toMutableList()
+                            .also {
+                                it.addAll(packageNameList)
+                            }
+                    )
+                )
+            }
+        }
+
+        return false
+    }
+
     private fun getLaunchableAppsFileUri(context: Context): String? {
         return context.getSharedPreferences(context.packageName, Context.MODE_PRIVATE)
             .getString("launchableAppsFile", null)
