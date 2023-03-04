@@ -22,7 +22,7 @@
     <string name="add_shortcut">Add shortcut to home screen</string>
     <string name="remove_app">Remove app from list</string>
     <string name="couldnt_remove_app">Couldn\'t remove app</string>
-    <string name="launchable_apps_file_description">Click to choose a file</string>
+    <string name="launchable_apps_file_description">Using default internal file</string>
     <string name="launchable_apps_file_title">Launchable apps file</string>
     <string name="file_icon">File icon</string>
     <string name="apps_edit_icon">Apps edit icon</string>
@@ -34,4 +34,5 @@
     <string name="sort_icon">Sort icon</string>
     <string name="sort_by_usage_title">Sort apps by usage</string>
     <string name="sort_by_usage_description">Move apps up in the list when they are opened</string>
+    <string name="couldnt_load_app_list">Couldn\'t load app list</string>
 </resources>

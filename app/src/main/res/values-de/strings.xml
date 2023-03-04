@@ -22,7 +22,7 @@
     <string name="add_shortcut">Verknüpfung auf Startbildschirm hinzufügen</string>
     <string name="remove_app">App aus Liste entfernen</string>
     <string name="couldnt_remove_app">App konnte nicht entfernt werden</string>
-    <string name="launchable_apps_file_description">Klicken, um Datei auszuwählen</string>
+    <string name="launchable_apps_file_description">Interne Standarddatei wird aktuell verwendet</string>
     <string name="launchable_apps_file_title">Datei mit startbaren Apps</string>
     <string name="file_icon">Datei Icon</string>
     <string name="apps_edit_icon">Apps-Bearbeiten Icon</string>
@@ -34,4 +34,5 @@
     <string name="sort_icon">Sortieren Icon</string>
     <string name="sort_by_usage_title">Sortiere Apps nach Nutzung</string>
     <string name="sort_by_usage_description">Apps in der Liste nach oben verschieben, wenn sie geöffnet werden</string>
+    <string name="couldnt_load_app_list">App-Liste konnte nicht geladen werden</string>
 </resources>
