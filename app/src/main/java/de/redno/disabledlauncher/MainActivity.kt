@@ -3,6 +3,7 @@ package de.redno.disabledlauncher
 import android.content.Context
 import android.content.Intent
 import android.content.pm.PackageManager
+import android.content.res.Resources
 import android.net.Uri
 import android.os.Bundle
 import android.os.Handler
@@ -74,7 +75,10 @@ class MainActivity : ComponentActivity() { // TODO: faster startup somehow?
                                     }
                                 }.start()
                             }) {
-                                Icon(Icons.Default.AppBlocking, contentDescription = "Disable all apps")
+                                Icon(
+                                    Icons.Default.AppBlocking,
+                                    contentDescription = getString(R.string.disable_all_apps)
+                                )
                             }
                         },
                         content = { padding ->
@@ -128,7 +132,7 @@ fun getDetailsForPackage(context: Context, packageName: String): AppEntryInList 
     }
 
     return AppEntryInList(
-        name = "App not found",
+        name = context.getString(R.string.app_not_found),
         packageName = packageName,
         icon = context.getDrawable(R.drawable.ic_launcher_background)!!.toBitmap(),
         isEnabled = false,
@@ -162,7 +166,7 @@ fun disableAllApps(context: Context) {
         .filter { packageName -> getDetailsForPackage(context, packageName).isEnabled }
 
     if (packagesToDisable.isEmpty()) {
-        asyncToastMakeText(context, "Nothing to disable", Toast.LENGTH_SHORT)
+        asyncToastMakeText(context, context.getString(R.string.nothing_to_disable), Toast.LENGTH_SHORT)
         return
     }
 
@@ -175,7 +179,11 @@ fun disableAllApps(context: Context) {
 fun disableApp(context: Context, packageName: String) {
     executeAdbCommand("pm disable-user --user 0 $packageName")
 
-    asyncToastMakeText(context, "Disabled $packageName", Toast.LENGTH_SHORT)
+    asyncToastMakeText(
+        context,
+        String.format(context.getString(R.string.disabled_app), packageName),
+        Toast.LENGTH_SHORT
+    )
 }
 
 @Throws(DisabledLauncherException::class)
@@ -183,7 +191,7 @@ fun executeAdbCommand(command: String) {
     checkShizukuPermission()
 
     if (Shizuku.newProcess(arrayOf("sh", "-c", command), null, null).waitFor() != 0) {
-        throw DisabledLauncherException("Process failure")
+        throw DisabledLauncherException(Resources.getSystem().getString(R.string.process_failure))
     }
 }
 
@@ -203,7 +211,7 @@ fun startApp(context: Context, packageName: String) {
             ?.addFlags(Intent.FLAG_ACTIVITY_REORDER_TO_FRONT)
         context.startActivity(launchIntent)
     } catch (e: Exception) {
-        throw DisabledLauncherException("App can't be opened")
+        throw DisabledLauncherException(context.getString(R.string.cant_open_app))
     }
 }
 
@@ -238,7 +246,12 @@ fun AppEntry(appEntry: AppEntryInList, modifier: Modifier = Modifier) {
 
     var dropdownExpanded by remember { mutableStateOf(false) }
     ListEntry(
-        icon = { Image(appEntry.icon.asImageBitmap(), "App icon") },
+        icon = {
+            Image(
+                appEntry.icon.asImageBitmap(),
+                String.format(stringResource(R.string.app_icon), appEntry.name)
+            )
+        },
         title = appEntry.name,
         description = appEntry.packageName,
         italicStyle = !appEntry.isEnabled,
@@ -262,22 +275,22 @@ fun AppEntry(appEntry: AppEntryInList, modifier: Modifier = Modifier) {
                             .build()
                         requestPinShortcut(context, shortcutInfo, null)
                     } else {
-                        Toast.makeText(context, "Launcher doesn't support pinned shortcuts", Toast.LENGTH_LONG)
+                        Toast.makeText(context, context.getString(R.string.launcher_not_support_pinned), Toast.LENGTH_LONG)
                             .show()
                     }
 
                     dropdownExpanded = false
                 }) {
-                    Text("Add shortcut to home screen")
+                    Text(stringResource(R.string.add_shortcut))
                 }
                 DropdownMenuItem(onClick = {
                     if (Datasource.removePackage(context, appEntry.packageName)) {
                         dropdownExpanded = false
                     } else {
-                        Toast.makeText(context, "Couldn't remove app", Toast.LENGTH_LONG).show()
+                        Toast.makeText(context, context.getString(R.string.couldnt_remove_app), Toast.LENGTH_LONG).show()
                     }
                 }) {
-                    Text("Remove app")
+                    Text(stringResource(R.string.remove_app))
                 }
             }
         },
@@ -322,7 +335,7 @@ fun AppList(packageNameList: List<String>, modifier: Modifier = Modifier) {
                 ) {
                     Icon(
                         imageVector = Icons.Default.Clear,
-                        contentDescription = "Clear search"
+                        contentDescription = context.getString(R.string.clear_search)
                     )
                 }
             }

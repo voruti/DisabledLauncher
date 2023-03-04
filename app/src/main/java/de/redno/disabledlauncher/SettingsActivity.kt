@@ -19,6 +19,7 @@ import androidx.compose.material.icons.filled.Sort
 import androidx.compose.runtime.*
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.platform.LocalContext
+import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.semantics.Role
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.core.app.ActivityCompat.startActivityForResult
@@ -105,18 +106,18 @@ fun SettingsList(modifier: Modifier = Modifier) {
 
     Column(modifier = modifier) {
         val currentUri = sharedPreferences.getString("launchableAppsFile", null)
-            ?: "Click to choose a file"
+            ?: stringResource(R.string.launchable_apps_file_description)
         ListEntry(
-            icon = { Icon(Icons.Default.Description, "File icon") },
-            title = "Launchable apps file",
+            icon = { Icon(Icons.Default.Description, stringResource(R.string.file_icon)) },
+            title = stringResource(R.string.launchable_apps_file_title),
             description = currentUri,
             modifier = Modifier.clickable { pickLaunchableAppsFile() }
         )
 
         ListEntry(
-            icon = { Icon(Icons.Default.AppRegistration, "Apps edit icon") },
-            title = "Add apps",
-            description = "Add apps to the launchable apps file",
+            icon = { Icon(Icons.Default.AppRegistration, stringResource(R.string.apps_edit_icon)) },
+            title = stringResource(R.string.add_apps_title),
+            description = stringResource(R.string.add_apps_description),
             modifier = Modifier.clickable {
                 context.startActivity(Intent(context, AddAppsActivity::class.java))
             }
@@ -127,9 +128,9 @@ fun SettingsList(modifier: Modifier = Modifier) {
         val initialFallbackToGooglePlay = sharedPreferences.getBoolean("fallbackToGooglePlay", false)
         var fallbackToGooglePlay by remember { mutableStateOf(initialFallbackToGooglePlay) }
         ListEntry(
-            icon = { Icon(Icons.Default.Shop, "Store icon") },
-            title = "Fallback to Google Play",
-            description = "When ADB/Shizuku isn't available, redirect the user to Google Play",
+            icon = { Icon(Icons.Default.Shop, stringResource(R.string.store_icon)) },
+            title = stringResource(R.string.fallback_googleplay_title),
+            description = stringResource(R.string.fallback_googleplay_description),
             endContent = { Switch(checked = fallbackToGooglePlay, onCheckedChange = null) },
             modifier = Modifier.toggleable(
                 role = Role.Switch,
@@ -147,9 +148,9 @@ fun SettingsList(modifier: Modifier = Modifier) {
         val initialSortAppsByUsage = sharedPreferences.getBoolean("sortAppsByUsage", false)
         var sortAppsByUsage by remember { mutableStateOf(initialSortAppsByUsage) }
         ListEntry(
-            icon = { Icon(Icons.Default.Sort, "Sort icon") },
-            title = "Sort apps by usage",
-            description = "Move apps up in the list when they are opened",
+            icon = { Icon(Icons.Default.Sort, stringResource(R.string.sort_icon)) },
+            title = stringResource(R.string.sort_by_usage_title),
+            description = stringResource(R.string.sort_by_usage_description),
             endContent = { Switch(checked = sortAppsByUsage, onCheckedChange = null) },
             modifier = Modifier.toggleable(
                 role = Role.Switch,

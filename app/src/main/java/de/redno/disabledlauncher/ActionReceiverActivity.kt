@@ -23,7 +23,7 @@ class ActionReceiverActivity : ComponentActivity() {
                         }
                     }
                 } else {
-                    error("Intent extras incorrect")
+                    error(getString(R.string.intent_extras_incorrect))
                 }
             }
 
@@ -37,7 +37,7 @@ class ActionReceiverActivity : ComponentActivity() {
                 }
             }
 
-            else -> error("Intent action incorrect")
+            else -> error(getString(R.string.intent_action_incorrect))
         }
 
         // close again:

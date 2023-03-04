@@ -1,3 +1,6 @@
 package de.redno.disabledlauncher.model.exception
 
-class NoShizukuPermissionException : ShizukuException("Shizuku denied access")
+import android.content.res.Resources
+import de.redno.disabledlauncher.R
+
+class NoShizukuPermissionException : ShizukuException(Resources.getSystem().getString(R.string.shizuku_denied))

@@ -1,3 +1,6 @@
 package de.redno.disabledlauncher.model.exception
 
-class ShizukuUnavailableException : ShizukuException("Can't connect to Shizuku")
+import android.content.res.Resources
+import de.redno.disabledlauncher.R
+
+class ShizukuUnavailableException : ShizukuException(Resources.getSystem().getString(R.string.shizuku_unavailable))

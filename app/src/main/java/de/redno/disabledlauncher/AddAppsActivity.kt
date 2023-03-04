@@ -50,17 +50,25 @@ class AddAppsActivity : ComponentActivity() {
                             FloatingActionButton(onClick = {
                                 Thread {
                                     if (selectedPackageList.isEmpty()) {
-                                        asyncToastMakeText(this, "No apps selected", Toast.LENGTH_SHORT)
+                                        asyncToastMakeText(
+                                            this,
+                                            getString(R.string.no_apps_selected),
+                                            Toast.LENGTH_SHORT
+                                        )
                                     } else {
                                         if (Datasource.addPackages(this, selectedPackageList)) {
                                             finish()
                                         } else {
-                                            asyncToastMakeText(this, "Failed adding apps", Toast.LENGTH_SHORT)
+                                            asyncToastMakeText(
+                                                this,
+                                                getString(R.string.failed_adding_apps),
+                                                Toast.LENGTH_SHORT
+                                            )
                                         }
                                     }
                                 }.start()
                             }) {
-                                Icon(Icons.Default.Check, contentDescription = "Confirm adding these apps")
+                                Icon(Icons.Default.Check, contentDescription = getString(R.string.confirm_adding_apps))
                             }
                         },
                         content = { padding ->
@@ -121,7 +129,7 @@ fun AddAppsPreview() {
             topBar = { ToolbarComponent() },
             floatingActionButton = {
                 FloatingActionButton(onClick = {}) {
-                    Icon(Icons.Default.Check, contentDescription = "")
+                    Icon(Icons.Default.Check, contentDescription = null)
                 }
             },
             content = { padding ->
@@ -144,7 +152,12 @@ fun SelectableAppEntry(
     val context = LocalContext.current
 
     ListEntry(
-        icon = { Image(appEntry.icon.asImageBitmap(), "App icon") },
+        icon = {
+            Image(
+                appEntry.icon.asImageBitmap(),
+                String.format(stringResource(R.string.app_icon), appEntry.name)
+            )
+        },
         title = appEntry.name,
         description = appEntry.packageName,
         italicStyle = !appEntry.isEnabled,
@@ -186,7 +199,7 @@ fun SelectableAppList(
                 ) {
                     Icon(
                         imageVector = Icons.Default.Clear,
-                        contentDescription = "Clear search"
+                        contentDescription = stringResource(R.string.clear_search)
                     )
                 }
             }
