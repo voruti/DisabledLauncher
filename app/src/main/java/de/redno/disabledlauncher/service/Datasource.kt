@@ -51,7 +51,7 @@ object Datasource {
         getLaunchableAppsFileUri(context).let { uri ->
 
             FileService.readFile(context, uri, MainFile::class.java)?.let {
-                // test for existance beforehand:
+                // test for existence beforehand:
                 if (!it.packages.contains(packageName)) {
                     return false
                 }
