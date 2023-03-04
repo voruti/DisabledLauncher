@@ -18,7 +18,7 @@ class ActionReceiverActivity : ComponentActivity() {
                     try {
                         openAppLogic(this, getDetailsForPackage(this, packageNameToOpen))
                     } catch (e: DisabledLauncherException) {
-                        e.message?.let {
+                        e.getLocalizedMessage(this)?.let {
                             error(it, e !is RedirectedToGooglePlayException)
                         }
                     }
@@ -31,7 +31,7 @@ class ActionReceiverActivity : ComponentActivity() {
                 try {
                     disableAllApps(this)
                 } catch (e: DisabledLauncherException) {
-                    e.message?.let {
+                    e.getLocalizedMessage(this)?.let {
                         error(it)
                     }
                 }

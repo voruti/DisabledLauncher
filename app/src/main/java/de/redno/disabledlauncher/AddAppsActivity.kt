@@ -149,8 +149,6 @@ fun SelectableAppEntry(
     selectedPackageList: SnapshotStateList<String>,
     modifier: Modifier = Modifier
 ) {
-    val context = LocalContext.current
-
     ListEntry(
         icon = {
             Image(

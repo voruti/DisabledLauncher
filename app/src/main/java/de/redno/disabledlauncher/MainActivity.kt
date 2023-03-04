@@ -69,7 +69,7 @@ class MainActivity : ComponentActivity() { // TODO: faster startup somehow?
                                     try {
                                         disableAllApps(this)
                                     } catch (e: DisabledLauncherException) {
-                                        e.message?.let {
+                                        e.getLocalizedMessage(this)?.let {
                                             asyncToastMakeText(this, it, Toast.LENGTH_SHORT)
                                         }
                                     }
@@ -275,8 +275,11 @@ fun AppEntry(appEntry: AppEntryInList, modifier: Modifier = Modifier) {
                             .build()
                         requestPinShortcut(context, shortcutInfo, null)
                     } else {
-                        Toast.makeText(context, context.getString(R.string.launcher_not_support_pinned), Toast.LENGTH_LONG)
-                            .show()
+                        Toast.makeText(
+                            context,
+                            context.getString(R.string.launcher_not_support_pinned),
+                            Toast.LENGTH_LONG
+                        ).show()
                     }
 
                     dropdownExpanded = false
@@ -287,7 +290,8 @@ fun AppEntry(appEntry: AppEntryInList, modifier: Modifier = Modifier) {
                     if (Datasource.removePackage(context, appEntry.packageName)) {
                         dropdownExpanded = false
                     } else {
-                        Toast.makeText(context, context.getString(R.string.couldnt_remove_app), Toast.LENGTH_LONG).show()
+                        Toast.makeText(context, context.getString(R.string.couldnt_remove_app), Toast.LENGTH_LONG)
+                            .show()
                     }
                 }) {
                     Text(stringResource(R.string.remove_app))
@@ -305,7 +309,7 @@ fun AppEntry(appEntry: AppEntryInList, modifier: Modifier = Modifier) {
                             }
                             MainActivity.exit()
                         } catch (e: DisabledLauncherException) {
-                            e.message?.let {
+                            e.getLocalizedMessage(context)?.let {
                                 asyncToastMakeText(context, it, Toast.LENGTH_SHORT)
                             }
                         }
