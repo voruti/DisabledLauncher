@@ -201,8 +201,7 @@ fun SelectableAppList(
                     searchTerms.all { searchTerm -> searchReference.contains(searchTerm) }
                 }
                 .sortedBy { it.name }
-                .sortedBy { !it.isInstalled },
-                key = { it.packageName }
+                .sortedBy { !it.isInstalled }
             ) { SelectableAppEntry(it, selectedPackageList) }
         }
     }
