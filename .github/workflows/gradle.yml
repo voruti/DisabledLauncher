@@ -29,11 +29,20 @@ jobs:
         java-version: '11'
         distribution: 'temurin'
     - name: Build with Gradle
-      uses: gradle/gradle-build-action@67421db6bd0bf253fb4bd25b31ebb98943c375e1
+      uses: gradle/gradle-build-action@v2.4.0
       with:
-        arguments: build
+        arguments: build assembleRelease
+    - name: Create APK
+      uses: r0adkll/sign-android-release@v1
+      id: create_apk
+      with:
+        releaseDirectory: app/build/outputs/apk/release
+        signingKeyBase64: ${{ secrets.SIGNING_KEY }}
+        alias: ${{ secrets.ALIAS }}
+        keyStorePassword: ${{ secrets.KEY_STORE_PASSWORD }}
+        keyPassword: ${{ secrets.KEY_PASSWORD }}
     - name: Upload Build Artifact
       uses: actions/upload-artifact@v3.1.2
       with:
-        name: disabledlauncher-debug.apk
-        path: ./app/build/outputs/apk/debug/app-debug.apk
+        name: DisabledLauncher.apk
+        path: ${{ steps.create_apk.outputs.signedReleaseFile }}
