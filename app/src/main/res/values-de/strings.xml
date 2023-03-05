@@ -33,7 +33,7 @@
     <string name="fallback_googleplay_description">Wenn ADB/Shizuku nicht verfügbar ist, öffne die entsprechende App in Google Play</string>
     <string name="sort_icon">Sortieren Icon</string>
     <string name="sort_by_usage_title">Sortiere Apps nach Nutzung</string>
-    <string name="sort_by_usage_description">Apps in der Liste nach oben verschieben, wenn sie geöffnet werden</string>
+    <string name="sort_by_usage_description">Apps in der Liste aufwärts bewegen, wenn sie geöffnet werden</string>
     <string name="couldnt_load_app_list">App-Liste konnte nicht geladen werden</string>
     <string name="success_added_x_apps">Erfolgreich %s Apps hinzugefügt</string>
 </resources>

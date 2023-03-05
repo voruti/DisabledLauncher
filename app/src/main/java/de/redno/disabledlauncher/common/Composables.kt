@@ -88,7 +88,7 @@ fun ListEntry(
                 )
                 Text(
                     text = description,
-                    maxLines = 2, // maybe different design/layout
+                    maxLines = 3,
                     overflow = TextOverflow.Ellipsis,
                     style = MaterialTheme.typography.body2,
                     color = Color(0xFF808080)
