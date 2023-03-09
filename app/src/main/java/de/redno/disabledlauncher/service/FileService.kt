@@ -5,7 +5,6 @@ import android.net.Uri
 import com.fasterxml.jackson.databind.SerializationFeature
 import com.fasterxml.jackson.module.kotlin.jacksonObjectMapper
 import java.io.FileNotFoundException
-import java.io.IOException
 
 object FileService {
     private const val MAIN_FILE_NAME = "mainFile.json"
@@ -35,7 +34,7 @@ object FileService {
             return fileContent
                 // deserialize into object:
                 ?.let { return objectMapper.readValue(it, clazz) }
-        } catch (e: IOException) {
+        } catch (e: Exception) {
             return null
         }
     }
@@ -70,7 +69,7 @@ object FileService {
                     }
                 }
             }
-        } catch (_: IOException) {
+        } catch (_: Exception) {
             // returning below
         }
 
