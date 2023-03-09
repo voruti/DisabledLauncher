@@ -56,4 +56,4 @@ jobs:
           repo_token: "${{ secrets.GITHUB_TOKEN }}"
           prerelease: false
           files: |
-            app/build/outputs/apk/release/app-release-unsigned-signed.apk
+            ${{ steps.create_apk.outputs.signedReleaseFile }}
