@@ -57,7 +57,11 @@ class SettingsActivity : ComponentActivity() {
             when (requestCode) {
                 PICK_LAUNCHABLE_APPS_FILE -> {
                     data?.data?.let {
-                        contentResolver.takePersistableUriPermission(it, Intent.FLAG_GRANT_WRITE_URI_PERMISSION)
+                        contentResolver.takePersistableUriPermission(
+                            it,
+                            Intent.FLAG_GRANT_READ_URI_PERMISSION or
+                                    Intent.FLAG_GRANT_WRITE_URI_PERMISSION
+                        )
 
                         getSharedPreferences(packageName, Context.MODE_PRIVATE)
                             .edit()
