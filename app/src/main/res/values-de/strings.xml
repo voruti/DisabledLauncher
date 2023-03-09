@@ -29,7 +29,7 @@
     <string name="add_apps_title">Apps hinzufügen</string>
     <string name="add_apps_description">Apps zur Datei mit startbaren Apps hinzufügen</string>
     <string name="store_icon">Store Icon</string>
-    <string name="fallback_googleplay_title">Google Play Alternative</string>
+    <string name="fallback_googleplay_title">Auf Google Play ausweichen</string>
     <string name="fallback_googleplay_description">Wenn ADB/Shizuku nicht verfügbar ist, öffne die entsprechende App in Google Play</string>
     <string name="sort_icon">Sortieren Icon</string>
     <string name="sort_by_usage_title">Sortiere Apps nach Nutzung</string>
