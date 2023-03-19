@@ -1,10 +1,13 @@
 package de.redno.disabledlauncher
 
+import android.content.Context
 import android.content.Intent
 import android.os.Bundle
 import android.widget.Toast
 import androidx.activity.ComponentActivity
 import androidx.activity.compose.setContent
+import androidx.activity.result.ActivityResultLauncher
+import androidx.activity.result.contract.ActivityResultContracts
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.fillMaxSize
@@ -32,6 +35,33 @@ import de.redno.disabledlauncher.model.AppEntryInList
 import de.redno.disabledlauncher.ui.theme.DisabledLauncherTheme
 
 class SelectAppsActivity : ComponentActivity() {
+    companion object {
+        fun registerCallback(
+            currentActivity: ComponentActivity,
+            callback: (selectedPackages: List<String>) -> Unit
+        ): ActivityResultLauncher<Intent> {
+            return currentActivity.registerForActivityResult(ActivityResultContracts.StartActivityForResult()) { result ->
+                if (result.resultCode == RESULT_OK) {
+                    result.data?.getStringArrayListExtra("selected_packages")?.let {
+                        callback(it)
+                    }
+                }
+            }
+        }
+
+        fun launch(
+            context: Context,
+            selectablePackages: Collection<String>,
+            resultLauncher: ActivityResultLauncher<Intent>
+        ) {
+            Intent(context, SelectAppsActivity::class.java).apply {
+                putStringArrayListExtra("selectable_packages", ArrayList(selectablePackages))
+            }.also {
+                resultLauncher.launch(it)
+            }
+        }
+    }
+
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
 

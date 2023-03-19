@@ -73,17 +73,13 @@ class SettingsActivity : ComponentActivity() {
             }
         }
 
-    val addAppsResultLauncher = registerForActivityResult(ActivityResultContracts.StartActivityForResult()) { result ->
-        if (result.resultCode == RESULT_OK) {
-            result.data?.getStringArrayListExtra("selected_packages")?.let {
-                if (!Datasource.addPackages(this, it)) {
-                    asyncToastMakeText(
-                        this,
-                        getString(R.string.failed_adding_apps),
-                        Toast.LENGTH_SHORT
-                    )
-                }
-            }
+    val addAppsResultLauncher = SelectAppsActivity.registerCallback(this) { selectedPackages ->
+        if (!Datasource.addPackages(this, selectedPackages)) {
+            asyncToastMakeText(
+                this,
+                getString(R.string.failed_adding_apps),
+                Toast.LENGTH_SHORT
+            )
         }
     }
 }
@@ -145,11 +141,9 @@ fun SettingsList(modifier: Modifier = Modifier) {
                 val addableApps = getInstalledPackages(context)
                     .subtract(Datasource.loadAppList(context).toSet())
 
-                val intent = Intent(context, SelectAppsActivity::class.java).apply {
-                    putStringArrayListExtra("selectable_packages", ArrayList(addableApps))
+                SettingsActivity.lastObject?.addAppsResultLauncher?.let {
+                    SelectAppsActivity.launch(context, addableApps, it)
                 }
-
-                SettingsActivity.lastObject?.addAppsResultLauncher?.launch(intent)
             }
         )
 
