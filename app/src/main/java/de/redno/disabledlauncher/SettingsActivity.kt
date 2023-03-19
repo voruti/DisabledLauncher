@@ -5,6 +5,7 @@ import android.content.Intent
 import android.os.Bundle
 import androidx.activity.ComponentActivity
 import androidx.activity.compose.setContent
+import androidx.activity.result.contract.ActivityResultContracts
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.fillMaxSize
@@ -24,7 +25,6 @@ import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.semantics.Role
 import androidx.compose.ui.tooling.preview.Preview
-import androidx.core.app.ActivityCompat.startActivityForResult
 import de.redno.disabledlauncher.common.ListEntry
 import de.redno.disabledlauncher.ui.theme.DisabledLauncherTheme
 
@@ -51,34 +51,26 @@ class SettingsActivity : ComponentActivity() {
         }
     }
 
-    override fun onActivityResult(requestCode: Int, resultCode: Int, data: Intent?) {
-        super.onActivityResult(requestCode, resultCode, data)
-        if (resultCode == RESULT_OK) {
-            when (requestCode) {
-                PICK_LAUNCHABLE_APPS_FILE -> {
-                    data?.data?.let {
-                        contentResolver.takePersistableUriPermission(
-                            it,
-                            Intent.FLAG_GRANT_READ_URI_PERMISSION or
-                                    Intent.FLAG_GRANT_WRITE_URI_PERMISSION
-                        )
+    val pickLaunchableAppsFileResultLauncher =
+        registerForActivityResult(ActivityResultContracts.StartActivityForResult()) { result ->
+            if (result.resultCode == RESULT_OK) {
+                result.data?.data?.let {
+                    contentResolver.takePersistableUriPermission(
+                        it,
+                        Intent.FLAG_GRANT_READ_URI_PERMISSION or
+                                Intent.FLAG_GRANT_WRITE_URI_PERMISSION
+                    )
 
-                        getSharedPreferences(packageName, Context.MODE_PRIVATE)
-                            .edit()
-                            .putString("launchableAppsFile", it.toString())
-                            .apply()
-                    }
+                    getSharedPreferences(packageName, Context.MODE_PRIVATE)
+                        .edit()
+                        .putString("launchableAppsFile", it.toString())
+                        .apply()
                 }
             }
         }
-    }
 }
 
 
-/**
- * Request code for selecting a json file with launch-able app packages.
- */
-const val PICK_LAUNCHABLE_APPS_FILE = 1
 fun pickLaunchableAppsFile() {
     val intent = Intent(Intent.ACTION_OPEN_DOCUMENT).apply {
         addCategory(Intent.CATEGORY_OPENABLE)
@@ -86,9 +78,7 @@ fun pickLaunchableAppsFile() {
         type = "application/json"
     }
 
-    SettingsActivity.lastObject?.let {
-        startActivityForResult(it, intent, PICK_LAUNCHABLE_APPS_FILE, null)
-    }
+    SettingsActivity.lastObject?.pickLaunchableAppsFileResultLauncher?.launch(intent)
 }
 
 
