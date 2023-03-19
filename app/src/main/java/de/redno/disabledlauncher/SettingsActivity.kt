@@ -140,7 +140,7 @@ fun SettingsList(modifier: Modifier = Modifier) {
                 val addableApps = getInstalledPackages(context)
                     .subtract(Datasource.loadAppList(context).toSet())
 
-                val intent = Intent(context, AddAppsActivity::class.java).apply {
+                val intent = Intent(context, SelectAppsActivity::class.java).apply {
                     putStringArrayListExtra("selectable_packages", ArrayList(addableApps))
                 }
 

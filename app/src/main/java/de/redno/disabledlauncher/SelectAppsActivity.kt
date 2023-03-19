@@ -31,7 +31,7 @@ import de.redno.disabledlauncher.common.ListEntry
 import de.redno.disabledlauncher.model.AppEntryInList
 import de.redno.disabledlauncher.ui.theme.DisabledLauncherTheme
 
-class AddAppsActivity : ComponentActivity() {
+class SelectAppsActivity : ComponentActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
 
@@ -87,7 +87,7 @@ class AddAppsActivity : ComponentActivity() {
 
 @Preview(showBackground = true, showSystemUi = true)
 @Composable
-fun AddAppsPreview() {
+fun SelectAppsPreview() {
     val context = LocalContext.current
 
     DisabledLauncherTheme {

@@ -17,7 +17,7 @@
         android:theme="@style/Theme.DisabledLauncher"
         tools:targetApi="31">
         <activity
-            android:name=".AddAppsActivity"
+            android:name=".SelectAppsActivity"
             android:exported="false"
             android:launchMode="singleInstance"
             android:theme="@style/Theme.DisabledLauncher">
