@@ -6,12 +6,12 @@ plugins {
 
 android {
     namespace 'de.redno.disabledlauncher'
-    compileSdk 32
+    compileSdk 33
 
     defaultConfig {
         applicationId "de.redno.disabledlauncher"
         minSdk 24
-        targetSdk 32
+        targetSdk 33
         versionCode 4
         versionName "1.2.1"
 
