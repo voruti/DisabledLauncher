@@ -10,7 +10,7 @@
     <string name="intent_action_incorrect">Intent action inkorrekt</string>
     <string name="no_apps_selected">Keine Apps ausgewählt</string>
     <string name="failed_adding_apps">Fehler beim Hinzufügen</string>
-    <string name="confirm_adding_apps">Hinzufügen bestätigen</string>
+    <string name="confirm_selected_apps">Auswahl bestätigen</string>
     <string name="clear_search">Suche löschen</string>
     <string name="app_not_found">App nicht gefunden</string>
     <string name="nothing_to_disable">Nichts zu deaktivieren</string>

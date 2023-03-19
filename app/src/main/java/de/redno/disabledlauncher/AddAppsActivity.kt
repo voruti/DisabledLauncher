@@ -1,7 +1,6 @@
 package de.redno.disabledlauncher
 
-import android.content.Context
-import android.content.pm.PackageManager
+import android.content.Intent
 import android.os.Bundle
 import android.widget.Toast
 import androidx.activity.ComponentActivity
@@ -30,19 +29,20 @@ import androidx.compose.ui.tooling.preview.Preview
 import androidx.core.graphics.drawable.toBitmap
 import de.redno.disabledlauncher.common.ListEntry
 import de.redno.disabledlauncher.model.AppEntryInList
-import de.redno.disabledlauncher.service.Datasource
 import de.redno.disabledlauncher.ui.theme.DisabledLauncherTheme
 
 class AddAppsActivity : ComponentActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
+
+        val selectablePackages = intent.getStringArrayListExtra("selectable_packages")
+            ?.map { packageString -> getDetailsForPackage(this, packageString) }
+            ?: emptyList()
+
         setContent {
             DisabledLauncherTheme {
                 // A surface container using the 'background' color from the theme
                 Surface(modifier = Modifier.fillMaxSize(), color = MaterialTheme.colors.background) {
-                    val currentPackages = Datasource.loadAppList(this)
-                    val addableApps = getInstalledPackages(this)
-                        .filter { !currentPackages.contains(it.packageName) }
                     val selectedPackageList = remember { mutableStateListOf<String>() }
                     Scaffold(
                         topBar = { ToolbarComponent() },
@@ -56,49 +56,32 @@ class AddAppsActivity : ComponentActivity() {
                                             Toast.LENGTH_SHORT
                                         )
                                     } else {
-                                        if (Datasource.addPackages(this, selectedPackageList)) {
+                                        Intent().apply {
+                                            putStringArrayListExtra("selected_packages", ArrayList(selectedPackageList))
+                                        }.also {
+                                            setResult(RESULT_OK, it)
                                             finish()
-                                        } else {
-                                            asyncToastMakeText(
-                                                this,
-                                                getString(R.string.failed_adding_apps),
-                                                Toast.LENGTH_SHORT
-                                            )
                                         }
                                     }
                                 }.start()
                             }) {
-                                Icon(Icons.Default.Check, contentDescription = getString(R.string.confirm_adding_apps))
+                                Icon(
+                                    Icons.Default.Check,
+                                    contentDescription = getString(R.string.confirm_selected_apps)
+                                )
                             }
-                        },
-                        content = { padding ->
-                            SelectableAppList(
-                                appEntryList = addableApps,
-                                selectedPackageList = selectedPackageList,
-                                modifier = Modifier.padding(padding)
-                            )
                         }
-                    )
+                    ) { padding ->
+                        SelectableAppList(
+                            appEntryList = selectablePackages,
+                            selectedPackageList = selectedPackageList,
+                            modifier = Modifier.padding(padding)
+                        )
+                    }
                 }
             }
         }
     }
-}
-
-
-fun getInstalledPackages(context: Context): List<AppEntryInList> {
-    val packageManager = context.packageManager
-
-    return packageManager.getInstalledPackages(PackageManager.GET_META_DATA)
-        .map { packageInfo ->
-            AppEntryInList(
-                packageInfo.applicationInfo.loadLabel(packageManager).toString(),
-                packageInfo.packageName,
-                packageInfo.applicationInfo.enabled,
-                true,
-                packageInfo.applicationInfo.loadIcon(packageManager).toBitmap()
-            )
-        }
 }
 
 

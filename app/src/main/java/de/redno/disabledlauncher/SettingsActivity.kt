@@ -2,7 +2,9 @@ package de.redno.disabledlauncher
 
 import android.content.Context
 import android.content.Intent
+import android.content.pm.PackageManager
 import android.os.Bundle
+import android.widget.Toast
 import androidx.activity.ComponentActivity
 import androidx.activity.compose.setContent
 import androidx.activity.result.contract.ActivityResultContracts
@@ -26,6 +28,7 @@ import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.semantics.Role
 import androidx.compose.ui.tooling.preview.Preview
 import de.redno.disabledlauncher.common.ListEntry
+import de.redno.disabledlauncher.service.Datasource
 import de.redno.disabledlauncher.ui.theme.DisabledLauncherTheme
 
 class SettingsActivity : ComponentActivity() {
@@ -68,6 +71,28 @@ class SettingsActivity : ComponentActivity() {
                 }
             }
         }
+
+    val addAppsResultLauncher = registerForActivityResult(ActivityResultContracts.StartActivityForResult()) { result ->
+        if (result.resultCode == RESULT_OK) {
+            result.data?.getStringArrayListExtra("selected_packages")?.let {
+                if (!Datasource.addPackages(this, it)) {
+                    asyncToastMakeText(
+                        this,
+                        getString(R.string.failed_adding_apps),
+                        Toast.LENGTH_SHORT
+                    )
+                }
+            }
+        }
+    }
+}
+
+
+fun getInstalledPackages(context: Context): List<String> {
+    val packageManager = context.packageManager
+
+    return packageManager.getInstalledPackages(PackageManager.GET_META_DATA)
+        .map { packageInfo -> packageInfo.packageName }
 }
 
 
@@ -112,7 +137,14 @@ fun SettingsList(modifier: Modifier = Modifier) {
             title = stringResource(R.string.add_apps_title),
             description = stringResource(R.string.add_apps_description),
             modifier = Modifier.clickable {
-                context.startActivity(Intent(context, AddAppsActivity::class.java))
+                val addableApps = getInstalledPackages(context)
+                    .subtract(Datasource.loadAppList(context).toSet())
+
+                val intent = Intent(context, AddAppsActivity::class.java).apply {
+                    putStringArrayListExtra("selectable_packages", ArrayList(addableApps))
+                }
+
+                SettingsActivity.lastObject?.addAppsResultLauncher?.launch(intent)
             }
         )
 
