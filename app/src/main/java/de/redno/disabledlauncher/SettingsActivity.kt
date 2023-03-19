@@ -2,6 +2,7 @@ package de.redno.disabledlauncher
 
 import android.content.Context
 import android.content.Intent
+import android.content.pm.PackageInfo
 import android.content.pm.PackageManager
 import android.os.Bundle
 import android.widget.Toast
@@ -88,10 +89,14 @@ class SettingsActivity : ComponentActivity() {
 }
 
 
-fun getInstalledPackages(context: Context): List<String> {
+fun getInstalledPackages(
+    context: Context,
+    packageInfoFilter: (packageInfo: PackageInfo) -> Boolean = { _ -> true }
+): List<String> {
     val packageManager = context.packageManager
 
     return packageManager.getInstalledPackages(PackageManager.GET_META_DATA)
+        .filter(packageInfoFilter)
         .map { packageInfo -> packageInfo.packageName }
 }
 
