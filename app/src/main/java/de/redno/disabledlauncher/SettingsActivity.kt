@@ -71,17 +71,6 @@ class SettingsActivity : ComponentActivity() {
 }
 
 
-fun pickLaunchableAppsFile() {
-    val intent = Intent(Intent.ACTION_OPEN_DOCUMENT).apply {
-        addCategory(Intent.CATEGORY_OPENABLE)
-        addFlags(Intent.FLAG_GRANT_PERSISTABLE_URI_PERMISSION)
-        type = "application/json"
-    }
-
-    SettingsActivity.lastObject?.pickLaunchableAppsFileResultLauncher?.launch(intent)
-}
-
-
 @Preview(showBackground = true, showSystemUi = true)
 @Composable
 fun SettingsPreview() {
@@ -107,7 +96,15 @@ fun SettingsList(modifier: Modifier = Modifier) {
             icon = { Icon(Icons.Default.Description, stringResource(R.string.file_icon)) },
             title = stringResource(R.string.launchable_apps_file_title),
             description = currentUri,
-            modifier = Modifier.clickable { pickLaunchableAppsFile() }
+            modifier = Modifier.clickable {
+                val intent = Intent(Intent.ACTION_OPEN_DOCUMENT).apply {
+                    addCategory(Intent.CATEGORY_OPENABLE)
+                    addFlags(Intent.FLAG_GRANT_PERSISTABLE_URI_PERMISSION)
+                    type = "application/json"
+                }
+
+                SettingsActivity.lastObject?.pickLaunchableAppsFileResultLauncher?.launch(intent)
+            }
         )
 
         ListEntry(
