@@ -36,4 +36,7 @@
     <string name="sort_by_usage_description">Apps in der Liste aufwärts bewegen, wenn sie geöffnet werden</string>
     <string name="couldnt_load_app_list">App-Liste konnte nicht geladen werden</string>
     <string name="success_added_x_apps">Erfolgreich %s Apps hinzugefügt</string>
+    <string name="disable_apps_once_icon">Blockieren Icon</string>
+    <string name="disable_apps_once_title">Apps einmalig deaktivieren</string>
+    <string name="disable_apps_once_description">Deaktiviere ausgewählten Apps einmalig/sofort</string>
 </resources>

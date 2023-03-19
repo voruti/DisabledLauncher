@@ -18,10 +18,7 @@ import androidx.compose.foundation.selection.toggleable
 import androidx.compose.foundation.verticalScroll
 import androidx.compose.material.*
 import androidx.compose.material.icons.Icons
-import androidx.compose.material.icons.filled.AppRegistration
-import androidx.compose.material.icons.filled.Description
-import androidx.compose.material.icons.filled.Shop
-import androidx.compose.material.icons.filled.Sort
+import androidx.compose.material.icons.filled.*
 import androidx.compose.runtime.*
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.platform.LocalContext
@@ -80,6 +77,12 @@ class SettingsActivity : ComponentActivity() {
                 getString(R.string.failed_adding_apps),
                 Toast.LENGTH_SHORT
             )
+        }
+    }
+
+    val disableAppsOnceResultLauncher = SelectAppsActivity.registerCallback(this) { selectedPackages ->
+        selectedPackages.forEach {
+            disableApp(this, it)
         }
     }
 }
@@ -187,6 +190,23 @@ fun SettingsList(modifier: Modifier = Modifier) {
                     sortAppsByUsage = it
                 }
             )
+        )
+
+        Divider()
+
+        ListEntry(
+            icon = { Icon(Icons.Default.Block, stringResource(R.string.disable_apps_once_icon)) },
+            title = stringResource(R.string.disable_apps_once_title),
+            description = stringResource(R.string.disable_apps_once_description),
+            modifier = Modifier.clickable {
+                val enabledApps = getInstalledPackages(context) { packageInfo ->
+                    packageInfo.applicationInfo.enabled
+                }
+
+                SettingsActivity.lastObject?.disableAppsOnceResultLauncher?.let {
+                    SelectAppsActivity.launch(context, enabledApps, it)
+                }
+            }
         )
     }
 }

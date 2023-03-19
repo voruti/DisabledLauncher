@@ -6,6 +6,6 @@ allowing convenient access to them when they are needed.
 ## Future ideas (backlog):
 
 - [ ] "long-term" app list, intended for apps being active for some days
-- [ ] manual mode, which allows any dis-/enable (once)
+- [ ] manual mode, which allows any enable (once)
 - [ ] Widget wrappers/placeholders
 - [ ] Intent filters (open in app) placeholders

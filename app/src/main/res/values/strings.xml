@@ -36,4 +36,7 @@
     <string name="sort_by_usage_description">Move apps up in the list when they are opened</string>
     <string name="couldnt_load_app_list">Couldn\'t load app list</string>
     <string name="success_added_x_apps">Successfully added %s app/s</string>
+    <string name="disable_apps_once_icon">Block icon</string>
+    <string name="disable_apps_once_title">Disable apps once</string>
+    <string name="disable_apps_once_description">Disable selected apps once/now</string>
 </resources>
