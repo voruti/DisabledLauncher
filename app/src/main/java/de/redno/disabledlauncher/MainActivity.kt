@@ -177,7 +177,7 @@ fun disableAllApps(context: Context) {
 }
 
 @Throws(DisabledLauncherException::class)
-fun disableApp(context: Context, packageName: String) {
+fun disableApp(context: Context, packageName: String) { // TODO: extract into service
     executeAdbCommand("pm disable-user --user 0 $packageName")
 
     asyncToastMakeText(
@@ -216,7 +216,7 @@ fun startApp(context: Context, packageName: String) {
     }
 }
 
-fun asyncToastMakeText(context: Context, text: CharSequence, duration: Int) {
+fun asyncToastMakeText(context: Context, text: CharSequence, duration: Int) { // TODO: move every "global" function
     Handler(Looper.getMainLooper()).post {
         Toast.makeText(context, text, duration).show()
     }
@@ -232,6 +232,7 @@ fun ToolbarComponent(modifier: Modifier = Modifier) {
         title = { Text(text = stringResource(id = R.string.app_name)) },
         actions = {
             IconButton(
+                // TODO: how to properly start other activities like settings? (see problem in WSA)
                 onClick = { context.startActivity(Intent(context, SettingsActivity::class.java)) }) {
                 Icon(Icons.Default.Settings, contentDescription = stringResource(id = R.string.settings))
             }
