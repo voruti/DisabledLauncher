@@ -42,7 +42,7 @@ class SettingsActivity : ComponentActivity() {
                 // A surface container using the 'background' color from the theme
                 Surface(modifier = Modifier.fillMaxSize(), color = MaterialTheme.colors.background) {
                     Scaffold(
-                        topBar = { ToolbarComponent() },
+                        topBar = { ToolbarComponent(showSettings = false) },
                         content = { padding ->
                             SettingsList(Modifier.padding(padding))
                         }
@@ -105,7 +105,7 @@ fun getInstalledPackages(
 fun SettingsPreview() {
     DisabledLauncherTheme {
         Scaffold(
-            topBar = { ToolbarComponent() },
+            topBar = { ToolbarComponent(showSettings = false) },
             content = { padding ->
                 SettingsList(Modifier.padding(padding))
             }

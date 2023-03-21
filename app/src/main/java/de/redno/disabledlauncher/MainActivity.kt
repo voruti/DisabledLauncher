@@ -224,17 +224,19 @@ fun asyncToastMakeText(context: Context, text: CharSequence, duration: Int) { //
 
 
 @Composable
-fun ToolbarComponent(modifier: Modifier = Modifier) {
+fun ToolbarComponent(modifier: Modifier = Modifier, showSettings: Boolean = true) {
     val context = LocalContext.current
 
     TopAppBar(
         modifier = modifier,
         title = { Text(text = stringResource(id = R.string.app_name)) },
         actions = {
-            IconButton(
-                // TODO: how to properly start other activities like settings? (see problem in WSA)
-                onClick = { context.startActivity(Intent(context, SettingsActivity::class.java)) }) {
-                Icon(Icons.Default.Settings, contentDescription = stringResource(id = R.string.settings))
+            if (showSettings) {
+                IconButton(
+                    // TODO: how to properly start other activities like settings? (see problem in WSA)
+                    onClick = { context.startActivity(Intent(context, SettingsActivity::class.java)) }) {
+                    Icon(Icons.Default.Settings, contentDescription = stringResource(id = R.string.settings))
+                }
             }
         }
     )

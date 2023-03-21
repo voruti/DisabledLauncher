@@ -75,7 +75,7 @@ class SelectAppsActivity : ComponentActivity() {
                 Surface(modifier = Modifier.fillMaxSize(), color = MaterialTheme.colors.background) {
                     val selectedPackageList = remember { mutableStateListOf<String>() }
                     Scaffold(
-                        topBar = { ToolbarComponent() },
+                        topBar = { ToolbarComponent(showSettings = false) },
                         floatingActionButton = {
                             FloatingActionButton(onClick = {
                                 Thread {
@@ -139,7 +139,7 @@ fun SelectAppsPreview() {
         )
         val selectedPackageList = remember { mutableStateListOf<String>() }
         Scaffold(
-            topBar = { ToolbarComponent() },
+            topBar = { ToolbarComponent(showSettings = false) },
             floatingActionButton = {
                 FloatingActionButton(onClick = {}) {
                     Icon(Icons.Default.Check, contentDescription = null)
