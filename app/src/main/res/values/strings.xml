@@ -30,7 +30,7 @@
     <string name="add_apps_description">Add apps to the launchable apps file</string>
     <string name="store_icon">Store icon</string>
     <string name="fallback_googleplay_title">Fallback to Google Play</string>
-    <string name="fallback_googleplay_description">When ADB/Shizuku isn\'t available, redirect the user to Google Play</string>
+    <string name="fallback_googleplay_description">Redirect the user to Google Play when ADB/Shizuku isn\'t available</string>
     <string name="sort_icon">Sort icon</string>
     <string name="sort_by_usage_title">Sort apps by usage</string>
     <string name="sort_by_usage_description">Move apps up in the list when they are opened</string>

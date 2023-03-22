@@ -22,7 +22,7 @@
     <string name="add_shortcut">Verknüpfung auf Startbildschirm hinzufügen</string>
     <string name="remove_app">App aus Liste entfernen</string>
     <string name="couldnt_remove_app">App konnte nicht entfernt werden</string>
-    <string name="launchable_apps_file_description">Interne Standarddatei wird aktuell verwendet</string>
+    <string name="launchable_apps_file_description">Interne Standarddatei wird verwendet</string>
     <string name="launchable_apps_file_title">Datei mit startbaren Apps</string>
     <string name="file_icon">Datei Icon</string>
     <string name="apps_edit_icon">Apps-Bearbeiten Icon</string>
@@ -30,13 +30,13 @@
     <string name="add_apps_description">Apps zur Datei mit startbaren Apps hinzufügen</string>
     <string name="store_icon">Store Icon</string>
     <string name="fallback_googleplay_title">Auf Google Play ausweichen</string>
-    <string name="fallback_googleplay_description">Wenn ADB/Shizuku nicht verfügbar ist, öffne die entsprechende App in Google Play</string>
+    <string name="fallback_googleplay_description">Öffne Apps in Google Play, wenn ADB/Shizuku nicht verfügbar ist</string>
     <string name="sort_icon">Sortieren Icon</string>
     <string name="sort_by_usage_title">Sortiere Apps nach Nutzung</string>
-    <string name="sort_by_usage_description">Apps in der Liste aufwärts bewegen, wenn sie geöffnet werden</string>
+    <string name="sort_by_usage_description">Bewege Apps in der Liste aufwärts, wenn sie geöffnet werden</string>
     <string name="couldnt_load_app_list">App-Liste konnte nicht geladen werden</string>
     <string name="success_added_x_apps">Erfolgreich %s Apps hinzugefügt</string>
     <string name="disable_apps_once_icon">Blockieren Icon</string>
     <string name="disable_apps_once_title">Apps einmalig deaktivieren</string>
-    <string name="disable_apps_once_description">Deaktiviere ausgewählten Apps einmalig/sofort</string>
+    <string name="disable_apps_once_description">Deaktiviere ausgewählte Apps einmalig/sofort</string>
 </resources>
