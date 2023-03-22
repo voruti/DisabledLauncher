@@ -233,7 +233,6 @@ fun ToolbarComponent(modifier: Modifier = Modifier, showSettings: Boolean = true
         actions = {
             if (showSettings) {
                 IconButton(
-                    // TODO: how to properly start other activities like settings? (see problem in WSA)
                     onClick = { context.startActivity(Intent(context, SettingsActivity::class.java)) }) {
                     Icon(Icons.Default.Settings, contentDescription = stringResource(id = R.string.settings))
                 }
