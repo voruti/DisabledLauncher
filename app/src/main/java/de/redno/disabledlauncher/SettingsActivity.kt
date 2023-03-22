@@ -194,7 +194,7 @@ fun SettingsList(modifier: Modifier = Modifier) {
 
         Divider()
 
-        ListEntry(
+        ListEntry( // TODO: move into navigation drawer
             icon = { Icon(Icons.Default.Block, stringResource(R.string.disable_apps_once_icon)) },
             title = stringResource(R.string.disable_apps_once_title),
             description = stringResource(R.string.disable_apps_once_description),
