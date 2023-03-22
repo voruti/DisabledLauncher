@@ -47,6 +47,10 @@
             android:label="@string/settings"
             android:launchMode="singleInstance"
             android:theme="@style/Theme.DisabledLauncher">
+            <intent-filter>
+                <action android:name="android.intent.action.APPLICATION_PREFERENCES" />
+                <category android:name="android.intent.category.DEFAULT" />
+            </intent-filter>
 
             <meta-data
                 android:name="android.app.lib_name"
