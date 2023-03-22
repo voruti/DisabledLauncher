@@ -19,7 +19,6 @@
         <activity
             android:name=".SelectAppsActivity"
             android:exported="false"
-            android:launchMode="singleInstance"
             android:theme="@style/Theme.DisabledLauncher">
 
             <meta-data
@@ -29,7 +28,6 @@
         <activity
             android:name=".ActionReceiverActivity"
             android:exported="true"
-            android:launchMode="singleInstance"
             android:theme="@android:style/Theme.Translucent">
             <intent-filter>
                 <action android:name="${applicationId}.action.OPEN_APP" />
@@ -45,7 +43,6 @@
             android:name=".SettingsActivity"
             android:exported="false"
             android:label="@string/settings"
-            android:launchMode="singleInstance"
             android:theme="@style/Theme.DisabledLauncher">
             <intent-filter>
                 <action android:name="android.intent.action.APPLICATION_PREFERENCES" />
