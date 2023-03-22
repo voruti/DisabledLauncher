@@ -17,6 +17,7 @@ class ActionReceiverActivity : ComponentActivity() {
                 if (packageNameToOpen != null && packageNameToOpen.matches(Regex("^\\w+\\.[\\w.]*\\w+$"))) {
                     try {
                         openAppLogic(this, getDetailsForPackage(this, packageNameToOpen))
+                        setResult(RESULT_OK, Intent())
                     } catch (e: DisabledLauncherException) {
                         e.getLocalizedMessage(this)?.let {
                             error(it, e !is RedirectedToGooglePlayException)
@@ -30,6 +31,7 @@ class ActionReceiverActivity : ComponentActivity() {
             "${packageName}.action.DISABLE_ALL_APPS" -> {
                 try {
                     disableAllApps(this)
+                    setResult(RESULT_OK, Intent())
                 } catch (e: DisabledLauncherException) {
                     e.getLocalizedMessage(this)?.let {
                         error(it)
