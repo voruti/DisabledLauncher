@@ -3,7 +3,6 @@ package de.redno.disabledlauncher
 import android.content.Context
 import android.content.Intent
 import android.content.pm.PackageManager
-import android.content.res.Resources
 import android.net.Uri
 import android.os.Bundle
 import android.os.Handler
@@ -41,9 +40,9 @@ import androidx.core.graphics.drawable.toBitmap
 import de.redno.disabledlauncher.common.ListEntry
 import de.redno.disabledlauncher.model.*
 import de.redno.disabledlauncher.model.exception.*
+import de.redno.disabledlauncher.service.AdbService
 import de.redno.disabledlauncher.service.Datasource
 import de.redno.disabledlauncher.ui.theme.DisabledLauncherTheme
-import rikka.shizuku.Shizuku
 
 class MainActivity : ComponentActivity() { // TODO: faster startup somehow?
     companion object {
@@ -92,28 +91,6 @@ class MainActivity : ComponentActivity() { // TODO: faster startup somehow?
 }
 
 
-@Throws(ShizukuException::class)
-fun checkShizukuPermission() {
-    try {
-        if (Shizuku.isPreV11()) {
-            // Pre-v11 is unsupported
-            throw ShizukuVersionNotSupportedException()
-        } else if (Shizuku.checkSelfPermission() == PackageManager.PERMISSION_GRANTED) {
-            // Granted
-            return
-        } else if (!Shizuku.shouldShowRequestPermissionRationale()) {
-            // Users choose "Deny and don't ask again"
-            throw NoShizukuPermissionException()
-        } else {
-            // Request the permission
-            Shizuku.requestPermission(0)
-            throw NoShizukuPermissionException()
-        }
-    } catch (e: IllegalStateException) {
-        throw ShizukuUnavailableException()
-    }
-}
-
 fun getDetailsForPackage(context: Context, packageName: String): App {
     val packageManager = context.packageManager
 
@@ -144,7 +121,7 @@ fun getDetailsForPackage(context: Context, packageName: String): App {
 @Throws(DisabledLauncherException::class)
 fun enableApp(context: Context, packageName: String) {
     try {
-        executeAdbCommand("pm enable $packageName")
+        AdbService.executeAdbCommand("pm enable $packageName")
     } catch (e: DisabledLauncherException) {
         val sharedPreferences = context.getSharedPreferences(context.packageName, Context.MODE_PRIVATE)
         val fallbackToGooglePlay = sharedPreferences.getBoolean("fallbackToGooglePlay", false)
@@ -179,22 +156,13 @@ fun disableAllApps(context: Context) {
 
 @Throws(DisabledLauncherException::class)
 fun disableApp(context: Context, app: App) { // TODO: extract into service
-    executeAdbCommand("pm disable-user --user 0 ${app.packageName}")
+    AdbService.executeAdbCommand("pm disable-user --user 0 ${app.packageName}")
 
     asyncToastMakeText(
         context,
         String.format(context.getString(R.string.disabled_app), app.name),
         Toast.LENGTH_SHORT
     )
-}
-
-@Throws(DisabledLauncherException::class)
-fun executeAdbCommand(command: String) {
-    checkShizukuPermission()
-
-    if (Shizuku.newProcess(arrayOf("sh", "-c", command), null, null).waitFor() != 0) {
-        throw DisabledLauncherException(Resources.getSystem().getString(R.string.process_failure))
-    }
 }
 
 @Throws(DisabledLauncherException::class)
