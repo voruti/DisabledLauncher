@@ -3,7 +3,7 @@ package de.redno.disabledlauncher.service
 import android.content.Context
 import android.widget.Toast
 import de.redno.disabledlauncher.R
-import de.redno.disabledlauncher.asyncToastMakeText
+import de.redno.disabledlauncher.common.AndroidUtil
 import de.redno.disabledlauncher.model.file.MainFile
 import kotlin.math.floor
 
@@ -17,7 +17,7 @@ object Datasource {
                 ?.let { return it.packages }
         }
 
-        asyncToastMakeText(context, context.getString(R.string.couldnt_load_app_list), Toast.LENGTH_SHORT)
+        AndroidUtil.asyncToastMakeText(context, context.getString(R.string.couldnt_load_app_list), Toast.LENGTH_SHORT)
         return emptyList()
     }
 
@@ -80,7 +80,7 @@ object Datasource {
                 )
 
                 if (success) {
-                    asyncToastMakeText(
+                    AndroidUtil.asyncToastMakeText(
                         context,
                         String.format(context.getString(R.string.success_added_x_apps), packageNameList.size),
                         Toast.LENGTH_SHORT

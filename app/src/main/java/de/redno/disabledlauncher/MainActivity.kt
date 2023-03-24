@@ -3,8 +3,6 @@ package de.redno.disabledlauncher
 import android.content.Context
 import android.content.Intent
 import android.os.Bundle
-import android.os.Handler
-import android.os.Looper
 import android.widget.Toast
 import androidx.activity.ComponentActivity
 import androidx.activity.compose.setContent
@@ -34,6 +32,7 @@ import androidx.core.content.pm.ShortcutInfoCompat
 import androidx.core.content.pm.ShortcutManagerCompat.isRequestPinShortcutSupported
 import androidx.core.content.pm.ShortcutManagerCompat.requestPinShortcut
 import androidx.core.graphics.drawable.IconCompat
+import de.redno.disabledlauncher.common.AndroidUtil
 import de.redno.disabledlauncher.common.ListEntry
 import de.redno.disabledlauncher.model.*
 import de.redno.disabledlauncher.model.exception.*
@@ -66,7 +65,7 @@ class MainActivity : ComponentActivity() { // TODO: faster startup somehow?
                                         AppService.disableAllApps(this)
                                     } catch (e: DisabledLauncherException) {
                                         e.getLocalizedMessage(this)?.let {
-                                            asyncToastMakeText(this, it, Toast.LENGTH_SHORT)
+                                            AndroidUtil.asyncToastMakeText(this, it, Toast.LENGTH_SHORT)
                                         }
                                     }
                                 }.start()
@@ -84,13 +83,6 @@ class MainActivity : ComponentActivity() { // TODO: faster startup somehow?
                 }
             }
         }
-    }
-}
-
-
-fun asyncToastMakeText(context: Context, text: CharSequence, duration: Int) { // TODO: move every "global" function
-    Handler(Looper.getMainLooper()).post {
-        Toast.makeText(context, text, duration).show()
     }
 }
 
@@ -186,7 +178,7 @@ fun AppEntry(app: App, modifier: Modifier = Modifier) {
                             MainActivity.exit()
                         } catch (e: DisabledLauncherException) {
                             e.getLocalizedMessage(context)?.let {
-                                asyncToastMakeText(context, it, Toast.LENGTH_SHORT)
+                                AndroidUtil.asyncToastMakeText(context, it, Toast.LENGTH_SHORT)
                             }
                         }
                     }

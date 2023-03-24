@@ -8,7 +8,7 @@ import android.net.Uri
 import android.widget.Toast
 import androidx.core.graphics.drawable.toBitmap
 import de.redno.disabledlauncher.R
-import de.redno.disabledlauncher.asyncToastMakeText
+import de.redno.disabledlauncher.common.AndroidUtil
 import de.redno.disabledlauncher.model.App
 import de.redno.disabledlauncher.model.exception.DisabledLauncherException
 import de.redno.disabledlauncher.model.exception.RedirectedToGooglePlayException
@@ -79,7 +79,7 @@ object AppService {
             .filter { it.isEnabled }
 
         if (appsToDisable.isEmpty()) {
-            asyncToastMakeText(context, context.getString(R.string.nothing_to_disable), Toast.LENGTH_SHORT)
+            AndroidUtil.asyncToastMakeText(context, context.getString(R.string.nothing_to_disable), Toast.LENGTH_SHORT)
             return
         }
 
@@ -92,7 +92,7 @@ object AppService {
     fun disableApp(context: Context, app: App) { // TODO: extract into service
         AdbService.executeAdbCommand("pm disable-user --user 0 ${app.packageName}")
 
-        asyncToastMakeText(
+        AndroidUtil.asyncToastMakeText(
             context,
             String.format(context.getString(R.string.disabled_app), app.name),
             Toast.LENGTH_SHORT

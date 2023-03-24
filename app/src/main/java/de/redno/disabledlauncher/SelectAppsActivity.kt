@@ -30,6 +30,7 @@ import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.semantics.Role
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.core.graphics.drawable.toBitmap
+import de.redno.disabledlauncher.common.AndroidUtil
 import de.redno.disabledlauncher.common.ListEntry
 import de.redno.disabledlauncher.model.App
 import de.redno.disabledlauncher.service.AppService
@@ -89,7 +90,7 @@ class SelectAppsActivity : ComponentActivity() {
                             FloatingActionButton(onClick = {
                                 Thread {
                                     if (selectedPackageList.isEmpty()) {
-                                        asyncToastMakeText(
+                                        AndroidUtil.asyncToastMakeText(
                                             this,
                                             getString(R.string.no_apps_selected),
                                             Toast.LENGTH_SHORT
