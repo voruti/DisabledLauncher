@@ -6,7 +6,7 @@ import android.os.Looper
 import android.widget.Toast
 
 object AndroidUtil {
-    fun asyncToastMakeText(context: Context, text: CharSequence, duration: Int) { // TODO: move every "global" function
+    fun asyncToastMakeText(context: Context, text: CharSequence, duration: Int) {
         Handler(Looper.getMainLooper()).post {
             Toast.makeText(context, text, duration).show()
         }

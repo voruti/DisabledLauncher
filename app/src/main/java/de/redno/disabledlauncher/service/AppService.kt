@@ -89,7 +89,7 @@ object AppService {
     }
 
     @Throws(DisabledLauncherException::class)
-    fun disableApp(context: Context, app: App) { // TODO: extract into service
+    fun disableApp(context: Context, app: App) {
         AdbService.executeAdbCommand("pm disable-user --user 0 ${app.packageName}")
 
         AndroidUtil.asyncToastMakeText(
