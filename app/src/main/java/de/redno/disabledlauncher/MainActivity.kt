@@ -114,12 +114,12 @@ fun checkShizukuPermission() {
     }
 }
 
-fun getDetailsForPackage(context: Context, packageName: String): AppEntryInList {
+fun getDetailsForPackage(context: Context, packageName: String): App {
     val packageManager = context.packageManager
 
     try {
         packageManager.getPackageInfo(packageName, 0)?.let { packageInfo ->
-            return AppEntryInList(
+            return App(
                 packageInfo.applicationInfo.loadLabel(packageManager).toString(),
                 packageInfo.packageName,
                 packageInfo.applicationInfo.enabled,
@@ -131,7 +131,7 @@ fun getDetailsForPackage(context: Context, packageName: String): AppEntryInList 
         e.printStackTrace()
     }
 
-    return AppEntryInList(
+    return App(
         name = context.getString(R.string.app_not_found),
         packageName = packageName,
         icon = context.getDrawable(R.drawable.ic_launcher_background)!!
@@ -197,12 +197,12 @@ fun executeAdbCommand(command: String) {
 }
 
 @Throws(DisabledLauncherException::class)
-fun openAppLogic(context: Context, appEntry: AppEntryInList) {
-    if (!appEntry.isEnabled) {
-        enableApp(context, appEntry.packageName)
+fun openAppLogic(context: Context, app: App) {
+    if (!app.isEnabled) {
+        enableApp(context, app.packageName)
     }
 
-    startApp(context, appEntry.packageName)
+    startApp(context, app.packageName)
 }
 
 @Throws(DisabledLauncherException::class)
@@ -243,7 +243,7 @@ fun ToolbarComponent(modifier: Modifier = Modifier, showSettings: Boolean = true
 
 @OptIn(ExperimentalFoundationApi::class)
 @Composable
-fun AppEntry(appEntry: AppEntryInList, modifier: Modifier = Modifier) {
+fun AppEntry(app: App, modifier: Modifier = Modifier) {
     val context = LocalContext.current
     val sharedPreferences = context.getSharedPreferences(context.packageName, Context.MODE_PRIVATE)
 
@@ -251,14 +251,14 @@ fun AppEntry(appEntry: AppEntryInList, modifier: Modifier = Modifier) {
     ListEntry(
         icon = {
             Image(
-                appEntry.icon.asImageBitmap(),
-                String.format(stringResource(R.string.app_icon), appEntry.name)
+                app.icon.asImageBitmap(),
+                String.format(stringResource(R.string.app_icon), app.name)
             )
         },
-        title = appEntry.name,
-        description = appEntry.packageName,
-        italicStyle = !appEntry.isEnabled,
-        disabledStyle = !appEntry.isInstalled,
+        title = app.name,
+        description = app.packageName,
+        italicStyle = !app.isEnabled,
+        disabledStyle = !app.isInstalled,
         contextContent = {
             DropdownMenu(
                 expanded = dropdownExpanded,
@@ -269,11 +269,11 @@ fun AppEntry(appEntry: AppEntryInList, modifier: Modifier = Modifier) {
                         val intent = Intent(context, ActionReceiverActivity::class.java)
                             .setFlags(Intent.FLAG_ACTIVITY_NEW_TASK)
                             .setAction("${context.packageName}.action.OPEN_APP")
-                            .putExtra("package_name", appEntry.packageName)
-                        val shortcutInfo = ShortcutInfoCompat.Builder(context, appEntry.packageName)
-                            .setShortLabel(appEntry.name)
-                            .setLongLabel(appEntry.name)
-                            .setIcon(IconCompat.createWithBitmap(appEntry.icon.asImageBitmap().asAndroidBitmap()))
+                            .putExtra("package_name", app.packageName)
+                        val shortcutInfo = ShortcutInfoCompat.Builder(context, app.packageName)
+                            .setShortLabel(app.name)
+                            .setLongLabel(app.name)
+                            .setIcon(IconCompat.createWithBitmap(app.icon.asImageBitmap().asAndroidBitmap()))
                             .setIntent(intent)
                             .build()
                         requestPinShortcut(context, shortcutInfo, null)
@@ -290,7 +290,7 @@ fun AppEntry(appEntry: AppEntryInList, modifier: Modifier = Modifier) {
                     Text(stringResource(R.string.add_shortcut))
                 }
                 DropdownMenuItem(onClick = {
-                    if (Datasource.removePackage(context, appEntry.packageName)) {
+                    if (Datasource.removePackage(context, app.packageName)) {
                         dropdownExpanded = false
                         // TODO: refresh app list (+ there are other actions/code locations that need to trigger a list refresh)
                     } else {
@@ -305,11 +305,11 @@ fun AppEntry(appEntry: AppEntryInList, modifier: Modifier = Modifier) {
         modifier = modifier.combinedClickable(
             onClick = {
                 Thread {
-                    if (appEntry.isInstalled) {
+                    if (app.isInstalled) {
                         try {
-                            openAppLogic(context, appEntry)
+                            openAppLogic(context, app)
                             if (sharedPreferences.getBoolean("sortAppsByUsage", false)) {
-                                Datasource.raisePackage(context, appEntry.packageName)
+                                Datasource.raisePackage(context, app.packageName)
                             }
                             MainActivity.exit()
                         } catch (e: DisabledLauncherException) {
@@ -349,10 +349,10 @@ fun AppList(packageNameList: List<String>, modifier: Modifier = Modifier) {
             }
         )
         LazyColumn {
-            val appEntryList = packageNameList.map {
+            val appList = packageNameList.map {
                 getDetailsForPackage(context, it)
             } // TODO: prevent being called on every text change
-            items(items = appEntryList
+            items(items = appList
                 .filter {
                     val searchTerms = text.trim().lowercase().split(" ")
                     val searchReference = "${it.name.trim().lowercase()} ${it.packageName.trim().lowercase()}"

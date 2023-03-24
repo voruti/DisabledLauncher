@@ -31,7 +31,7 @@ import androidx.compose.ui.semantics.Role
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.core.graphics.drawable.toBitmap
 import de.redno.disabledlauncher.common.ListEntry
-import de.redno.disabledlauncher.model.AppEntryInList
+import de.redno.disabledlauncher.model.App
 import de.redno.disabledlauncher.ui.theme.DisabledLauncherTheme
 
 class SelectAppsActivity : ComponentActivity() {
@@ -103,7 +103,7 @@ class SelectAppsActivity : ComponentActivity() {
                         }
                     ) { padding ->
                         SelectableAppList(
-                            appEntryList = selectablePackages,
+                            appList = selectablePackages,
                             selectedPackageList = selectedPackageList,
                             modifier = Modifier.padding(padding)
                         )
@@ -121,15 +121,15 @@ fun SelectAppsPreview() {
     val context = LocalContext.current
 
     DisabledLauncherTheme {
-        val installedApps: List<AppEntryInList> = listOf(
-            AppEntryInList(
+        val installedApps: List<App> = listOf(
+            App(
                 "Test",
                 "it.test",
                 true,
                 true,
                 context.getDrawable(R.drawable.ic_launcher_background)!!.toBitmap()
             ),
-            AppEntryInList(
+            App(
                 "Test B",
                 "it.test.2",
                 true,
@@ -147,7 +147,7 @@ fun SelectAppsPreview() {
             },
             content = { padding ->
                 SelectableAppList(
-                    appEntryList = installedApps,
+                    appList = installedApps,
                     selectedPackageList = selectedPackageList,
                     modifier = Modifier.padding(padding)
                 )
@@ -158,32 +158,32 @@ fun SelectAppsPreview() {
 
 @Composable
 fun SelectableAppEntry(
-    appEntry: AppEntryInList,
+    app: App,
     selectedPackageList: SnapshotStateList<String>,
     modifier: Modifier = Modifier
 ) {
     ListEntry(
         icon = {
             Image(
-                appEntry.icon.asImageBitmap(),
-                String.format(stringResource(R.string.app_icon), appEntry.name)
+                app.icon.asImageBitmap(),
+                String.format(stringResource(R.string.app_icon), app.name)
             )
         },
-        title = appEntry.name,
-        description = appEntry.packageName,
-        italicStyle = !appEntry.isEnabled,
-        disabledStyle = !appEntry.isInstalled,
+        title = app.name,
+        description = app.packageName,
+        italicStyle = !app.isEnabled,
+        disabledStyle = !app.isInstalled,
         startContent = {
-            Checkbox(checked = selectedPackageList.contains(appEntry.packageName), onCheckedChange = null)
+            Checkbox(checked = selectedPackageList.contains(app.packageName), onCheckedChange = null)
         },
         modifier = Modifier.toggleable(
             role = Role.Checkbox,
-            value = selectedPackageList.contains(appEntry.packageName),
+            value = selectedPackageList.contains(app.packageName),
             onValueChange = {
                 if (it) {
-                    selectedPackageList.add(appEntry.packageName)
+                    selectedPackageList.add(app.packageName)
                 } else {
-                    selectedPackageList.remove(appEntry.packageName)
+                    selectedPackageList.remove(app.packageName)
                 }
             }
         )
@@ -192,7 +192,7 @@ fun SelectableAppEntry(
 
 @Composable
 fun SelectableAppList(
-    appEntryList: List<AppEntryInList>,
+    appList: List<App>,
     selectedPackageList: SnapshotStateList<String>,
     modifier: Modifier = Modifier
 ) {
@@ -217,7 +217,7 @@ fun SelectableAppList(
         )
 
         LazyColumn {
-            items(items = appEntryList
+            items(items = appList
                 .filter { // TODO: prevent being called on every text change
                     val searchTerms = text.trim().lowercase().split(" ")
                     val searchReference = "${it.name.trim().lowercase()} ${it.packageName.trim().lowercase()}"

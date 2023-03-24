@@ -5,7 +5,7 @@ import android.os.Parcelable
 import kotlinx.parcelize.Parcelize
 
 @Parcelize
-data class AppEntryInList(
+data class App(
     val name: String,
     val packageName: String,
     val isEnabled: Boolean,
