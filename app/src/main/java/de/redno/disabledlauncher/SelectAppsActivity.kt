@@ -32,6 +32,7 @@ import androidx.compose.ui.tooling.preview.Preview
 import androidx.core.graphics.drawable.toBitmap
 import de.redno.disabledlauncher.common.ListEntry
 import de.redno.disabledlauncher.model.App
+import de.redno.disabledlauncher.service.AppService
 import de.redno.disabledlauncher.ui.theme.DisabledLauncherTheme
 
 class SelectAppsActivity : ComponentActivity() {
@@ -74,7 +75,7 @@ class SelectAppsActivity : ComponentActivity() {
         super.onCreate(savedInstanceState)
 
         val selectablePackages = intent.getStringArrayListExtra("selectable_packages")
-            ?.map { getDetailsForPackage(this, it) }
+            ?.map { AppService.getDetailsForPackage(this, it) }
             ?: emptyList()
 
         setContent {

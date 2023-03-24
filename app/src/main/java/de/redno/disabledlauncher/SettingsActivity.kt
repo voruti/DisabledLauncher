@@ -2,8 +2,6 @@ package de.redno.disabledlauncher
 
 import android.content.Context
 import android.content.Intent
-import android.content.pm.PackageInfo
-import android.content.pm.PackageManager
 import android.os.Bundle
 import android.widget.Toast
 import androidx.activity.ComponentActivity
@@ -26,6 +24,7 @@ import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.semantics.Role
 import androidx.compose.ui.tooling.preview.Preview
 import de.redno.disabledlauncher.common.ListEntry
+import de.redno.disabledlauncher.service.AppService
 import de.redno.disabledlauncher.service.Datasource
 import de.redno.disabledlauncher.ui.theme.DisabledLauncherTheme
 
@@ -81,23 +80,11 @@ class SettingsActivity : ComponentActivity() {
     }
 
     val disableAppsOnceResultLauncher = SelectAppsActivity.registerCallback(this,
-        { it.map { getDetailsForPackage(this, it) } }) {
+        { it.map { AppService.getDetailsForPackage(this, it) } }) {
         it.forEach {
-            disableApp(this, it)
+            AppService.disableApp(this, it)
         }
     }
-}
-
-
-fun getInstalledPackages(
-    context: Context,
-    packageInfoFilter: (packageInfo: PackageInfo) -> Boolean = { true }
-): List<String> {
-    val packageManager = context.packageManager
-
-    return packageManager.getInstalledPackages(PackageManager.GET_META_DATA)
-        .filter(packageInfoFilter)
-        .map { it.packageName }
 }
 
 
@@ -142,7 +129,7 @@ fun SettingsList(modifier: Modifier = Modifier) {
             title = stringResource(R.string.add_apps_title),
             description = stringResource(R.string.add_apps_description),
             modifier = Modifier.clickable {
-                val addableApps = getInstalledPackages(context)
+                val addableApps = AppService.getInstalledPackages(context)
                     .subtract(Datasource.loadAppList(context).toSet())
 
                 SettingsActivity.lastObject?.addAppsResultLauncher?.let {
@@ -200,7 +187,7 @@ fun SettingsList(modifier: Modifier = Modifier) {
             title = stringResource(R.string.disable_apps_once_title),
             description = stringResource(R.string.disable_apps_once_description),
             modifier = Modifier.clickable {
-                val enabledApps = getInstalledPackages(context) {
+                val enabledApps = AppService.getInstalledPackages(context) {
                     it.applicationInfo.enabled
                 }
 

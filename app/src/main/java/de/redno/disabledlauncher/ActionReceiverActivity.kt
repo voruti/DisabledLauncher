@@ -6,6 +6,7 @@ import android.widget.Toast
 import androidx.activity.ComponentActivity
 import de.redno.disabledlauncher.model.exception.DisabledLauncherException
 import de.redno.disabledlauncher.model.exception.RedirectedToGooglePlayException
+import de.redno.disabledlauncher.service.AppService
 
 class ActionReceiverActivity : ComponentActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {
@@ -16,7 +17,7 @@ class ActionReceiverActivity : ComponentActivity() {
                 val packageNameToOpen = intent.getStringExtra("package_name")
                 if (packageNameToOpen != null && packageNameToOpen.matches(Regex("^\\w+\\.[\\w.]*\\w+$"))) {
                     try {
-                        openAppLogic(this, getDetailsForPackage(this, packageNameToOpen))
+                        AppService.openAppLogic(this, AppService.getDetailsForPackage(this, packageNameToOpen))
                         setResult(RESULT_OK, Intent())
                     } catch (e: DisabledLauncherException) {
                         e.getLocalizedMessage(this)?.let {
@@ -30,7 +31,7 @@ class ActionReceiverActivity : ComponentActivity() {
 
             "${packageName}.action.DISABLE_ALL_APPS" -> {
                 try {
-                    disableAllApps(this)
+                    AppService.disableAllApps(this)
                     setResult(RESULT_OK, Intent())
                 } catch (e: DisabledLauncherException) {
                     e.getLocalizedMessage(this)?.let {

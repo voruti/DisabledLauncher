@@ -2,8 +2,6 @@ package de.redno.disabledlauncher
 
 import android.content.Context
 import android.content.Intent
-import android.content.pm.PackageManager
-import android.net.Uri
 import android.os.Bundle
 import android.os.Handler
 import android.os.Looper
@@ -36,11 +34,10 @@ import androidx.core.content.pm.ShortcutInfoCompat
 import androidx.core.content.pm.ShortcutManagerCompat.isRequestPinShortcutSupported
 import androidx.core.content.pm.ShortcutManagerCompat.requestPinShortcut
 import androidx.core.graphics.drawable.IconCompat
-import androidx.core.graphics.drawable.toBitmap
 import de.redno.disabledlauncher.common.ListEntry
 import de.redno.disabledlauncher.model.*
 import de.redno.disabledlauncher.model.exception.*
-import de.redno.disabledlauncher.service.AdbService
+import de.redno.disabledlauncher.service.AppService
 import de.redno.disabledlauncher.service.Datasource
 import de.redno.disabledlauncher.ui.theme.DisabledLauncherTheme
 
@@ -66,7 +63,7 @@ class MainActivity : ComponentActivity() { // TODO: faster startup somehow?
                             FloatingActionButton(onClick = {
                                 Thread {
                                     try {
-                                        disableAllApps(this)
+                                        AppService.disableAllApps(this)
                                     } catch (e: DisabledLauncherException) {
                                         e.getLocalizedMessage(this)?.let {
                                             asyncToastMakeText(this, it, Toast.LENGTH_SHORT)
@@ -90,100 +87,6 @@ class MainActivity : ComponentActivity() { // TODO: faster startup somehow?
     }
 }
 
-
-fun getDetailsForPackage(context: Context, packageName: String): App {
-    val packageManager = context.packageManager
-
-    try {
-        packageManager.getPackageInfo(packageName, 0)?.let {
-            return App(
-                it.applicationInfo.loadLabel(packageManager).toString(),
-                it.packageName,
-                it.applicationInfo.enabled,
-                true,
-                it.applicationInfo.loadIcon(packageManager).toBitmap()
-            )
-        }
-    } catch (e: PackageManager.NameNotFoundException) {
-        e.printStackTrace()
-    }
-
-    return App(
-        name = context.getString(R.string.app_not_found),
-        packageName = packageName,
-        icon = context.getDrawable(R.drawable.ic_launcher_background)!!
-            .toBitmap(), // TODO: add proper app icons (+ for static shortcut, etc.)
-        isEnabled = false,
-        isInstalled = false
-    )
-}
-
-@Throws(DisabledLauncherException::class)
-fun enableApp(context: Context, packageName: String) {
-    try {
-        AdbService.executeAdbCommand("pm enable $packageName")
-    } catch (e: DisabledLauncherException) {
-        val sharedPreferences = context.getSharedPreferences(context.packageName, Context.MODE_PRIVATE)
-        val fallbackToGooglePlay = sharedPreferences.getBoolean("fallbackToGooglePlay", false)
-
-        if (fallbackToGooglePlay) {
-            val intent = Intent(Intent.ACTION_VIEW).apply {
-                data = Uri.parse("https://play.google.com/store/apps/details?id=$packageName")
-            }
-            context.startActivity(intent)
-            throw RedirectedToGooglePlayException(e)
-        }
-
-        throw e
-    }
-}
-
-@Throws(DisabledLauncherException::class)
-fun disableAllApps(context: Context) {
-    val appsToDisable = Datasource.loadAppList(context)
-        .map { getDetailsForPackage(context, it) }
-        .filter { it.isEnabled }
-
-    if (appsToDisable.isEmpty()) {
-        asyncToastMakeText(context, context.getString(R.string.nothing_to_disable), Toast.LENGTH_SHORT)
-        return
-    }
-
-    appsToDisable.forEach {
-        disableApp(context, it)
-    }
-}
-
-@Throws(DisabledLauncherException::class)
-fun disableApp(context: Context, app: App) { // TODO: extract into service
-    AdbService.executeAdbCommand("pm disable-user --user 0 ${app.packageName}")
-
-    asyncToastMakeText(
-        context,
-        String.format(context.getString(R.string.disabled_app), app.name),
-        Toast.LENGTH_SHORT
-    )
-}
-
-@Throws(DisabledLauncherException::class)
-fun openAppLogic(context: Context, app: App) {
-    if (!app.isEnabled) {
-        enableApp(context, app.packageName)
-    }
-
-    startApp(context, app.packageName)
-}
-
-@Throws(DisabledLauncherException::class)
-fun startApp(context: Context, packageName: String) {
-    try {
-        val launchIntent = context.packageManager.getLaunchIntentForPackage(packageName)
-            ?.addFlags(Intent.FLAG_ACTIVITY_REORDER_TO_FRONT)
-        context.startActivity(launchIntent)
-    } catch (e: Exception) {
-        throw DisabledLauncherException(context.getString(R.string.cant_open_app))
-    }
-}
 
 fun asyncToastMakeText(context: Context, text: CharSequence, duration: Int) { // TODO: move every "global" function
     Handler(Looper.getMainLooper()).post {
@@ -276,7 +179,7 @@ fun AppEntry(app: App, modifier: Modifier = Modifier) {
                 Thread {
                     if (app.isInstalled) {
                         try {
-                            openAppLogic(context, app)
+                            AppService.openAppLogic(context, app)
                             if (sharedPreferences.getBoolean("sortAppsByUsage", false)) {
                                 Datasource.raisePackage(context, app.packageName)
                             }
@@ -319,7 +222,7 @@ fun AppList(packageNameList: List<String>, modifier: Modifier = Modifier) {
         )
         LazyColumn {
             val appList = packageNameList.map {
-                getDetailsForPackage(context, it)
+                AppService.getDetailsForPackage(context, it)
             } // TODO: prevent being called on every text change
             items(items = appList
                 .filter {
