@@ -25,6 +25,7 @@ import androidx.compose.ui.semantics.Role
 import androidx.compose.ui.tooling.preview.Preview
 import de.redno.disabledlauncher.common.AndroidUtil
 import de.redno.disabledlauncher.common.ListEntry
+import de.redno.disabledlauncher.common.ToolbarComponent
 import de.redno.disabledlauncher.service.AppService
 import de.redno.disabledlauncher.service.Datasource
 import de.redno.disabledlauncher.ui.theme.DisabledLauncherTheme

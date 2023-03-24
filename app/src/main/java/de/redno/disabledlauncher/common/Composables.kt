@@ -1,21 +1,25 @@
 package de.redno.disabledlauncher.common
 
+import android.content.Intent
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.*
-import androidx.compose.material.Checkbox
-import androidx.compose.material.MaterialTheme
-import androidx.compose.material.Switch
-import androidx.compose.material.Text
+import androidx.compose.material.*
+import androidx.compose.material.icons.Icons
+import androidx.compose.material.icons.filled.Settings
 import androidx.compose.runtime.*
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.platform.LocalContext
+import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.TextStyle
 import androidx.compose.ui.text.font.FontStyle
 import androidx.compose.ui.text.style.TextDecoration
 import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
+import de.redno.disabledlauncher.R
+import de.redno.disabledlauncher.SettingsActivity
 import de.redno.disabledlauncher.ui.theme.DisabledLauncherTheme
 
 @Preview(showBackground = true, showSystemUi = true)
@@ -34,6 +38,25 @@ fun DefaultPreview() {
             }
         )
     }
+}
+
+
+@Composable
+fun ToolbarComponent(modifier: Modifier = Modifier, showSettings: Boolean = true) {
+    val context = LocalContext.current
+
+    TopAppBar(
+        modifier = modifier,
+        title = { Text(text = stringResource(id = R.string.app_name)) },
+        actions = {
+            if (showSettings) {
+                IconButton(
+                    onClick = { context.startActivity(Intent(context, SettingsActivity::class.java)) }) {
+                    Icon(Icons.Default.Settings, contentDescription = stringResource(id = R.string.settings))
+                }
+            }
+        }
+    )
 }
 
 @Composable

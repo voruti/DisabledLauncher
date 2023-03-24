@@ -19,7 +19,6 @@ import androidx.compose.material.*
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.AppBlocking
 import androidx.compose.material.icons.filled.Clear
-import androidx.compose.material.icons.filled.Settings
 import androidx.compose.runtime.*
 import androidx.compose.runtime.saveable.rememberSaveable
 import androidx.compose.ui.Modifier
@@ -34,6 +33,7 @@ import androidx.core.content.pm.ShortcutManagerCompat.requestPinShortcut
 import androidx.core.graphics.drawable.IconCompat
 import de.redno.disabledlauncher.common.AndroidUtil
 import de.redno.disabledlauncher.common.ListEntry
+import de.redno.disabledlauncher.common.ToolbarComponent
 import de.redno.disabledlauncher.model.*
 import de.redno.disabledlauncher.model.exception.*
 import de.redno.disabledlauncher.service.AppService
@@ -86,24 +86,6 @@ class MainActivity : ComponentActivity() { // TODO: faster startup somehow?
     }
 }
 
-
-@Composable
-fun ToolbarComponent(modifier: Modifier = Modifier, showSettings: Boolean = true) {
-    val context = LocalContext.current
-
-    TopAppBar(
-        modifier = modifier,
-        title = { Text(text = stringResource(id = R.string.app_name)) },
-        actions = {
-            if (showSettings) {
-                IconButton(
-                    onClick = { context.startActivity(Intent(context, SettingsActivity::class.java)) }) {
-                    Icon(Icons.Default.Settings, contentDescription = stringResource(id = R.string.settings))
-                }
-            }
-        }
-    )
-}
 
 @OptIn(ExperimentalFoundationApi::class)
 @Composable
