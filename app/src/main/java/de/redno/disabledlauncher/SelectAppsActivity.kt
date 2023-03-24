@@ -157,7 +157,7 @@ fun SelectAppsPreview() {
 }
 
 @Composable
-fun SelectableAppEntry(
+fun SelectableAppEntry( // TODO: merge with other AppEntry
     app: App,
     selectedPackageList: SnapshotStateList<String>,
     modifier: Modifier = Modifier

@@ -54,7 +54,7 @@ class SettingsActivity : ComponentActivity() {
 
     val pickLaunchableAppsFileResultLauncher =
         registerForActivityResult(ActivityResultContracts.StartActivityForResult()) { result ->
-            if (result.resultCode == RESULT_OK) {
+            if (result.resultCode == RESULT_OK) { // TODO: move into function like SelectAppsActivity.registerCallback
                 result.data?.data?.let {
                     contentResolver.takePersistableUriPermission(
                         it,
