@@ -36,17 +36,25 @@ import de.redno.disabledlauncher.ui.theme.DisabledLauncherTheme
 
 class SelectAppsActivity : ComponentActivity() {
     companion object {
-        fun registerCallback(
+        fun <R> registerCallback(
             currentActivity: ComponentActivity,
-            callback: (selectedPackages: List<String>) -> Unit
+            convert: (selectedPackages: List<String>) -> List<R>,
+            callback: (selectedPackages: List<R>) -> Unit
         ): ActivityResultLauncher<Intent> {
             return currentActivity.registerForActivityResult(ActivityResultContracts.StartActivityForResult()) { result ->
                 if (result.resultCode == RESULT_OK) {
                     result.data?.getStringArrayListExtra("selected_packages")?.let {
-                        callback(it)
+                        callback(convert(it))
                     }
                 }
             }
+        }
+
+        fun registerCallback(
+            currentActivity: ComponentActivity,
+            callback: (selectedApps: List<String>) -> Unit
+        ): ActivityResultLauncher<Intent> {
+            return registerCallback(currentActivity, { it }, callback)
         }
 
         fun launch(

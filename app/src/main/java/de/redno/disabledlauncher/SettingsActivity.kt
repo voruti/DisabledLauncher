@@ -70,8 +70,8 @@ class SettingsActivity : ComponentActivity() {
             }
         }
 
-    val addAppsResultLauncher = SelectAppsActivity.registerCallback(this) { selectedPackages ->
-        if (!Datasource.addPackages(this, selectedPackages)) {
+    val addAppsResultLauncher = SelectAppsActivity.registerCallback(this) {
+        if (!Datasource.addPackages(this, it)) {
             asyncToastMakeText(
                 this,
                 getString(R.string.failed_adding_apps),
@@ -80,8 +80,9 @@ class SettingsActivity : ComponentActivity() {
         }
     }
 
-    val disableAppsOnceResultLauncher = SelectAppsActivity.registerCallback(this) { selectedPackages ->
-        selectedPackages.forEach {
+    val disableAppsOnceResultLauncher = SelectAppsActivity.registerCallback(this,
+        { it.map { selectedPackage -> getDetailsForPackage(this, selectedPackage) } }) {
+        it.forEach {
             disableApp(this, it)
         }
     }

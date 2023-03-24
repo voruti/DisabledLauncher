@@ -163,26 +163,27 @@ fun enableApp(context: Context, packageName: String) {
 
 @Throws(DisabledLauncherException::class)
 fun disableAllApps(context: Context) {
-    val packagesToDisable = Datasource.loadAppList(context)
-        .filter { packageName -> getDetailsForPackage(context, packageName).isEnabled }
+    val appsToDisable = Datasource.loadAppList(context)
+        .map { packageName -> getDetailsForPackage(context, packageName) }
+        .filter { app -> app.isEnabled }
 
-    if (packagesToDisable.isEmpty()) {
+    if (appsToDisable.isEmpty()) {
         asyncToastMakeText(context, context.getString(R.string.nothing_to_disable), Toast.LENGTH_SHORT)
         return
     }
 
-    for (packageName in packagesToDisable) {
-        disableApp(context, packageName)
+    for (app in appsToDisable) {
+        disableApp(context, app)
     }
 }
 
 @Throws(DisabledLauncherException::class)
-fun disableApp(context: Context, packageName: String) { // TODO: extract into service
-    executeAdbCommand("pm disable-user --user 0 $packageName")
+fun disableApp(context: Context, app: App) { // TODO: extract into service
+    executeAdbCommand("pm disable-user --user 0 ${app.packageName}")
 
     asyncToastMakeText(
         context,
-        String.format(context.getString(R.string.disabled_app), packageName),
+        String.format(context.getString(R.string.disabled_app), app.name),
         Toast.LENGTH_SHORT
     )
 }
