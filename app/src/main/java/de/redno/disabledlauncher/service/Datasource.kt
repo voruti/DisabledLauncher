@@ -11,9 +11,9 @@ object Datasource {
     const val INTERNAL_MAIN_FILE = "internalMainFile"
 
     fun loadAppList(context: Context): List<String> {
-        getLaunchableAppsFileUri(context).let { uri ->
+        getLaunchableAppsFileUri(context).let {
 
-            FileService.readFile(context, uri, MainFile::class.java)
+            FileService.readFile(context, it, MainFile::class.java)
                 ?.let { return it.packages }
         }
 

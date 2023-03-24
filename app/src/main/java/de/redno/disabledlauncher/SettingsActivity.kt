@@ -43,8 +43,8 @@ class SettingsActivity : ComponentActivity() {
                 Surface(modifier = Modifier.fillMaxSize(), color = MaterialTheme.colors.background) {
                     Scaffold(
                         topBar = { ToolbarComponent(showSettings = false) },
-                        content = { padding ->
-                            SettingsList(Modifier.padding(padding))
+                        content = {
+                            SettingsList(Modifier.padding(it))
                         }
                     )
                 }
@@ -53,9 +53,9 @@ class SettingsActivity : ComponentActivity() {
     }
 
     val pickLaunchableAppsFileResultLauncher =
-        registerForActivityResult(ActivityResultContracts.StartActivityForResult()) { result ->
-            if (result.resultCode == RESULT_OK) { // TODO: move into function like SelectAppsActivity.registerCallback
-                result.data?.data?.let {
+        registerForActivityResult(ActivityResultContracts.StartActivityForResult()) {
+            if (it.resultCode == RESULT_OK) { // TODO: move into function like SelectAppsActivity.registerCallback
+                it.data?.data?.let {
                     contentResolver.takePersistableUriPermission(
                         it,
                         Intent.FLAG_GRANT_READ_URI_PERMISSION or
@@ -81,7 +81,7 @@ class SettingsActivity : ComponentActivity() {
     }
 
     val disableAppsOnceResultLauncher = SelectAppsActivity.registerCallback(this,
-        { it.map { selectedPackage -> getDetailsForPackage(this, selectedPackage) } }) {
+        { it.map { getDetailsForPackage(this, it) } }) {
         it.forEach {
             disableApp(this, it)
         }
@@ -91,13 +91,13 @@ class SettingsActivity : ComponentActivity() {
 
 fun getInstalledPackages(
     context: Context,
-    packageInfoFilter: (packageInfo: PackageInfo) -> Boolean = { _ -> true }
+    packageInfoFilter: (packageInfo: PackageInfo) -> Boolean = { true }
 ): List<String> {
     val packageManager = context.packageManager
 
     return packageManager.getInstalledPackages(PackageManager.GET_META_DATA)
         .filter(packageInfoFilter)
-        .map { packageInfo -> packageInfo.packageName }
+        .map { it.packageName }
 }
 
 
@@ -107,8 +107,8 @@ fun SettingsPreview() {
     DisabledLauncherTheme {
         Scaffold(
             topBar = { ToolbarComponent(showSettings = false) },
-            content = { padding ->
-                SettingsList(Modifier.padding(padding))
+            content = {
+                SettingsList(Modifier.padding(it))
             }
         )
     }
@@ -200,8 +200,8 @@ fun SettingsList(modifier: Modifier = Modifier) {
             title = stringResource(R.string.disable_apps_once_title),
             description = stringResource(R.string.disable_apps_once_description),
             modifier = Modifier.clickable {
-                val enabledApps = getInstalledPackages(context) { packageInfo ->
-                    packageInfo.applicationInfo.enabled
+                val enabledApps = getInstalledPackages(context) {
+                    it.applicationInfo.enabled
                 }
 
                 SettingsActivity.lastObject?.disableAppsOnceResultLauncher?.let {

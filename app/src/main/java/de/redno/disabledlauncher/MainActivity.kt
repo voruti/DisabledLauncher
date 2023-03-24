@@ -81,8 +81,8 @@ class MainActivity : ComponentActivity() { // TODO: faster startup somehow?
                                 )
                             }
                         },
-                        content = { padding ->
-                            AppList(Datasource.loadAppList(this), Modifier.padding(padding))
+                        content = {
+                            AppList(Datasource.loadAppList(this), Modifier.padding(it))
                         }
                     )
                 }
@@ -118,13 +118,13 @@ fun getDetailsForPackage(context: Context, packageName: String): App {
     val packageManager = context.packageManager
 
     try {
-        packageManager.getPackageInfo(packageName, 0)?.let { packageInfo ->
+        packageManager.getPackageInfo(packageName, 0)?.let {
             return App(
-                packageInfo.applicationInfo.loadLabel(packageManager).toString(),
-                packageInfo.packageName,
-                packageInfo.applicationInfo.enabled,
+                it.applicationInfo.loadLabel(packageManager).toString(),
+                it.packageName,
+                it.applicationInfo.enabled,
                 true,
-                packageInfo.applicationInfo.loadIcon(packageManager).toBitmap()
+                it.applicationInfo.loadIcon(packageManager).toBitmap()
             )
         }
     } catch (e: PackageManager.NameNotFoundException) {
@@ -164,16 +164,16 @@ fun enableApp(context: Context, packageName: String) {
 @Throws(DisabledLauncherException::class)
 fun disableAllApps(context: Context) {
     val appsToDisable = Datasource.loadAppList(context)
-        .map { packageName -> getDetailsForPackage(context, packageName) }
-        .filter { app -> app.isEnabled }
+        .map { getDetailsForPackage(context, it) }
+        .filter { it.isEnabled }
 
     if (appsToDisable.isEmpty()) {
         asyncToastMakeText(context, context.getString(R.string.nothing_to_disable), Toast.LENGTH_SHORT)
         return
     }
 
-    for (app in appsToDisable) {
-        disableApp(context, app)
+    appsToDisable.forEach {
+        disableApp(context, it)
     }
 }
 
@@ -358,7 +358,7 @@ fun AppList(packageNameList: List<String>, modifier: Modifier = Modifier) {
                     val searchTerms = text.trim().lowercase().split(" ")
                     val searchReference = "${it.name.trim().lowercase()} ${it.packageName.trim().lowercase()}"
 
-                    searchTerms.all { searchTerm -> searchReference.contains(searchTerm) }
+                    searchTerms.all { searchReference.contains(it) }
                 }
                 .sortedBy { !it.isInstalled }
             ) { AppEntry(it) }
@@ -377,8 +377,8 @@ fun DefaultPreview() {
                     Icon(Icons.Default.AppBlocking, contentDescription = null)
                 }
             },
-            content = { padding ->
-                AppList(listOf("de.test.1", "de.test.2", "de.test.3"), Modifier.padding(padding))
+            content = {
+                AppList(listOf("de.test.1", "de.test.2", "de.test.3"), Modifier.padding(it))
             }
         )
     }

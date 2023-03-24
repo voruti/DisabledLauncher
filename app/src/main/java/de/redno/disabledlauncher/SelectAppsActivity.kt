@@ -41,9 +41,9 @@ class SelectAppsActivity : ComponentActivity() {
             convert: (selectedPackages: List<String>) -> List<R>,
             callback: (selectedPackages: List<R>) -> Unit
         ): ActivityResultLauncher<Intent> {
-            return currentActivity.registerForActivityResult(ActivityResultContracts.StartActivityForResult()) { result ->
-                if (result.resultCode == RESULT_OK) {
-                    result.data?.getStringArrayListExtra("selected_packages")?.let {
+            return currentActivity.registerForActivityResult(ActivityResultContracts.StartActivityForResult()) {
+                if (it.resultCode == RESULT_OK) {
+                    it.data?.getStringArrayListExtra("selected_packages")?.let {
                         callback(convert(it))
                     }
                 }
@@ -74,7 +74,7 @@ class SelectAppsActivity : ComponentActivity() {
         super.onCreate(savedInstanceState)
 
         val selectablePackages = intent.getStringArrayListExtra("selectable_packages")
-            ?.map { packageString -> getDetailsForPackage(this, packageString) }
+            ?.map { getDetailsForPackage(this, it) }
             ?: emptyList()
 
         setContent {
@@ -109,11 +109,11 @@ class SelectAppsActivity : ComponentActivity() {
                                 )
                             }
                         }
-                    ) { padding ->
+                    ) {
                         SelectableAppList(
                             appList = selectablePackages,
                             selectedPackageList = selectedPackageList,
-                            modifier = Modifier.padding(padding)
+                            modifier = Modifier.padding(it)
                         )
                     }
                 }
@@ -153,11 +153,11 @@ fun SelectAppsPreview() {
                     Icon(Icons.Default.Check, contentDescription = null)
                 }
             },
-            content = { padding ->
+            content = {
                 SelectableAppList(
                     appList = installedApps,
                     selectedPackageList = selectedPackageList,
-                    modifier = Modifier.padding(padding)
+                    modifier = Modifier.padding(it)
                 )
             }
         )
@@ -230,7 +230,7 @@ fun SelectableAppList(
                     val searchTerms = text.trim().lowercase().split(" ")
                     val searchReference = "${it.name.trim().lowercase()} ${it.packageName.trim().lowercase()}"
 
-                    searchTerms.all { searchTerm -> searchReference.contains(searchTerm) }
+                    searchTerms.all { searchReference.contains(it) }
                 }
                 .sortedBy { it.name }
                 .sortedBy { !it.isInstalled }
