@@ -26,28 +26,32 @@ import de.redno.disabledlauncher.ui.theme.DisabledLauncherTheme
 @Composable
 fun DefaultPreview() {
     DisabledLauncherTheme {
-        var test by remember { mutableStateOf(true) }
-        ListEntry(
-            title = "Title",
-            description = "Desc",
-            startContent = {
-                Checkbox(checked = false, onCheckedChange = null)
-            },
-            endContent = {
-                Switch(checked = test, onCheckedChange = null)
-            }
-        )
+        Column {
+            ToolbarComponent(title = "Preview")
+
+            var test by remember { mutableStateOf(true) }
+            ListEntry(
+                title = "Title",
+                description = "Desc",
+                startContent = {
+                    Checkbox(checked = false, onCheckedChange = null)
+                },
+                endContent = {
+                    Switch(checked = test, onCheckedChange = null)
+                }
+            )
+        }
     }
 }
 
 
 @Composable
-fun ToolbarComponent(modifier: Modifier = Modifier, showSettings: Boolean = true) {
+fun ToolbarComponent(modifier: Modifier = Modifier, title: String, showSettings: Boolean = true) {
     val context = LocalContext.current
 
     TopAppBar(
         modifier = modifier,
-        title = { Text(text = stringResource(id = R.string.app_name)) },
+        title = { Text(text = title) },
         actions = {
             if (showSettings) {
                 IconButton(

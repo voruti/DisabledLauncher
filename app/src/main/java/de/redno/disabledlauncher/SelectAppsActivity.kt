@@ -62,10 +62,14 @@ class SelectAppsActivity : ComponentActivity() {
 
         fun launch(
             context: Context,
+            title: String?,
             selectablePackages: Collection<String>,
             resultLauncher: ActivityResultLauncher<Intent>
         ) {
             Intent(context, SelectAppsActivity::class.java).apply {
+                title?.let {
+                    putExtra("title", it)
+                }
                 putStringArrayListExtra("selectable_packages", ArrayList(selectablePackages))
             }.also {
                 resultLauncher.launch(it)
@@ -76,6 +80,8 @@ class SelectAppsActivity : ComponentActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
 
+        val title = intent.getStringExtra("title")
+            ?: getString(R.string.app_name)
         val selectablePackages = intent.getStringArrayListExtra("selectable_packages")
             ?.map { AppService.getDetailsForPackage(this, it) }
             ?: emptyList()
@@ -86,7 +92,7 @@ class SelectAppsActivity : ComponentActivity() {
                 Surface(modifier = Modifier.fillMaxSize(), color = MaterialTheme.colors.background) {
                     val selectedPackageList = remember { mutableStateListOf<String>() }
                     Scaffold(
-                        topBar = { ToolbarComponent(showSettings = false) },
+                        topBar = { ToolbarComponent(title = title, showSettings = false) },
                         floatingActionButton = {
                             FloatingActionButton(onClick = {
                                 Thread {
@@ -150,7 +156,7 @@ fun SelectAppsPreview() {
         )
         val selectedPackageList = remember { mutableStateListOf<String>() }
         Scaffold(
-            topBar = { ToolbarComponent(showSettings = false) },
+            topBar = { ToolbarComponent(title = "Preview", showSettings = false) },
             floatingActionButton = {
                 FloatingActionButton(onClick = {}) {
                     Icon(Icons.Default.Check, contentDescription = null)

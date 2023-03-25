@@ -57,7 +57,7 @@ class MainActivity : ComponentActivity() { // TODO: faster startup somehow?
                 // A surface container using the 'background' color from the theme
                 Surface(modifier = Modifier.fillMaxSize(), color = MaterialTheme.colors.background) {
                     Scaffold(
-                        topBar = { ToolbarComponent() },
+                        topBar = { ToolbarComponent(title = stringResource(id = R.string.app_name)) },
                         floatingActionButton = {
                             FloatingActionButton(onClick = {
                                 Thread {
@@ -216,7 +216,7 @@ fun AppList(packageNameList: List<String>, modifier: Modifier = Modifier) {
 fun DefaultPreview() {
     DisabledLauncherTheme {
         Scaffold(
-            topBar = { ToolbarComponent() },
+            topBar = { ToolbarComponent(title = stringResource(id = R.string.app_name)) },
             floatingActionButton = {
                 FloatingActionButton(onClick = {}) {
                     Icon(Icons.Default.AppBlocking, contentDescription = null)

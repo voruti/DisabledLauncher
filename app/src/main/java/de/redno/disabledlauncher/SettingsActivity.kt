@@ -43,7 +43,7 @@ class SettingsActivity : ComponentActivity() {
                 // A surface container using the 'background' color from the theme
                 Surface(modifier = Modifier.fillMaxSize(), color = MaterialTheme.colors.background) {
                     Scaffold(
-                        topBar = { ToolbarComponent(showSettings = false) },
+                        topBar = { ToolbarComponent(title = stringResource(R.string.settings), showSettings = false) },
                         content = {
                             SettingsList(Modifier.padding(it))
                         }
@@ -95,7 +95,7 @@ class SettingsActivity : ComponentActivity() {
 fun SettingsPreview() {
     DisabledLauncherTheme {
         Scaffold(
-            topBar = { ToolbarComponent(showSettings = false) },
+            topBar = { ToolbarComponent(title = stringResource(R.string.settings), showSettings = false) },
             content = {
                 SettingsList(Modifier.padding(it))
             }
@@ -126,16 +126,17 @@ fun SettingsList(modifier: Modifier = Modifier) {
             }
         )
 
+        val addAppsTitle = stringResource(R.string.add_apps_title)
         ListEntry(
             icon = { Icon(Icons.Default.AppRegistration, stringResource(R.string.apps_edit_icon)) },
-            title = stringResource(R.string.add_apps_title),
+            title = addAppsTitle,
             description = stringResource(R.string.add_apps_description),
             modifier = Modifier.clickable {
                 val addableApps = AppService.getInstalledPackages(context)
                     .subtract(Datasource.loadAppList(context).toSet())
 
                 SettingsActivity.lastObject?.addAppsResultLauncher?.let {
-                    SelectAppsActivity.launch(context, addableApps, it)
+                    SelectAppsActivity.launch(context, addAppsTitle, addableApps, it)
                 }
             }
         )
@@ -184,9 +185,10 @@ fun SettingsList(modifier: Modifier = Modifier) {
 
         Divider()
 
+        val disableAppsOnceTitle = stringResource(R.string.disable_apps_once_title)
         ListEntry( // TODO: move into navigation drawer
             icon = { Icon(Icons.Default.Block, stringResource(R.string.disable_apps_once_icon)) },
-            title = stringResource(R.string.disable_apps_once_title),
+            title = disableAppsOnceTitle,
             description = stringResource(R.string.disable_apps_once_description),
             modifier = Modifier.clickable {
                 val enabledApps = AppService.getInstalledPackages(context) {
@@ -194,7 +196,7 @@ fun SettingsList(modifier: Modifier = Modifier) {
                 }
 
                 SettingsActivity.lastObject?.disableAppsOnceResultLauncher?.let {
-                    SelectAppsActivity.launch(context, enabledApps, it)
+                    SelectAppsActivity.launch(context, disableAppsOnceTitle, enabledApps, it)
                 }
             }
         )
