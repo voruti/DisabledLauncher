@@ -31,6 +31,10 @@ import androidx.core.content.pm.ShortcutInfoCompat
 import androidx.core.content.pm.ShortcutManagerCompat.isRequestPinShortcutSupported
 import androidx.core.content.pm.ShortcutManagerCompat.requestPinShortcut
 import androidx.core.graphics.drawable.IconCompat
+import androidx.navigation.NavHostController
+import androidx.navigation.compose.NavHost
+import androidx.navigation.compose.composable
+import androidx.navigation.compose.rememberNavController
 import de.redno.disabledlauncher.common.AndroidUtil
 import de.redno.disabledlauncher.model.*
 import de.redno.disabledlauncher.model.exception.*
@@ -77,7 +81,7 @@ class MainActivity : ComponentActivity() { // TODO: faster startup somehow?
                             }
                         },
                         content = {
-                            AppList(Datasource.loadAppList(this), Modifier.padding(it))
+                            DisabledLauncherNavHost(Modifier.padding(it))
                         }
                     )
                 }
@@ -86,6 +90,25 @@ class MainActivity : ComponentActivity() { // TODO: faster startup somehow?
     }
 }
 
+
+@Composable
+fun DisabledLauncherNavHost(
+    modifier: Modifier = Modifier,
+    navController: NavHostController = rememberNavController(),
+    startDestination: String = "directlauncher"
+) {
+    val context = LocalContext.current
+
+    NavHost(
+        modifier = modifier,
+        navController = navController,
+        startDestination = startDestination
+    ) {
+        composable("directlauncher") {
+            AppList(Datasource.loadAppList(context))
+        }
+    }
+}
 
 @OptIn(ExperimentalFoundationApi::class)
 @Composable

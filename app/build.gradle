@@ -49,6 +49,7 @@ android {
 
 dependencies {
     def shizuku_version = "13.1.0"
+    def nav_version = "2.5.3"
 
     implementation 'androidx.core:core-ktx:1.7.0'
     implementation 'androidx.lifecycle:lifecycle-runtime-ktx:2.3.1'
@@ -57,6 +58,7 @@ dependencies {
     implementation "androidx.compose.ui:ui-tooling-preview:$compose_ui_version"
     implementation "androidx.compose.material:material:$compose_ui_version"
     implementation "androidx.compose.material:material-icons-extended:$compose_ui_version"
+    implementation "androidx.navigation:navigation-compose:$nav_version"
     implementation "dev.rikka.shizuku:api:$shizuku_version"
     implementation "dev.rikka.shizuku:provider:$shizuku_version"
     implementation "com.fasterxml.jackson.module:jackson-module-kotlin:2.14.2"
