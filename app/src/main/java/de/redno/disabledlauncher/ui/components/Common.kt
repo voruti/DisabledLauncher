@@ -30,7 +30,7 @@ fun DefaultPreview() {
             ToolbarComponent(title = "Preview")
 
             var test by remember { mutableStateOf(true) }
-            ListEntry(
+            ListItem(
                 title = "Title",
                 description = "Desc",
                 startContent = {
@@ -64,7 +64,7 @@ fun ToolbarComponent(modifier: Modifier = Modifier, title: String, showSettings:
 }
 
 @Composable
-fun ListEntry(
+fun ListItem(
     title: String,
     description: String,
     modifier: Modifier = Modifier,

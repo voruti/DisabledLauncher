@@ -24,10 +24,10 @@ import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.semantics.Role
 import androidx.compose.ui.tooling.preview.Preview
 import de.redno.disabledlauncher.common.AndroidUtil
-import de.redno.disabledlauncher.ui.components.ListEntry
-import de.redno.disabledlauncher.ui.components.ToolbarComponent
 import de.redno.disabledlauncher.service.AppService
 import de.redno.disabledlauncher.service.Datasource
+import de.redno.disabledlauncher.ui.components.ListItem
+import de.redno.disabledlauncher.ui.components.ToolbarComponent
 import de.redno.disabledlauncher.ui.theme.DisabledLauncherTheme
 
 class SettingsActivity : ComponentActivity() {
@@ -111,7 +111,7 @@ fun SettingsList(modifier: Modifier = Modifier) {
     Column(modifier = modifier.verticalScroll(rememberScrollState())) {
         val currentUri = sharedPreferences.getString("launchableAppsFile", null)
             ?: stringResource(R.string.launchable_apps_file_description)
-        ListEntry(
+        ListItem(
             icon = { Icon(Icons.Default.Description, stringResource(R.string.file_icon)) },
             title = stringResource(R.string.launchable_apps_file_title),
             description = currentUri,
@@ -127,7 +127,7 @@ fun SettingsList(modifier: Modifier = Modifier) {
         )
 
         val addAppsTitle = stringResource(R.string.add_apps_title)
-        ListEntry(
+        ListItem(
             icon = { Icon(Icons.Default.AppRegistration, stringResource(R.string.apps_edit_icon)) },
             title = addAppsTitle,
             description = stringResource(R.string.add_apps_description),
@@ -145,7 +145,7 @@ fun SettingsList(modifier: Modifier = Modifier) {
 
         val initialFallbackToGooglePlay = sharedPreferences.getBoolean("fallbackToGooglePlay", false)
         var fallbackToGooglePlay by remember { mutableStateOf(initialFallbackToGooglePlay) }
-        ListEntry(
+        ListItem(
             icon = { Icon(Icons.Default.Shop, stringResource(R.string.store_icon)) },
             title = stringResource(R.string.fallback_googleplay_title),
             description = stringResource(R.string.fallback_googleplay_description),
@@ -165,7 +165,7 @@ fun SettingsList(modifier: Modifier = Modifier) {
 
         val initialSortAppsByUsage = sharedPreferences.getBoolean("sortAppsByUsage", false)
         var sortAppsByUsage by remember { mutableStateOf(initialSortAppsByUsage) }
-        ListEntry(
+        ListItem(
             icon = { Icon(Icons.Default.Sort, stringResource(R.string.sort_icon)) },
             title = stringResource(R.string.sort_by_usage_title),
             description = stringResource(R.string.sort_by_usage_description),
@@ -186,7 +186,7 @@ fun SettingsList(modifier: Modifier = Modifier) {
         Divider()
 
         val disableAppsOnceTitle = stringResource(R.string.disable_apps_once_title)
-        ListEntry( // TODO: move into navigation drawer
+        ListItem( // TODO: move into navigation drawer
             icon = { Icon(Icons.Default.Block, stringResource(R.string.disable_apps_once_icon)) },
             title = disableAppsOnceTitle,
             description = stringResource(R.string.disable_apps_once_description),

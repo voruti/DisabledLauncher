@@ -31,10 +31,10 @@ import androidx.compose.ui.semantics.Role
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.core.graphics.drawable.toBitmap
 import de.redno.disabledlauncher.common.AndroidUtil
-import de.redno.disabledlauncher.ui.components.ListEntry
-import de.redno.disabledlauncher.ui.components.ToolbarComponent
 import de.redno.disabledlauncher.model.App
 import de.redno.disabledlauncher.service.AppService
+import de.redno.disabledlauncher.ui.components.ListItem
+import de.redno.disabledlauncher.ui.components.ToolbarComponent
 import de.redno.disabledlauncher.ui.theme.DisabledLauncherTheme
 
 class SelectAppsActivity : ComponentActivity() {
@@ -179,7 +179,7 @@ fun SelectableAppEntry( // TODO: merge with other AppEntry
     selectedPackageList: SnapshotStateList<String>,
     modifier: Modifier = Modifier
 ) {
-    ListEntry(
+    ListItem(
         icon = {
             Image(
                 app.icon.asImageBitmap(),

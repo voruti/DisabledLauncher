@@ -32,12 +32,12 @@ import androidx.core.content.pm.ShortcutManagerCompat.isRequestPinShortcutSuppor
 import androidx.core.content.pm.ShortcutManagerCompat.requestPinShortcut
 import androidx.core.graphics.drawable.IconCompat
 import de.redno.disabledlauncher.common.AndroidUtil
-import de.redno.disabledlauncher.ui.components.ListEntry
-import de.redno.disabledlauncher.ui.components.ToolbarComponent
 import de.redno.disabledlauncher.model.*
 import de.redno.disabledlauncher.model.exception.*
 import de.redno.disabledlauncher.service.AppService
 import de.redno.disabledlauncher.service.Datasource
+import de.redno.disabledlauncher.ui.components.ListItem
+import de.redno.disabledlauncher.ui.components.ToolbarComponent
 import de.redno.disabledlauncher.ui.theme.DisabledLauncherTheme
 
 class MainActivity : ComponentActivity() { // TODO: faster startup somehow?
@@ -94,7 +94,7 @@ fun AppEntry(app: App, modifier: Modifier = Modifier) {
     val sharedPreferences = context.getSharedPreferences(context.packageName, Context.MODE_PRIVATE)
 
     var dropdownExpanded by remember { mutableStateOf(false) }
-    ListEntry(
+    ListItem(
         icon = {
             Image(
                 app.icon.asImageBitmap(),
