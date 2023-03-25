@@ -16,7 +16,7 @@ import de.redno.disabledlauncher.model.exception.RedirectedToGooglePlayException
 object AppService {
     fun getInstalledPackages(
         context: Context,
-        packageInfoFilter: (packageInfo: PackageInfo) -> Boolean = { true }
+        packageInfoFilter: (PackageInfo) -> Boolean = { true }
     ): List<String> {
         val packageManager = context.packageManager
 

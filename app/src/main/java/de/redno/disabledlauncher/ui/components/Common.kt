@@ -68,7 +68,7 @@ fun ListItem(
     title: String,
     description: String,
     modifier: Modifier = Modifier,
-    icon: (@Composable (() -> Unit))? = null,
+    icon: @Composable BoxScope.() -> Unit = {},
     startContent: (@Composable (() -> Unit))? = null,
     endContent: (@Composable (() -> Unit))? = null,
     contextContent: (@Composable (() -> Unit))? = null,
@@ -93,12 +93,9 @@ fun ListItem(
             Box(
                 modifier = Modifier.size(64.dp)
                     .padding(PaddingValues(end = 16.dp)),
-                contentAlignment = Alignment.Center
-            ) {
-                icon?.let {
-                    icon()
-                }
-            }
+                contentAlignment = Alignment.Center,
+                content = icon
+            )
             Column(modifier = Modifier.weight(1F)) {
                 val titleStyle = MaterialTheme.typography.h6.merge(
                     if (disabledStyle)
