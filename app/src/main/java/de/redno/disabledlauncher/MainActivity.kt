@@ -205,7 +205,8 @@ fun AppList(packageNameList: List<String>, modifier: Modifier = Modifier) {
 
                     searchTerms.all { searchReference.contains(it) }
                 }
-                .sortedBy { !it.isInstalled }
+                .sortedBy { !it.isInstalled },
+                key = App::packageName
             ) { AppEntry(it) }
         }
     }
