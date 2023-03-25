@@ -42,4 +42,5 @@
     <string name="enable_apps_once_title">Apps einmalig aktivieren</string>
     <string name="enable_apps_once_icon">Haken Icon</string>
     <string name="enable_apps_once_description">Aktiviere ausgewählte Apps einmalig/sofort</string>
+    <string name="enabled_app">%s aktiviert</string>
 </resources>

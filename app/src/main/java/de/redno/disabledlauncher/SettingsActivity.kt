@@ -86,7 +86,7 @@ class SettingsActivity : ComponentActivity() {
         { it.map { AppService.getDetailsForPackage(this, it) } }) {
         try {
             it.forEach {
-                AppService.disableApp(this, it)
+                AppService.disableApp(this, it, true)
             }
         } catch (e: DisabledLauncherException) {
             e.getLocalizedMessage(this)?.let {
@@ -95,10 +95,11 @@ class SettingsActivity : ComponentActivity() {
         }
     }
 
-    val enableAppsOnceResultLauncher = SelectAppsActivity.registerCallback(this) {
+    val enableAppsOnceResultLauncher = SelectAppsActivity.registerCallback(this,
+        { it.map { AppService.getDetailsForPackage(this, it) } }) {
         try {
             it.forEach {
-                AppService.enableApp(this, it)
+                AppService.enableApp(this, it, true)
             }
         } catch (e: DisabledLauncherException) {
             e.getLocalizedMessage(this)?.let {

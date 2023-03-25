@@ -22,7 +22,7 @@ object AppService {
 
         return packageManager.getInstalledPackages(PackageManager.GET_META_DATA)
             .filter(packageInfoFilter)
-            .map { it.packageName }
+            .map(PackageInfo::packageName)
     }
 
     fun getDetailsForPackage(context: Context, packageName: String): App {
@@ -53,16 +53,24 @@ object AppService {
     }
 
     @Throws(DisabledLauncherException::class)
-    fun enableApp(context: Context, packageName: String) {
+    fun enableApp(context: Context, app: App, showToast: Boolean = false) {
         try {
-            AdbService.executeAdbCommand("pm enable $packageName")
+            AdbService.executeAdbCommand("pm enable ${app.packageName}")
+
+            if (showToast) {
+                AndroidUtil.asyncToastMakeText(
+                    context,
+                    String.format(context.getString(R.string.enabled_app), app.name),
+                    Toast.LENGTH_SHORT
+                )
+            }
         } catch (e: DisabledLauncherException) {
             val sharedPreferences = context.getSharedPreferences(context.packageName, Context.MODE_PRIVATE)
             val fallbackToGooglePlay = sharedPreferences.getBoolean("fallbackToGooglePlay", false)
 
             if (fallbackToGooglePlay) {
                 val intent = Intent(Intent.ACTION_VIEW).apply {
-                    data = Uri.parse("https://play.google.com/store/apps/details?id=$packageName")
+                    data = Uri.parse("https://play.google.com/store/apps/details?id=${app.packageName}")
                 }
                 context.startActivity(intent)
                 throw RedirectedToGooglePlayException(e)
@@ -89,29 +97,31 @@ object AppService {
     }
 
     @Throws(DisabledLauncherException::class)
-    fun disableApp(context: Context, app: App) {
+    fun disableApp(context: Context, app: App, showToast: Boolean = true) {
         AdbService.executeAdbCommand("pm disable-user --user 0 ${app.packageName}")
 
-        AndroidUtil.asyncToastMakeText(
-            context,
-            String.format(context.getString(R.string.disabled_app), app.name),
-            Toast.LENGTH_SHORT
-        )
+        if (showToast) {
+            AndroidUtil.asyncToastMakeText(
+                context,
+                String.format(context.getString(R.string.disabled_app), app.name),
+                Toast.LENGTH_SHORT
+            )
+        }
     }
 
     @Throws(DisabledLauncherException::class)
     fun openAppLogic(context: Context, app: App) {
         if (!app.isEnabled) {
-            enableApp(context, app.packageName)
+            enableApp(context, app)
         }
 
-        startApp(context, app.packageName)
+        startApp(context, app)
     }
 
     @Throws(DisabledLauncherException::class)
-    fun startApp(context: Context, packageName: String) {
+    fun startApp(context: Context, app: App) {
         try {
-            val launchIntent = context.packageManager.getLaunchIntentForPackage(packageName)
+            val launchIntent = context.packageManager.getLaunchIntentForPackage(app.packageName)
                 ?.addFlags(Intent.FLAG_ACTIVITY_REORDER_TO_FRONT)
             context.startActivity(launchIntent)
         } catch (e: Exception) {

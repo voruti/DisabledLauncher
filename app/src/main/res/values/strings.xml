@@ -15,6 +15,7 @@
     <string name="app_not_found">App not found</string>
     <string name="nothing_to_disable">Nothing to disable</string>
     <string name="disabled_app">Disabled %s</string>
+    <string name="enabled_app">Enabled %s</string>
     <string name="process_failure">Process failure</string>
     <string name="cant_open_app">App can\'t be opened</string>
     <string name="app_icon">%s icon</string>
