@@ -24,6 +24,7 @@ import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.semantics.Role
 import androidx.compose.ui.tooling.preview.Preview
 import de.redno.disabledlauncher.common.AndroidUtil
+import de.redno.disabledlauncher.model.exception.DisabledLauncherException
 import de.redno.disabledlauncher.service.AppService
 import de.redno.disabledlauncher.service.Datasource
 import de.redno.disabledlauncher.ui.components.ListItem
@@ -83,8 +84,26 @@ class SettingsActivity : ComponentActivity() {
 
     val disableAppsOnceResultLauncher = SelectAppsActivity.registerCallback(this,
         { it.map { AppService.getDetailsForPackage(this, it) } }) {
-        it.forEach {
-            AppService.disableApp(this, it)
+        try {
+            it.forEach {
+                AppService.disableApp(this, it)
+            }
+        } catch (e: DisabledLauncherException) {
+            e.getLocalizedMessage(this)?.let {
+                AndroidUtil.asyncToastMakeText(this, it, Toast.LENGTH_SHORT)
+            }
+        }
+    }
+
+    val enableAppsOnceResultLauncher = SelectAppsActivity.registerCallback(this) {
+        try {
+            it.forEach {
+                AppService.enableApp(this, it)
+            }
+        } catch (e: DisabledLauncherException) {
+            e.getLocalizedMessage(this)?.let {
+                AndroidUtil.asyncToastMakeText(this, it, Toast.LENGTH_SHORT)
+            }
         }
     }
 }
@@ -197,6 +216,22 @@ fun SettingsList(modifier: Modifier = Modifier) {
 
                 SettingsActivity.lastObject?.disableAppsOnceResultLauncher?.let {
                     SelectAppsActivity.launch(context, disableAppsOnceTitle, enabledApps, it)
+                }
+            }
+        )
+
+        val enableAppsOnceTitle = stringResource(R.string.enable_apps_once_title)
+        ListItem( // TODO: move into navigation drawer
+            icon = { Icon(Icons.Default.Check, stringResource(R.string.enable_apps_once_icon)) },
+            title = enableAppsOnceTitle,
+            description = stringResource(R.string.enable_apps_once_description),
+            modifier = Modifier.clickable {
+                val disabledApps = AppService.getInstalledPackages(context) {
+                    !it.applicationInfo.enabled
+                }
+
+                SettingsActivity.lastObject?.enableAppsOnceResultLauncher?.let {
+                    SelectAppsActivity.launch(context, enableAppsOnceTitle, disabledApps, it)
                 }
             }
         )

@@ -39,4 +39,7 @@
     <string name="disable_apps_once_icon">Block icon</string>
     <string name="disable_apps_once_title">Disable apps once</string>
     <string name="disable_apps_once_description">Disable selected apps once/now</string>
+    <string name="enable_apps_once_title">Enable apps once</string>
+    <string name="enable_apps_once_icon">Check icon</string>
+    <string name="enable_apps_once_description">Enable selected apps once/now</string>
 </resources>
