@@ -1,4 +1,4 @@
-package de.redno.disabledlauncher.common
+package de.redno.disabledlauncher.ui.components
 
 import android.content.Intent
 import androidx.compose.foundation.background

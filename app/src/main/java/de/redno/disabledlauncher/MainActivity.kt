@@ -32,8 +32,8 @@ import androidx.core.content.pm.ShortcutManagerCompat.isRequestPinShortcutSuppor
 import androidx.core.content.pm.ShortcutManagerCompat.requestPinShortcut
 import androidx.core.graphics.drawable.IconCompat
 import de.redno.disabledlauncher.common.AndroidUtil
-import de.redno.disabledlauncher.common.ListEntry
-import de.redno.disabledlauncher.common.ToolbarComponent
+import de.redno.disabledlauncher.ui.components.ListEntry
+import de.redno.disabledlauncher.ui.components.ToolbarComponent
 import de.redno.disabledlauncher.model.*
 import de.redno.disabledlauncher.model.exception.*
 import de.redno.disabledlauncher.service.AppService
