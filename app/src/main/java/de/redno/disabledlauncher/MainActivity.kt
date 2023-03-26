@@ -6,6 +6,7 @@ import android.os.Bundle
 import android.widget.Toast
 import androidx.activity.ComponentActivity
 import androidx.activity.compose.setContent
+import androidx.activity.result.contract.ActivityResultContracts
 import androidx.compose.foundation.ExperimentalFoundationApi
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.combinedClickable
@@ -38,6 +39,7 @@ import de.redno.disabledlauncher.model.exception.*
 import de.redno.disabledlauncher.service.AppService
 import de.redno.disabledlauncher.service.Datasource
 import de.redno.disabledlauncher.ui.components.ListItem
+import de.redno.disabledlauncher.ui.components.SettingsList
 import de.redno.disabledlauncher.ui.components.ToolbarComponent
 import de.redno.disabledlauncher.ui.theme.DisabledLauncherTheme
 
@@ -55,7 +57,6 @@ class MainActivity : ComponentActivity() { // TODO: faster startup somehow?
         lastObject = this
         setContent {
             DisabledLauncherTheme {
-                // A surface container using the 'background' color from the theme
                 Surface(
                     modifier = Modifier.fillMaxSize(),
                     color = MaterialTheme.colors.background
@@ -65,14 +66,71 @@ class MainActivity : ComponentActivity() { // TODO: faster startup somehow?
             }
         }
     }
+
+    val pickLaunchableAppsFileResultLauncher =
+        registerForActivityResult(ActivityResultContracts.StartActivityForResult()) {
+            if (it.resultCode == RESULT_OK) { // TODO: move into function like SelectAppsActivity.registerCallback
+                it.data?.data?.let {
+                    contentResolver.takePersistableUriPermission(
+                        it,
+                        Intent.FLAG_GRANT_READ_URI_PERMISSION or
+                                Intent.FLAG_GRANT_WRITE_URI_PERMISSION
+                    )
+
+                    getSharedPreferences(packageName, Context.MODE_PRIVATE)
+                        .edit()
+                        .putString("launchableAppsFile", it.toString())
+                        .apply()
+                }
+            }
+        }
+
+    val addAppsResultLauncher = SelectAppsActivity.registerCallback(this) {
+        if (!Datasource.addPackages(this, it)) {
+            AndroidUtil.asyncToastMakeText(
+                this,
+                this.getString(R.string.failed_adding_apps),
+                Toast.LENGTH_SHORT
+            )
+        }
+    }
+
+    val disableAppsOnceResultLauncher = SelectAppsActivity.registerCallback(this,
+        { it.map { AppService.getDetailsForPackage(this, it) } }) {
+        try {
+            it.forEach {
+                AppService.disableApp(this, it, true)
+            }
+        } catch (e: DisabledLauncherException) {
+            e.getLocalizedMessage(this)?.let {
+                AndroidUtil.asyncToastMakeText(this, it, Toast.LENGTH_SHORT)
+            }
+        }
+    }
+
+    val enableAppsOnceResultLauncher = SelectAppsActivity.registerCallback(this,
+        { it.map { AppService.getDetailsForPackage(this, it) } }) {
+        try {
+            it.forEach {
+                AppService.enableApp(this, it, true)
+            }
+        } catch (e: DisabledLauncherException) {
+            e.getLocalizedMessage(this)?.let {
+                AndroidUtil.asyncToastMakeText(this, it, Toast.LENGTH_SHORT)
+            }
+        }
+    }
 }
 
+
+const val ROUTE_DIRECT_LAUNCHER = "directlauncher"
+const val ROUTE_SETTINGS = "settings"
 
 @Composable
 fun DisabledLauncherNavHost(
     modifier: Modifier = Modifier,
     navController: NavHostController = rememberNavController(),
-    startDestination: String = "directlauncher"
+    startDestination: String = ROUTE_DIRECT_LAUNCHER
 ) {
     val context = LocalContext.current
 
@@ -81,9 +139,14 @@ fun DisabledLauncherNavHost(
         navController = navController,
         startDestination = startDestination
     ) {
-        composable("directlauncher") {
+        composable(ROUTE_DIRECT_LAUNCHER) {
             Scaffold(
-                topBar = { ToolbarComponent(title = stringResource(id = R.string.app_name)) },
+                topBar = {
+                    ToolbarComponent(
+                        title = stringResource(id = R.string.app_name),
+                        onSettingsClick = { navController.navigate(ROUTE_SETTINGS) }
+                    )
+                },
                 floatingActionButton = {
                     FloatingActionButton(onClick = Thread {
                         try {
@@ -102,6 +165,13 @@ fun DisabledLauncherNavHost(
                 }
             ) {
                 AppList(Datasource.loadAppList(context), Modifier.padding(it))
+            }
+        }
+        composable(ROUTE_SETTINGS) {
+            Scaffold(
+                topBar = { ToolbarComponent(title = stringResource(R.string.settings)) }
+            ) {
+                SettingsList(Modifier.padding(it))
             }
         }
     }
@@ -243,7 +313,7 @@ fun AppList(packageNameList: List<String>, modifier: Modifier = Modifier) {
 fun DefaultPreview() {
     DisabledLauncherTheme {
         Scaffold(
-            topBar = { ToolbarComponent(title = stringResource(id = R.string.app_name)) },
+            topBar = { ToolbarComponent(title = stringResource(id = R.string.app_name), onSettingsClick = {}) },
             floatingActionButton = {
                 FloatingActionButton(onClick = {}) {
                     Icon(Icons.Default.AppBlocking, contentDescription = null)

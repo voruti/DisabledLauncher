@@ -1,20 +1,17 @@
-package de.redno.disabledlauncher
+package de.redno.disabledlauncher.ui.components
 
 import android.content.Context
 import android.content.Intent
-import android.os.Bundle
-import android.widget.Toast
-import androidx.activity.ComponentActivity
-import androidx.activity.compose.setContent
-import androidx.activity.result.contract.ActivityResultContracts
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Column
-import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.selection.toggleable
 import androidx.compose.foundation.verticalScroll
-import androidx.compose.material.*
+import androidx.compose.material.Divider
+import androidx.compose.material.Icon
+import androidx.compose.material.Scaffold
+import androidx.compose.material.Switch
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.*
 import androidx.compose.runtime.*
@@ -23,105 +20,26 @@ import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.semantics.Role
 import androidx.compose.ui.tooling.preview.Preview
-import de.redno.disabledlauncher.common.AndroidUtil
-import de.redno.disabledlauncher.model.exception.DisabledLauncherException
+import de.redno.disabledlauncher.MainActivity
+import de.redno.disabledlauncher.R
+import de.redno.disabledlauncher.SelectAppsActivity
 import de.redno.disabledlauncher.service.AppService
 import de.redno.disabledlauncher.service.Datasource
-import de.redno.disabledlauncher.ui.components.ListItem
-import de.redno.disabledlauncher.ui.components.ToolbarComponent
 import de.redno.disabledlauncher.ui.theme.DisabledLauncherTheme
-
-class SettingsActivity : ComponentActivity() {
-    companion object {
-        var lastObject: SettingsActivity? = null
-    }
-
-    override fun onCreate(savedInstanceState: Bundle?) {
-        super.onCreate(savedInstanceState)
-        lastObject = this
-        setContent {
-            DisabledLauncherTheme {
-                // A surface container using the 'background' color from the theme
-                Surface(modifier = Modifier.fillMaxSize(), color = MaterialTheme.colors.background) {
-                    Scaffold(
-                        topBar = { ToolbarComponent(title = stringResource(R.string.settings), showSettings = false) },
-                        content = {
-                            SettingsList(Modifier.padding(it))
-                        }
-                    )
-                }
-            }
-        }
-    }
-
-    val pickLaunchableAppsFileResultLauncher =
-        registerForActivityResult(ActivityResultContracts.StartActivityForResult()) {
-            if (it.resultCode == RESULT_OK) { // TODO: move into function like SelectAppsActivity.registerCallback
-                it.data?.data?.let {
-                    contentResolver.takePersistableUriPermission(
-                        it,
-                        Intent.FLAG_GRANT_READ_URI_PERMISSION or
-                                Intent.FLAG_GRANT_WRITE_URI_PERMISSION
-                    )
-
-                    getSharedPreferences(packageName, Context.MODE_PRIVATE)
-                        .edit()
-                        .putString("launchableAppsFile", it.toString())
-                        .apply()
-                }
-            }
-        }
-
-    val addAppsResultLauncher = SelectAppsActivity.registerCallback(this) {
-        if (!Datasource.addPackages(this, it)) {
-            AndroidUtil.asyncToastMakeText(
-                this,
-                getString(R.string.failed_adding_apps),
-                Toast.LENGTH_SHORT
-            )
-        }
-    }
-
-    val disableAppsOnceResultLauncher = SelectAppsActivity.registerCallback(this,
-        { it.map { AppService.getDetailsForPackage(this, it) } }) {
-        try {
-            it.forEach {
-                AppService.disableApp(this, it, true)
-            }
-        } catch (e: DisabledLauncherException) {
-            e.getLocalizedMessage(this)?.let {
-                AndroidUtil.asyncToastMakeText(this, it, Toast.LENGTH_SHORT)
-            }
-        }
-    }
-
-    val enableAppsOnceResultLauncher = SelectAppsActivity.registerCallback(this,
-        { it.map { AppService.getDetailsForPackage(this, it) } }) {
-        try {
-            it.forEach {
-                AppService.enableApp(this, it, true)
-            }
-        } catch (e: DisabledLauncherException) {
-            e.getLocalizedMessage(this)?.let {
-                AndroidUtil.asyncToastMakeText(this, it, Toast.LENGTH_SHORT)
-            }
-        }
-    }
-}
-
 
 @Preview(showBackground = true, showSystemUi = true)
 @Composable
 fun SettingsPreview() {
     DisabledLauncherTheme {
         Scaffold(
-            topBar = { ToolbarComponent(title = stringResource(R.string.settings), showSettings = false) },
+            topBar = { ToolbarComponent(title = stringResource(R.string.settings)) },
             content = {
                 SettingsList(Modifier.padding(it))
             }
         )
     }
 }
+
 
 @Composable
 fun SettingsList(modifier: Modifier = Modifier) {
@@ -142,7 +60,7 @@ fun SettingsList(modifier: Modifier = Modifier) {
                     type = "application/json"
                 }
 
-                SettingsActivity.lastObject?.pickLaunchableAppsFileResultLauncher?.launch(intent)
+                MainActivity.lastObject?.pickLaunchableAppsFileResultLauncher?.launch(intent)
             }
         )
 
@@ -155,7 +73,7 @@ fun SettingsList(modifier: Modifier = Modifier) {
                 val addableApps = AppService.getInstalledPackages(context)
                     .subtract(Datasource.loadAppList(context).toSet())
 
-                SettingsActivity.lastObject?.addAppsResultLauncher?.let {
+                MainActivity.lastObject?.addAppsResultLauncher?.let {
                     SelectAppsActivity.launch(context, addAppsTitle, addableApps, it)
                 }
             }
@@ -215,7 +133,7 @@ fun SettingsList(modifier: Modifier = Modifier) {
                     it.applicationInfo.enabled
                 }
 
-                SettingsActivity.lastObject?.disableAppsOnceResultLauncher?.let {
+                MainActivity.lastObject?.disableAppsOnceResultLauncher?.let {
                     SelectAppsActivity.launch(context, disableAppsOnceTitle, enabledApps, it)
                 }
             }
@@ -231,7 +149,7 @@ fun SettingsList(modifier: Modifier = Modifier) {
                     !it.applicationInfo.enabled
                 }
 
-                SettingsActivity.lastObject?.enableAppsOnceResultLauncher?.let {
+                MainActivity.lastObject?.enableAppsOnceResultLauncher?.let {
                     SelectAppsActivity.launch(context, enableAppsOnceTitle, disabledApps, it)
                 }
             }
