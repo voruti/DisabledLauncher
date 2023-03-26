@@ -9,10 +9,7 @@ import androidx.activity.compose.setContent
 import androidx.compose.foundation.ExperimentalFoundationApi
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.combinedClickable
-import androidx.compose.foundation.layout.Column
-import androidx.compose.foundation.layout.fillMaxSize
-import androidx.compose.foundation.layout.fillMaxWidth
-import androidx.compose.foundation.layout.padding
+import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.items
 import androidx.compose.material.*
@@ -59,31 +56,11 @@ class MainActivity : ComponentActivity() { // TODO: faster startup somehow?
         setContent {
             DisabledLauncherTheme {
                 // A surface container using the 'background' color from the theme
-                Surface(modifier = Modifier.fillMaxSize(), color = MaterialTheme.colors.background) {
-                    Scaffold(
-                        topBar = { ToolbarComponent(title = stringResource(id = R.string.app_name)) },
-                        floatingActionButton = {
-                            FloatingActionButton(onClick = {
-                                Thread {
-                                    try {
-                                        AppService.disableAllApps(this)
-                                    } catch (e: DisabledLauncherException) {
-                                        e.getLocalizedMessage(this)?.let {
-                                            AndroidUtil.asyncToastMakeText(this, it, Toast.LENGTH_SHORT)
-                                        }
-                                    }
-                                }.start()
-                            }) {
-                                Icon(
-                                    Icons.Default.AppBlocking,
-                                    contentDescription = getString(R.string.disable_all_apps)
-                                )
-                            }
-                        },
-                        content = {
-                            DisabledLauncherNavHost(Modifier.padding(it))
-                        }
-                    )
+                Surface(
+                    modifier = Modifier.fillMaxSize(),
+                    color = MaterialTheme.colors.background
+                ) {
+                    DisabledLauncherNavHost()
                 }
             }
         }
@@ -105,7 +82,27 @@ fun DisabledLauncherNavHost(
         startDestination = startDestination
     ) {
         composable("directlauncher") {
-            AppList(Datasource.loadAppList(context))
+            Scaffold(
+                topBar = { ToolbarComponent(title = stringResource(id = R.string.app_name)) },
+                floatingActionButton = {
+                    FloatingActionButton(onClick = Thread {
+                        try {
+                            AppService.disableAllApps(context)
+                        } catch (e: DisabledLauncherException) {
+                            e.getLocalizedMessage(context)?.let {
+                                AndroidUtil.asyncToastMakeText(context, it, Toast.LENGTH_SHORT)
+                            }
+                        }
+                    }::start) {
+                        Icon(
+                            Icons.Default.AppBlocking,
+                            contentDescription = stringResource(R.string.disable_all_apps)
+                        )
+                    }
+                }
+            ) {
+                AppList(Datasource.loadAppList(context), Modifier.padding(it))
+            }
         }
     }
 }
