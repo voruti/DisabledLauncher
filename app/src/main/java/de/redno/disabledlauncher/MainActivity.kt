@@ -158,6 +158,12 @@ fun AppEntry(app: App, modifier: Modifier = Modifier) {
                 DropdownMenuItem(onClick = {
                     if (Datasource.removePackage(context, app.packageName)) {
                         dropdownExpanded = false
+
+                        AndroidUtil.asyncToastMakeText(
+                            context,
+                            String.format(context.getString(R.string.app_removed), app.name),
+                            Toast.LENGTH_SHORT
+                        )
                         // TODO: refresh app list (+ there are other actions/code locations that need to trigger a list refresh)
                     } else {
                         Toast.makeText(context, context.getString(R.string.couldnt_remove_app), Toast.LENGTH_LONG)
