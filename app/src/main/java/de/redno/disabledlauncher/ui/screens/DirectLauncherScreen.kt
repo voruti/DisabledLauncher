@@ -160,7 +160,7 @@ private fun AppEntry(app: App, modifier: Modifier = Modifier) {
                             if (sharedPreferences.getBoolean("sortAppsByUsage", false)) {
                                 Datasource.raisePackage(context, app.packageName)
                             }
-                            MainActivity.exit()
+                            MainActivity.lastObject?.finishAndRemoveTask()
                         } catch (e: DisabledLauncherException) {
                             e.getLocalizedMessage(context)?.let {
                                 AndroidUtil.asyncToastMakeText(context, it, Toast.LENGTH_SHORT)

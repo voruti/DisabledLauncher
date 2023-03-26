@@ -31,10 +31,6 @@ class MainActivity : ComponentActivity() { // TODO: faster startup somehow?
         const val ROUTE_SETTINGS = "settings"
 
         var lastObject: MainActivity? = null
-
-        fun exit() {
-            lastObject?.finishAndRemoveTask()
-        }
     }
 
     override fun onCreate(savedInstanceState: Bundle?) {
