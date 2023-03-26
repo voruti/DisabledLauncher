@@ -1,4 +1,4 @@
-package de.redno.disabledlauncher.ui.components
+package de.redno.disabledlauncher.ui.screens
 
 import android.content.Context
 import android.content.Intent
@@ -25,24 +25,31 @@ import de.redno.disabledlauncher.R
 import de.redno.disabledlauncher.SelectAppsActivity
 import de.redno.disabledlauncher.service.AppService
 import de.redno.disabledlauncher.service.Datasource
+import de.redno.disabledlauncher.ui.components.ListItem
+import de.redno.disabledlauncher.ui.components.ToolbarComponent
 import de.redno.disabledlauncher.ui.theme.DisabledLauncherTheme
 
 @Preview(showBackground = true, showSystemUi = true)
 @Composable
-fun SettingsPreview() {
+private fun SettingsPreview() {
     DisabledLauncherTheme {
-        Scaffold(
-            topBar = { ToolbarComponent(title = stringResource(R.string.settings)) },
-            content = {
-                SettingsList(Modifier.padding(it))
-            }
-        )
+        SettingsScreen()
     }
 }
 
 
 @Composable
-fun SettingsList(modifier: Modifier = Modifier) {
+fun SettingsScreen(modifier: Modifier = Modifier) {
+    Scaffold(
+        modifier = modifier,
+        topBar = { ToolbarComponent(title = stringResource(R.string.settings)) }
+    ) {
+        SettingsList(Modifier.padding(it))
+    }
+}
+
+@Composable
+private fun SettingsList(modifier: Modifier = Modifier) {
     val context = LocalContext.current
     val sharedPreferences = context.getSharedPreferences(context.packageName, Context.MODE_PRIVATE)
 

@@ -39,8 +39,8 @@ import de.redno.disabledlauncher.model.exception.*
 import de.redno.disabledlauncher.service.AppService
 import de.redno.disabledlauncher.service.Datasource
 import de.redno.disabledlauncher.ui.components.ListItem
-import de.redno.disabledlauncher.ui.components.SettingsList
 import de.redno.disabledlauncher.ui.components.ToolbarComponent
+import de.redno.disabledlauncher.ui.screens.SettingsScreen
 import de.redno.disabledlauncher.ui.theme.DisabledLauncherTheme
 
 class MainActivity : ComponentActivity() { // TODO: faster startup somehow?
@@ -168,11 +168,7 @@ fun DisabledLauncherNavHost(
             }
         }
         composable(ROUTE_SETTINGS) {
-            Scaffold(
-                topBar = { ToolbarComponent(title = stringResource(R.string.settings)) }
-            ) {
-                SettingsList(Modifier.padding(it))
-            }
+            SettingsScreen()
         }
     }
 }
