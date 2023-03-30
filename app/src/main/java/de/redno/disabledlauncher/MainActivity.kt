@@ -3,7 +3,6 @@ package de.redno.disabledlauncher
 import android.content.Context
 import android.content.Intent
 import android.os.Bundle
-import android.widget.Toast
 import androidx.activity.ComponentActivity
 import androidx.activity.compose.setContent
 import androidx.activity.result.contract.ActivityResultContracts
@@ -17,9 +16,6 @@ import androidx.navigation.NavHostController
 import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
 import androidx.navigation.compose.rememberNavController
-import de.redno.disabledlauncher.common.AndroidUtil
-import de.redno.disabledlauncher.model.exception.DisabledLauncherException
-import de.redno.disabledlauncher.service.AppService
 import de.redno.disabledlauncher.service.Datasource
 import de.redno.disabledlauncher.ui.screens.DirectLauncherScreen
 import de.redno.disabledlauncher.ui.screens.SettingsScreen
@@ -65,42 +61,6 @@ class MainActivity : ComponentActivity() { // TODO: faster startup somehow?
                 }
             }
         }
-
-    val addAppsResultLauncher = SelectAppsActivity.registerCallback(this) {
-        if (!Datasource.addPackages(this, it)) {
-            AndroidUtil.asyncToastMakeText(
-                this,
-                this.getString(R.string.failed_adding_apps),
-                Toast.LENGTH_SHORT
-            )
-        }
-    }
-
-    val disableAppsOnceResultLauncher = SelectAppsActivity.registerCallback(this,
-        { it.map { AppService.getDetailsForPackage(this, it) } }) {
-        try {
-            it.forEach {
-                AppService.disableApp(this, it, true)
-            }
-        } catch (e: DisabledLauncherException) {
-            e.getLocalizedMessage(this)?.let {
-                AndroidUtil.asyncToastMakeText(this, it, Toast.LENGTH_SHORT)
-            }
-        }
-    }
-
-    val enableAppsOnceResultLauncher = SelectAppsActivity.registerCallback(this,
-        { it.map { AppService.getDetailsForPackage(this, it) } }) {
-        try {
-            it.forEach {
-                AppService.enableApp(this, it, true)
-            }
-        } catch (e: DisabledLauncherException) {
-            e.getLocalizedMessage(this)?.let {
-                AndroidUtil.asyncToastMakeText(this, it, Toast.LENGTH_SHORT)
-            }
-        }
-    }
 }
 
 

@@ -16,6 +16,7 @@ import androidx.compose.ui.text.style.TextDecoration
 import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
+import androidx.compose.ui.window.Dialog
 import de.redno.disabledlauncher.R
 import de.redno.disabledlauncher.ui.theme.DisabledLauncherTheme
 
@@ -125,5 +126,18 @@ fun ListItem(
         contextContent?.let {
             contextContent()
         }
+    }
+}
+
+@Composable
+fun ConditionalDialog(
+    showDialog: MutableState<Boolean>,
+    content: @Composable () -> Unit
+) {
+    if (showDialog.value) { // TODO: loading animation
+        Dialog(
+            onDismissRequest = { showDialog.value = false },
+            content = content
+        )
     }
 }
