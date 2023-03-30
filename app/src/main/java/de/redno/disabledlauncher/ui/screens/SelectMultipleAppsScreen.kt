@@ -21,6 +21,7 @@ import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.semantics.Role
 import androidx.compose.ui.tooling.preview.Preview
+import androidx.core.graphics.drawable.toBitmap
 import de.redno.disabledlauncher.R
 import de.redno.disabledlauncher.common.AndroidUtil
 import de.redno.disabledlauncher.model.App
@@ -31,11 +32,23 @@ import de.redno.disabledlauncher.ui.theme.DisabledLauncherTheme
 @Preview(showBackground = true, showSystemUi = true)
 @Composable
 private fun SelectMultipleAppsPreview() {
+    val context = LocalContext.current
+
     DisabledLauncherTheme {
         SelectMultipleAppsScreen(
-            "Preview",
-            emptyList(),
-            {}
+            title = "Preview",
+            selectableApps = listOf(
+                App(
+                    name = "P1",
+                    packageName = "test.p1",
+                    isEnabled = true,
+                    isInstalled = true,
+                    icon = context.getDrawable(R.drawable.ic_launcher_background)!!
+                        .toBitmap()
+                )
+            ),
+            onConfirmSelection = {},
+            onBackNavigation = {}
         )
     }
 }
@@ -46,6 +59,7 @@ fun SelectMultipleAppsScreen( // TODO: alternatively as (smaller) dialog?
     title: String,
     selectableApps: List<App>,
     onConfirmSelection: (List<App>) -> Unit,
+    onBackNavigation: () -> Unit,
     modifier: Modifier = Modifier
 ) {
     val context = LocalContext.current
@@ -53,7 +67,7 @@ fun SelectMultipleAppsScreen( // TODO: alternatively as (smaller) dialog?
     val selectedAppList = remember { mutableStateListOf<App>() }
     Scaffold(
         modifier = modifier,
-        topBar = { ToolbarComponent(title = title) },
+        topBar = { ToolbarComponent(title = title, onBackNavigation = onBackNavigation) },
         floatingActionButton = {
             FloatingActionButton(onClick = {
                 Thread {

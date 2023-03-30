@@ -79,12 +79,14 @@ fun DisabledLauncherNavHost(
     ) {
         composable(MainActivity.ROUTE_DIRECT_LAUNCHER) {
             DirectLauncherScreen(
-                { navController.navigate(MainActivity.ROUTE_SETTINGS) },
-                Datasource.loadAppList(context)
+                onSettingsClick = { navController.navigate(MainActivity.ROUTE_SETTINGS) },
+                packageNameList = Datasource.loadAppList(context)
             )
         }
         composable(MainActivity.ROUTE_SETTINGS) {
-            SettingsScreen()
+            SettingsScreen(
+                onBackNavigation = { navController.popBackStack() }
+            )
         }
     }
 }

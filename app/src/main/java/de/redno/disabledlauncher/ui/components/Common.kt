@@ -4,6 +4,7 @@ import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.*
 import androidx.compose.material.*
 import androidx.compose.material.icons.Icons
+import androidx.compose.material.icons.filled.ArrowBack
 import androidx.compose.material.icons.filled.Settings
 import androidx.compose.runtime.*
 import androidx.compose.ui.Alignment
@@ -25,7 +26,7 @@ import de.redno.disabledlauncher.ui.theme.DisabledLauncherTheme
 fun DefaultPreview() {
     DisabledLauncherTheme {
         Column {
-            ToolbarComponent(title = "Preview", onSettingsClick = {})
+            ToolbarComponent(title = "Preview", onBackNavigation = {}, onSettingsClick = {})
 
             var test by remember { mutableStateOf(true) }
             ListItem(
@@ -47,10 +48,18 @@ fun DefaultPreview() {
 fun ToolbarComponent(
     title: String,
     modifier: Modifier = Modifier,
+    onBackNavigation: (() -> Unit)? = null,
     onSettingsClick: (() -> Unit)? = null
 ) {
     TopAppBar(
         modifier = modifier,
+        navigationIcon = if (onBackNavigation != null) {
+            {
+                IconButton(onClick = onBackNavigation) {
+                    Icon(Icons.Default.ArrowBack, contentDescription = stringResource(id = R.string.back_icon))
+                }
+            }
+        } else null,
         title = { Text(text = title) },
         actions = {
             onSettingsClick?.let {

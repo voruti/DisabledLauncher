@@ -38,16 +38,21 @@ import de.redno.disabledlauncher.ui.theme.DisabledLauncherTheme
 @Composable
 private fun SettingsPreview() {
     DisabledLauncherTheme {
-        SettingsScreen()
+        SettingsScreen(
+            onBackNavigation = {}
+        )
     }
 }
 
 
 @Composable
-fun SettingsScreen(modifier: Modifier = Modifier) {
+fun SettingsScreen(
+    onBackNavigation: () -> Unit,
+    modifier: Modifier = Modifier
+) {
     Scaffold(
         modifier = modifier,
-        topBar = { ToolbarComponent(title = stringResource(R.string.settings)) }
+        topBar = { ToolbarComponent(title = stringResource(R.string.settings), onBackNavigation = onBackNavigation) }
     ) {
         SettingsList(Modifier.padding(it))
     }
@@ -105,7 +110,8 @@ private fun SettingsList(modifier: Modifier = Modifier) {
                                 Toast.LENGTH_SHORT
                             )
                         }
-                    }
+                    },
+                    onBackNavigation = { addAppsDialogOpen.value = false }
                 )
             }
         }
@@ -186,7 +192,8 @@ private fun SettingsList(modifier: Modifier = Modifier) {
                                 AndroidUtil.asyncToastMakeText(context, it, Toast.LENGTH_SHORT)
                             }
                         }
-                    }
+                    },
+                    onBackNavigation = { disableAppsOnceDialogOpen.value = false }
                 )
             }
         }
@@ -219,7 +226,8 @@ private fun SettingsList(modifier: Modifier = Modifier) {
                                 AndroidUtil.asyncToastMakeText(context, it, Toast.LENGTH_SHORT)
                             }
                         }
-                    }
+                    },
+                    onBackNavigation = { enableAppsOnceDialogOpen.value = false }
                 )
             }
         }
