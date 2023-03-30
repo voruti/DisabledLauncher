@@ -27,7 +27,7 @@ import de.redno.disabledlauncher.ui.theme.DisabledLauncherTheme
 
 class MainActivity : ComponentActivity() { // TODO: faster startup somehow?
     companion object {
-        const val ROUTE_DIRECT_LAUNCHER = "directlauncher"
+        const val ROUTE_DIRECT_LAUNCHER = "directLauncher"
         const val ROUTE_SETTINGS = "settings"
 
         var lastObject: MainActivity? = null
