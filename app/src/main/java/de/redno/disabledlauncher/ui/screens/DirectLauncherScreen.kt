@@ -42,13 +42,18 @@ import de.redno.disabledlauncher.ui.theme.DisabledLauncherTheme
 @Composable
 private fun DirectLauncherPreview() {
     DisabledLauncherTheme {
-        DirectLauncherScreen({}, listOf("de.test.1", "de.test.2", "de.test.3"))
+        DirectLauncherScreen(
+            onMenuClick = {},
+            onSettingsClick = {},
+            packageNameList = listOf("de.test.1", "de.test.2", "de.test.3")
+        )
     }
 }
 
 
 @Composable
 fun DirectLauncherScreen(
+    onMenuClick: () -> Unit,
     onSettingsClick: () -> Unit,
     packageNameList: List<String>,
     modifier: Modifier = Modifier
@@ -60,6 +65,7 @@ fun DirectLauncherScreen(
         topBar = {
             ToolbarComponent(
                 title = stringResource(id = R.string.app_name),
+                onMenuClick = onMenuClick,
                 onSettingsClick = onSettingsClick
             )
         },

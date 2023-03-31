@@ -79,6 +79,7 @@ fun DisabledLauncherNavHost(
     ) {
         composable(MainActivity.ROUTE_DIRECT_LAUNCHER) {
             DirectLauncherScreen(
+                onMenuClick = { /* TODO */ },
                 onSettingsClick = { navController.navigate(MainActivity.ROUTE_SETTINGS) },
                 packageNameList = Datasource.loadAppList(context)
             )

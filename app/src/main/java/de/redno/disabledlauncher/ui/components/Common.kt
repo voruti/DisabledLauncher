@@ -5,11 +5,13 @@ import androidx.compose.foundation.layout.*
 import androidx.compose.material.*
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.ArrowBack
+import androidx.compose.material.icons.filled.Menu
 import androidx.compose.material.icons.filled.Settings
 import androidx.compose.runtime.*
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.graphics.vector.ImageVector
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.TextStyle
 import androidx.compose.ui.text.font.FontStyle
@@ -20,6 +22,19 @@ import androidx.compose.ui.unit.dp
 import androidx.compose.ui.window.Dialog
 import de.redno.disabledlauncher.R
 import de.redno.disabledlauncher.ui.theme.DisabledLauncherTheme
+
+fun clickableIcon(
+    imageVector: ImageVector,
+    contentDescription: String,
+    onClick: () -> Unit
+): @Composable () -> Unit {
+    return {
+        IconButton(onClick = onClick) {
+            Icon(imageVector, contentDescription)
+        }
+    }
+}
+
 
 @Preview(showBackground = true, showSystemUi = true)
 @Composable
@@ -48,17 +63,16 @@ fun DefaultPreview() {
 fun ToolbarComponent(
     title: String,
     modifier: Modifier = Modifier,
+    onMenuClick: (() -> Unit)? = null,
     onBackNavigation: (() -> Unit)? = null,
     onSettingsClick: (() -> Unit)? = null
 ) {
     TopAppBar(
         modifier = modifier,
-        navigationIcon = onBackNavigation?.let {
-            {
-                IconButton(onClick = it) {
-                    Icon(Icons.Default.ArrowBack, contentDescription = stringResource(id = R.string.back_icon))
-                }
-            }
+        navigationIcon = onMenuClick?.let {
+            clickableIcon(Icons.Default.Menu, stringResource(id = R.string.menu_icon), it)
+        } ?: onBackNavigation?.let {
+            clickableIcon(Icons.Default.ArrowBack, stringResource(id = R.string.back_icon), it)
         },
         title = { Text(text = title) },
         actions = {

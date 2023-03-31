@@ -45,4 +45,5 @@
     <string name="enable_apps_once_description">Enable selected apps once/now</string>
     <string name="app_removed">%s removed</string>
     <string name="back_icon">Back icon</string>
+    <string name="menu_icon">Menu icon</string>
 </resources>

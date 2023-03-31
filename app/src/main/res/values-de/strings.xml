@@ -45,4 +45,5 @@
     <string name="enabled_app">%s aktiviert</string>
     <string name="app_removed">%s entfernt</string>
     <string name="back_icon">Zurück Icon</string>
+    <string name="menu_icon">Menü Icon</string>
 </resources>
