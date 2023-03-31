@@ -53,13 +53,13 @@ fun ToolbarComponent(
 ) {
     TopAppBar(
         modifier = modifier,
-        navigationIcon = if (onBackNavigation != null) {
+        navigationIcon = onBackNavigation?.let {
             {
-                IconButton(onClick = onBackNavigation) {
+                IconButton(onClick = it) {
                     Icon(Icons.Default.ArrowBack, contentDescription = stringResource(id = R.string.back_icon))
                 }
             }
-        } else null,
+        },
         title = { Text(text = title) },
         actions = {
             onSettingsClick?.let {
