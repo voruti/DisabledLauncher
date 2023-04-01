@@ -55,7 +55,7 @@ private fun SelectMultipleAppsPreview() {
 
 
 @Composable
-fun SelectMultipleAppsScreen( // TODO: alternatively as (smaller) dialog?
+fun SelectMultipleAppsScreen(
     title: String,
     selectableApps: List<App>,
     onConfirmSelection: (List<App>) -> Unit,
