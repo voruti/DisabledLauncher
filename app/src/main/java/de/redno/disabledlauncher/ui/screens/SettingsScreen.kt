@@ -15,7 +15,10 @@ import androidx.compose.material.Icon
 import androidx.compose.material.Scaffold
 import androidx.compose.material.Switch
 import androidx.compose.material.icons.Icons
-import androidx.compose.material.icons.filled.*
+import androidx.compose.material.icons.filled.AppRegistration
+import androidx.compose.material.icons.filled.Description
+import androidx.compose.material.icons.filled.Shop
+import androidx.compose.material.icons.filled.Sort
 import androidx.compose.runtime.*
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.platform.LocalContext
@@ -26,7 +29,6 @@ import de.redno.disabledlauncher.MainActivity
 import de.redno.disabledlauncher.R
 import de.redno.disabledlauncher.common.AndroidUtil
 import de.redno.disabledlauncher.model.App
-import de.redno.disabledlauncher.model.exception.DisabledLauncherException
 import de.redno.disabledlauncher.service.AppService
 import de.redno.disabledlauncher.service.Datasource
 import de.redno.disabledlauncher.ui.components.ConditionalDialog
@@ -160,76 +162,6 @@ private fun SettingsList(modifier: Modifier = Modifier) {
                     }
                 )
             )
-        }
-
-        Divider()
-
-        Box {
-            val disableAppsOnceTitle = stringResource(R.string.disable_apps_once_title)
-            val disableAppsOnceDialogOpen = remember { mutableStateOf(false) }
-            ListItem( // TODO: move into navigation drawer
-                icon = { Icon(Icons.Default.Block, stringResource(R.string.disable_apps_once_icon)) },
-                title = disableAppsOnceTitle,
-                description = stringResource(R.string.disable_apps_once_description),
-                modifier = Modifier.clickable { disableAppsOnceDialogOpen.value = true }
-            )
-            ConditionalDialog(disableAppsOnceDialogOpen) {
-                val enabledApps = AppService.getInstalledPackages(context) { it.applicationInfo.enabled }
-                    .map { AppService.getDetailsForPackage(context, it) }
-
-                SelectMultipleAppsScreen(
-                    title = disableAppsOnceTitle,
-                    selectableApps = enabledApps,
-                    onConfirmSelection = {
-                        disableAppsOnceDialogOpen.value = false
-
-                        try {
-                            it.forEach {
-                                AppService.disableApp(context, it, true)
-                            }
-                        } catch (e: DisabledLauncherException) {
-                            e.getLocalizedMessage(context)?.let {
-                                AndroidUtil.asyncToastMakeText(context, it, Toast.LENGTH_SHORT)
-                            }
-                        }
-                    },
-                    onBackNavigation = { disableAppsOnceDialogOpen.value = false }
-                )
-            }
-        }
-
-        Box {
-            val enableAppsOnceTitle = stringResource(R.string.enable_apps_once_title)
-            val enableAppsOnceDialogOpen = remember { mutableStateOf(false) }
-            ListItem( // TODO: move into navigation drawer
-                icon = { Icon(Icons.Default.Check, stringResource(R.string.enable_apps_once_icon)) },
-                title = enableAppsOnceTitle,
-                description = stringResource(R.string.enable_apps_once_description),
-                modifier = Modifier.clickable { enableAppsOnceDialogOpen.value = true }
-            )
-            ConditionalDialog(enableAppsOnceDialogOpen) {
-                val disabledApps = AppService.getInstalledPackages(context) { !it.applicationInfo.enabled }
-                    .map { AppService.getDetailsForPackage(context, it) }
-
-                SelectMultipleAppsScreen(
-                    title = enableAppsOnceTitle,
-                    selectableApps = disabledApps,
-                    onConfirmSelection = {
-                        enableAppsOnceDialogOpen.value = false
-
-                        try {
-                            it.forEach {
-                                AppService.enableApp(context, it, true)
-                            }
-                        } catch (e: DisabledLauncherException) {
-                            e.getLocalizedMessage(context)?.let {
-                                AndroidUtil.asyncToastMakeText(context, it, Toast.LENGTH_SHORT)
-                            }
-                        }
-                    },
-                    onBackNavigation = { enableAppsOnceDialogOpen.value = false }
-                )
-            }
         }
     }
 }

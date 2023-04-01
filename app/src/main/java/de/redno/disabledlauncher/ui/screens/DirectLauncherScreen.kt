@@ -44,7 +44,6 @@ private fun DirectLauncherPreview() {
     DisabledLauncherTheme {
         DirectLauncherScreen(
             onMenuClick = {},
-            onSettingsClick = {},
             packageNameList = listOf("de.test.1", "de.test.2", "de.test.3")
         )
     }
@@ -54,7 +53,6 @@ private fun DirectLauncherPreview() {
 @Composable
 fun DirectLauncherScreen(
     onMenuClick: () -> Unit,
-    onSettingsClick: () -> Unit,
     packageNameList: List<String>,
     modifier: Modifier = Modifier
 ) {
@@ -64,9 +62,8 @@ fun DirectLauncherScreen(
         modifier = modifier,
         topBar = {
             ToolbarComponent(
-                title = stringResource(id = R.string.app_name),
-                onMenuClick = onMenuClick,
-                onSettingsClick = onSettingsClick
+                title = stringResource(id = R.string.direct_launcher_title),
+                onMenuClick = onMenuClick
             )
         },
         floatingActionButton = {

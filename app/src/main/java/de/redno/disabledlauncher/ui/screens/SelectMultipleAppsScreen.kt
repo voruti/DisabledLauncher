@@ -59,15 +59,22 @@ fun SelectMultipleAppsScreen( // TODO: alternatively as (smaller) dialog?
     title: String,
     selectableApps: List<App>,
     onConfirmSelection: (List<App>) -> Unit,
-    onBackNavigation: () -> Unit,
-    modifier: Modifier = Modifier
+    modifier: Modifier = Modifier,
+    onMenuClick: (() -> Unit)? = null,
+    onBackNavigation: (() -> Unit)? = null
 ) {
     val context = LocalContext.current
 
     val selectedAppList = remember { mutableStateListOf<App>() }
     Scaffold(
         modifier = modifier,
-        topBar = { ToolbarComponent(title = title, onBackNavigation = onBackNavigation) },
+        topBar = {
+            ToolbarComponent(
+                title = title,
+                onMenuClick = onMenuClick,
+                onBackNavigation = onBackNavigation
+            )
+        },
         floatingActionButton = {
             FloatingActionButton(onClick = {
                 Thread {
@@ -79,6 +86,7 @@ fun SelectMultipleAppsScreen( // TODO: alternatively as (smaller) dialog?
                         )
                     } else {
                         onConfirmSelection(ArrayList(selectedAppList))
+                        selectedAppList.clear()
                     }
                 }.start()
             }) {

@@ -39,11 +39,11 @@
     <string name="success_added_x_apps">Successfully added %s app/s</string>
     <string name="disable_apps_once_icon">Block icon</string>
     <string name="disable_apps_once_title">Disable apps once</string>
-    <string name="disable_apps_once_description">Disable selected apps once/now</string>
     <string name="enable_apps_once_title">Enable apps once</string>
     <string name="enable_apps_once_icon">Check icon</string>
-    <string name="enable_apps_once_description">Enable selected apps once/now</string>
     <string name="app_removed">%s removed</string>
     <string name="back_icon">Back icon</string>
     <string name="menu_icon">Menu icon</string>
+    <string name="direct_launcher_title">Direct Launcher</string>
+    <string name="direct_launcher_icon">Apps icon</string>
 </resources>

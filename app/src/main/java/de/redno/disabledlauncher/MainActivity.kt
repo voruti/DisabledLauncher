@@ -17,13 +17,13 @@ import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
 import androidx.navigation.compose.rememberNavController
 import de.redno.disabledlauncher.service.Datasource
-import de.redno.disabledlauncher.ui.screens.DirectLauncherScreen
+import de.redno.disabledlauncher.ui.screens.MainScreen
 import de.redno.disabledlauncher.ui.screens.SettingsScreen
 import de.redno.disabledlauncher.ui.theme.DisabledLauncherTheme
 
 class MainActivity : ComponentActivity() { // TODO: faster startup somehow?
     companion object {
-        const val ROUTE_DIRECT_LAUNCHER = "directLauncher"
+        const val ROUTE_MAIN = "main"
         const val ROUTE_SETTINGS = "settings"
 
         var lastObject: MainActivity? = null
@@ -68,7 +68,7 @@ class MainActivity : ComponentActivity() { // TODO: faster startup somehow?
 fun DisabledLauncherNavHost(
     modifier: Modifier = Modifier,
     navController: NavHostController = rememberNavController(),
-    startDestination: String = MainActivity.ROUTE_DIRECT_LAUNCHER
+    startDestination: String = MainActivity.ROUTE_MAIN
 ) {
     val context = LocalContext.current
 
@@ -77,11 +77,10 @@ fun DisabledLauncherNavHost(
         navController = navController,
         startDestination = startDestination
     ) {
-        composable(MainActivity.ROUTE_DIRECT_LAUNCHER) {
-            DirectLauncherScreen(
-                onMenuClick = { /* TODO */ },
+        composable(MainActivity.ROUTE_MAIN) {
+            MainScreen(
                 onSettingsClick = { navController.navigate(MainActivity.ROUTE_SETTINGS) },
-                packageNameList = Datasource.loadAppList(context)
+                directLauncherPackageNameList = Datasource.loadAppList(context)
             )
         }
         composable(MainActivity.ROUTE_SETTINGS) {
