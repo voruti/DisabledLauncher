@@ -29,7 +29,7 @@ import de.redno.disabledlauncher.service.AppService
 import de.redno.disabledlauncher.ui.theme.DisabledLauncherTheme
 import kotlinx.coroutines.launch
 
-private const val SCREEN_DIRECT_LAUNCHER = 0
+private const val SCREEN_DIRECT_LAUNCHER = 0 // TODO: use nav controller instead
 private const val SCREEN_DISABLE_APPS_ONCE = 1
 private const val SCREEN_ENABLE_APPS_ONCE = 2
 
