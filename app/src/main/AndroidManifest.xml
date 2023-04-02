@@ -18,13 +18,7 @@
         <activity
             android:name=".ActionReceiverActivity"
             android:exported="true"
-            android:theme="@android:style/Theme.Translucent">
-            <intent-filter>
-                <action android:name="${applicationId}.action.OPEN_APP" />
-
-                <category android:name="android.intent.category.DEFAULT" />
-            </intent-filter>
-        </activity>
+            android:theme="@android:style/Theme.Translucent" />
         <activity
             android:name=".MainActivity"
             android:exported="true"
