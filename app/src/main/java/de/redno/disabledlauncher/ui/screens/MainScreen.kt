@@ -68,6 +68,7 @@ fun MainScreen(
     }
 
     // close after leaving settings:
+    // TODO: negative side effect: also closed on screen rotation
     run {
         scope.launch {
             scaffoldState.drawerState.apply {
