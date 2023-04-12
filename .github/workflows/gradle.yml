@@ -31,7 +31,7 @@ jobs:
           java-version: "11"
           distribution: "temurin"
       - name: Build with Gradle
-        uses: gradle/gradle-build-action@v2.4.0
+        uses: gradle/gradle-build-action@v2.4.1
         with:
           arguments: build assembleRelease
       - name: Create APK
