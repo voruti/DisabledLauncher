@@ -96,7 +96,7 @@ private fun SettingsList(modifier: Modifier = Modifier) {
             )
             ConditionalDialog(addDirectAppsDialogOpen) {
                 val addableApps = AppService.getInstalledPackages(context)
-                    .subtract(Datasource.loadAppList(context, Datasource.ListType.MAIN).toSet())
+                    .subtract(Datasource.loadAppList(context, Datasource.ListType.DIRECT).toSet())
                     .map { AppService.getDetailsForPackage(context, it) }
 
                 SelectMultipleAppsScreen(
@@ -105,7 +105,7 @@ private fun SettingsList(modifier: Modifier = Modifier) {
                     onConfirmSelection = {
                         addDirectAppsDialogOpen.value = false
 
-                        if (!Datasource.addPackages(context, it.map(App::packageName), Datasource.ListType.MAIN)) {
+                        if (!Datasource.addPackages(context, it.map(App::packageName), Datasource.ListType.DIRECT)) {
                             AndroidUtil.asyncToastMakeText(
                                 context,
                                 context.getString(R.string.failed_adding_apps),

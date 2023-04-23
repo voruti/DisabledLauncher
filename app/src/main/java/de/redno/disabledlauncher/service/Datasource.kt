@@ -10,12 +10,12 @@ import kotlin.math.floor
 object Datasource {
     const val INTERNAL_MAIN_FILE = "internalMainFile"
 
-    fun loadAppList(context: Context, listType: ListType = ListType.MAIN): List<String> {
+    fun loadAppList(context: Context, listType: ListType = ListType.DIRECT): List<String> {
         getLaunchableAppsFileUri(context).let {
 
             FileService.readFile(context, it, MainFile::class.java)
                 ?.let {
-                    return if (listType == ListType.MAIN) {
+                    return if (listType == ListType.DIRECT) {
                         it.packages
                     } else {
                         it.longTermPackages ?: emptyList()
@@ -27,14 +27,14 @@ object Datasource {
         return emptyList()
     }
 
-    fun raisePackage(context: Context, packageName: String, listType: ListType = ListType.MAIN): Boolean {
+    fun raisePackage(context: Context, packageName: String, listType: ListType = ListType.DIRECT): Boolean {
         getLaunchableAppsFileUri(context).let { uri ->
 
             FileService.readFile(context, uri, MainFile::class.java)?.let {
                 var packages = it.packages
                 var longTermPackages = it.longTermPackages ?: emptyList()
 
-                val oldIndex = (if (listType == ListType.MAIN) packages else longTermPackages)
+                val oldIndex = (if (listType == ListType.DIRECT) packages else longTermPackages)
                     .indexOf(packageName)
                 if (oldIndex <= 0) {
                     return false
@@ -52,7 +52,7 @@ object Datasource {
                         }
                 }
 
-                if (listType == ListType.MAIN) {
+                if (listType == ListType.DIRECT) {
                     packages = moveToIndex(packages)
                 } else {
                     longTermPackages = moveToIndex(longTermPackages)
@@ -67,7 +67,7 @@ object Datasource {
         return false
     }
 
-    fun removePackage(context: Context, packageName: String, listType: ListType = ListType.MAIN): Boolean {
+    fun removePackage(context: Context, packageName: String, listType: ListType = ListType.DIRECT): Boolean {
         getLaunchableAppsFileUri(context).let { uri ->
 
             FileService.readFile(context, uri, MainFile::class.java)?.let {
@@ -76,14 +76,14 @@ object Datasource {
 
                 // test for existence beforehand:
                 if (!
-                    (if (listType == ListType.MAIN) packages else longTermPackages)
+                    (if (listType == ListType.DIRECT) packages else longTermPackages)
                         .contains(packageName)
                 ) {
                     return false
                 }
 
                 // remove:
-                if (listType == ListType.MAIN) {
+                if (listType == ListType.DIRECT) {
                     packages = packages.filter { it != packageName }
                 } else {
                     longTermPackages = longTermPackages.filter { it != packageName }
@@ -98,14 +98,14 @@ object Datasource {
         return false
     }
 
-    fun addPackages(context: Context, packageNameList: List<String>, listType: ListType = ListType.MAIN): Boolean {
+    fun addPackages(context: Context, packageNameList: List<String>, listType: ListType = ListType.DIRECT): Boolean {
         getLaunchableAppsFileUri(context).let { uri ->
 
             FileService.readFile(context, uri, MainFile::class.java)?.let {
                 val packages = it.packages.toMutableList()
                 val longTermPackages = (it.longTermPackages ?: emptyList()).toMutableList()
 
-                (if (listType == ListType.MAIN) packages else longTermPackages)
+                (if (listType == ListType.DIRECT) packages else longTermPackages)
                     .also {
                         it.addAll(packageNameList)
                     }
@@ -135,7 +135,7 @@ object Datasource {
     }
 
     enum class ListType {
-        MAIN,
+        DIRECT,
         LONG_TERM
     }
 }

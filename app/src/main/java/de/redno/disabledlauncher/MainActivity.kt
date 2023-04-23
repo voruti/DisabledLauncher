@@ -80,7 +80,7 @@ fun DisabledLauncherNavHost(
         composable(MainActivity.ROUTE_MAIN) {
             MainScreen(
                 onSettingsClick = { navController.navigate(MainActivity.ROUTE_SETTINGS) },
-                directLauncherPackageNameList = Datasource.loadAppList(context, Datasource.ListType.MAIN),
+                directLauncherPackageNameList = Datasource.loadAppList(context, Datasource.ListType.DIRECT),
                 longTermLauncherPackageNameList = Datasource.loadAppList(context, Datasource.ListType.LONG_TERM)
             )
         }
