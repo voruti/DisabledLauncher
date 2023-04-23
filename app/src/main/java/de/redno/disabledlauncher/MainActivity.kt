@@ -81,7 +81,10 @@ fun DisabledLauncherNavHost(
         composable(MainActivity.ROUTE_MAIN) {
             MainScreen(
                 onSettingsClick = { navController.navigate(MainActivity.ROUTE_SETTINGS) },
-                directLauncherPackageNameList = Datasource.loadAppList(context, ListType.DIRECT),
+                directLauncherPackageNameList = Datasource.loadAppList(context, ListType.DIRECT).toMutableList().apply {
+                    addAll(Datasource.loadAppList(context, ListType.LONG_TERM))
+                    // TODO: removing apps that come from the long term list isn't possible when "injected" here (only possible when seeing them in their own long term list)
+                },
                 longTermLauncherPackageNameList = Datasource.loadAppList(context, ListType.LONG_TERM)
             )
         }
