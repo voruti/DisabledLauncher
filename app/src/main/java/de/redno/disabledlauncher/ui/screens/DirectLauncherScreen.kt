@@ -83,13 +83,21 @@ fun DirectLauncherScreen(
             }
         }
     ) {
-        AppList(packageNameList, Modifier.padding(it))
+        AppList(
+            packageNameList = packageNameList,
+            listType = Datasource.ListType.DIRECT,
+            modifier = Modifier.padding(it)
+        )
     }
 }
 
 @OptIn(ExperimentalFoundationApi::class)
 @Composable
-private fun AppEntry(app: App, modifier: Modifier = Modifier) {
+private fun AppEntry(
+    app: App,
+    overlyingListType: Datasource.ListType,
+    modifier: Modifier = Modifier
+) {
     val context = LocalContext.current
     val sharedPreferences = context.getSharedPreferences(context.packageName, Context.MODE_PRIVATE)
 
@@ -136,7 +144,7 @@ private fun AppEntry(app: App, modifier: Modifier = Modifier) {
                     Text(stringResource(R.string.add_shortcut))
                 }
                 DropdownMenuItem(onClick = {
-                    if (Datasource.removePackage(context, app.packageName)) {
+                    if (Datasource.removePackage(context, app.packageName, overlyingListType)) {
                         dropdownExpanded = false
 
                         AndroidUtil.asyncToastMakeText(
@@ -178,7 +186,11 @@ private fun AppEntry(app: App, modifier: Modifier = Modifier) {
 }
 
 @Composable
-fun AppList(packageNameList: List<String>, modifier: Modifier = Modifier) {
+fun AppList(
+    packageNameList: List<String>,
+    listType: Datasource.ListType,
+    modifier: Modifier = Modifier
+) {
     val context = LocalContext.current
 
     Column(modifier = modifier) {
@@ -213,7 +225,7 @@ fun AppList(packageNameList: List<String>, modifier: Modifier = Modifier) {
                 }
                 .sortedBy { !it.isInstalled },
                 key = App::packageName
-            ) { AppEntry(it) }
+            ) { AppEntry(it, listType) }
         }
     }
 }
