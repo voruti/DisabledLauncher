@@ -7,7 +7,7 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.tooling.preview.Preview
 import de.redno.disabledlauncher.R
-import de.redno.disabledlauncher.service.Datasource
+import de.redno.disabledlauncher.model.ListType
 import de.redno.disabledlauncher.ui.components.ToolbarComponent
 import de.redno.disabledlauncher.ui.theme.DisabledLauncherTheme
 
@@ -40,7 +40,7 @@ fun LongTermLauncherScreen(
     ) {
         AppList(
             packageNameList = packageNameList,
-            listType = Datasource.ListType.LONG_TERM,
+            listType = ListType.LONG_TERM,
             modifier = Modifier.padding(it)
         )
     }

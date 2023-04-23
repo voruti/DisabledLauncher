@@ -16,6 +16,7 @@ import androidx.navigation.NavHostController
 import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
 import androidx.navigation.compose.rememberNavController
+import de.redno.disabledlauncher.model.ListType
 import de.redno.disabledlauncher.service.Datasource
 import de.redno.disabledlauncher.ui.screens.MainScreen
 import de.redno.disabledlauncher.ui.screens.SettingsScreen
@@ -80,8 +81,8 @@ fun DisabledLauncherNavHost(
         composable(MainActivity.ROUTE_MAIN) {
             MainScreen(
                 onSettingsClick = { navController.navigate(MainActivity.ROUTE_SETTINGS) },
-                directLauncherPackageNameList = Datasource.loadAppList(context, Datasource.ListType.DIRECT),
-                longTermLauncherPackageNameList = Datasource.loadAppList(context, Datasource.ListType.LONG_TERM)
+                directLauncherPackageNameList = Datasource.loadAppList(context, ListType.DIRECT),
+                longTermLauncherPackageNameList = Datasource.loadAppList(context, ListType.LONG_TERM)
             )
         }
         composable(MainActivity.ROUTE_SETTINGS) {

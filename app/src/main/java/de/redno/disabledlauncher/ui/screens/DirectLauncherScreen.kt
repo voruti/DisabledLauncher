@@ -31,6 +31,7 @@ import de.redno.disabledlauncher.MainActivity
 import de.redno.disabledlauncher.R
 import de.redno.disabledlauncher.common.AndroidUtil
 import de.redno.disabledlauncher.model.App
+import de.redno.disabledlauncher.model.ListType
 import de.redno.disabledlauncher.model.exception.DisabledLauncherException
 import de.redno.disabledlauncher.service.AppService
 import de.redno.disabledlauncher.service.Datasource
@@ -85,7 +86,7 @@ fun DirectLauncherScreen(
     ) {
         AppList(
             packageNameList = packageNameList,
-            listType = Datasource.ListType.DIRECT,
+            listType = ListType.DIRECT,
             modifier = Modifier.padding(it)
         )
     }
@@ -95,7 +96,7 @@ fun DirectLauncherScreen(
 @Composable
 private fun AppEntry(
     app: App,
-    overlyingListType: Datasource.ListType,
+    overlyingListType: ListType,
     modifier: Modifier = Modifier
 ) {
     val context = LocalContext.current
@@ -188,7 +189,7 @@ private fun AppEntry(
 @Composable
 fun AppList(
     packageNameList: List<String>,
-    listType: Datasource.ListType,
+    listType: ListType,
     modifier: Modifier = Modifier
 ) {
     val context = LocalContext.current

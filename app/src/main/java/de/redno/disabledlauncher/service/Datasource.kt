@@ -4,6 +4,7 @@ import android.content.Context
 import android.widget.Toast
 import de.redno.disabledlauncher.R
 import de.redno.disabledlauncher.common.AndroidUtil
+import de.redno.disabledlauncher.model.ListType
 import de.redno.disabledlauncher.model.file.MainFile
 import kotlin.math.floor
 
@@ -134,8 +135,4 @@ object Datasource {
             .getString("launchableAppsFile", INTERNAL_MAIN_FILE)!!
     }
 
-    enum class ListType {
-        DIRECT,
-        LONG_TERM
-    }
 }

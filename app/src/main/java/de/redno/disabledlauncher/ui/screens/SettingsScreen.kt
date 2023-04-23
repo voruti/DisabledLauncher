@@ -29,6 +29,7 @@ import de.redno.disabledlauncher.MainActivity
 import de.redno.disabledlauncher.R
 import de.redno.disabledlauncher.common.AndroidUtil
 import de.redno.disabledlauncher.model.App
+import de.redno.disabledlauncher.model.ListType
 import de.redno.disabledlauncher.service.AppService
 import de.redno.disabledlauncher.service.Datasource
 import de.redno.disabledlauncher.ui.components.ConditionalDialog
@@ -96,7 +97,7 @@ private fun SettingsList(modifier: Modifier = Modifier) {
             )
             ConditionalDialog(addDirectAppsDialogOpen) {
                 val addableApps = AppService.getInstalledPackages(context)
-                    .subtract(Datasource.loadAppList(context, Datasource.ListType.DIRECT).toSet())
+                    .subtract(Datasource.loadAppList(context, ListType.DIRECT).toSet())
                     .map { AppService.getDetailsForPackage(context, it) }
 
                 SelectMultipleAppsScreen(
@@ -105,7 +106,7 @@ private fun SettingsList(modifier: Modifier = Modifier) {
                     onConfirmSelection = {
                         addDirectAppsDialogOpen.value = false
 
-                        if (!Datasource.addPackages(context, it.map(App::packageName), Datasource.ListType.DIRECT)) {
+                        if (!Datasource.addPackages(context, it.map(App::packageName), ListType.DIRECT)) {
                             AndroidUtil.asyncToastMakeText(
                                 context,
                                 context.getString(R.string.failed_adding_apps),
@@ -129,7 +130,7 @@ private fun SettingsList(modifier: Modifier = Modifier) {
             )
             ConditionalDialog(addLongTermAppsDialogOpen) {
                 val addableApps = AppService.getInstalledPackages(context)
-                    .subtract(Datasource.loadAppList(context, Datasource.ListType.LONG_TERM).toSet())
+                    .subtract(Datasource.loadAppList(context, ListType.LONG_TERM).toSet())
                     .map { AppService.getDetailsForPackage(context, it) }
 
                 SelectMultipleAppsScreen(
@@ -138,7 +139,7 @@ private fun SettingsList(modifier: Modifier = Modifier) {
                     onConfirmSelection = {
                         addLongTermAppsDialogOpen.value = false
 
-                        if (!Datasource.addPackages(context, it.map(App::packageName), Datasource.ListType.LONG_TERM)) {
+                        if (!Datasource.addPackages(context, it.map(App::packageName), ListType.LONG_TERM)) {
                             AndroidUtil.asyncToastMakeText(
                                 context,
                                 context.getString(R.string.failed_adding_apps),
