@@ -27,8 +27,8 @@
     <string name="launchable_apps_file_title">Datei mit startbaren Apps</string>
     <string name="file_icon">Datei Icon</string>
     <string name="apps_edit_icon">Apps-Bearbeiten Icon</string>
-    <string name="add_apps_title">Apps hinzufügen</string>
-    <string name="add_apps_description">Apps zur Datei mit startbaren Apps hinzufügen</string>
+    <string name="add_direct_apps_title">Sofortstart Apps hinzufügen</string>
+    <string name="add_direct_apps_description">Apps zur Datei mit sofort startbaren Apps hinzufügen</string>
     <string name="store_icon">Store Icon</string>
     <string name="fallback_googleplay_title">Auf Google Play ausweichen</string>
     <string name="fallback_googleplay_description">Öffne Apps in Google Play, wenn ADB/Shizuku nicht verfügbar ist</string>

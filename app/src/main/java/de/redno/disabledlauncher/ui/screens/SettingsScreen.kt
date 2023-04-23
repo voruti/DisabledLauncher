@@ -86,24 +86,24 @@ private fun SettingsList(modifier: Modifier = Modifier) {
         }
 
         Box {
-            val addAppsTitle = stringResource(R.string.add_apps_title)
-            val addAppsDialogOpen = remember { mutableStateOf(false) }
+            val addDirectAppsTitle = stringResource(R.string.add_direct_apps_title)
+            val addDirectAppsDialogOpen = remember { mutableStateOf(false) }
             ListItem(
                 icon = { Icon(Icons.Default.AppRegistration, stringResource(R.string.apps_edit_icon)) },
-                title = addAppsTitle,
-                description = stringResource(R.string.add_apps_description),
-                modifier = Modifier.clickable { addAppsDialogOpen.value = true }
+                title = addDirectAppsTitle,
+                description = stringResource(R.string.add_direct_apps_description),
+                modifier = Modifier.clickable { addDirectAppsDialogOpen.value = true }
             )
-            ConditionalDialog(addAppsDialogOpen) {
+            ConditionalDialog(addDirectAppsDialogOpen) {
                 val addableApps = AppService.getInstalledPackages(context)
                     .subtract(Datasource.loadAppList(context).toSet())
                     .map { AppService.getDetailsForPackage(context, it) }
 
                 SelectMultipleAppsScreen(
-                    title = addAppsTitle,
+                    title = addDirectAppsTitle,
                     selectableApps = addableApps,
                     onConfirmSelection = {
-                        addAppsDialogOpen.value = false
+                        addDirectAppsDialogOpen.value = false
 
                         if (!Datasource.addPackages(context, it.map(App::packageName))) {
                             AndroidUtil.asyncToastMakeText(
@@ -113,7 +113,7 @@ private fun SettingsList(modifier: Modifier = Modifier) {
                             )
                         }
                     },
-                    onBackNavigation = { addAppsDialogOpen.value = false }
+                    onBackNavigation = { addDirectAppsDialogOpen.value = false }
                 )
             }
         }
