@@ -46,4 +46,5 @@
     <string name="menu_icon">Menü Icon</string>
     <string name="direct_launcher_title">App-Sofortstart</string>
     <string name="direct_launcher_icon">Apps Icon</string>
+    <string name="long_term_launcher_title">Langzeit-Apps</string>
 </resources>

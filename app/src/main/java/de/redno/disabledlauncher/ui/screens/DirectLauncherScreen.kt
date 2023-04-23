@@ -178,7 +178,7 @@ private fun AppEntry(app: App, modifier: Modifier = Modifier) {
 }
 
 @Composable
-private fun AppList(packageNameList: List<String>, modifier: Modifier = Modifier) {
+fun AppList(packageNameList: List<String>, modifier: Modifier = Modifier) {
     val context = LocalContext.current
 
     Column(modifier = modifier) {
