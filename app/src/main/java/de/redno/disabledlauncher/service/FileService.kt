@@ -2,11 +2,13 @@ package de.redno.disabledlauncher.service
 
 import android.content.Context
 import android.net.Uri
+import android.util.Log
 import com.fasterxml.jackson.databind.SerializationFeature
 import com.fasterxml.jackson.module.kotlin.jacksonObjectMapper
 import java.io.FileNotFoundException
 
 object FileService {
+    private const val TAG = "FileService"
     private const val MAIN_FILE_NAME = "mainFile.json"
 
     private val objectMapper = jacksonObjectMapper()
@@ -35,6 +37,7 @@ object FileService {
                 // deserialize into object:
                 ?.let { return objectMapper.readValue(it, clazz) }
         } catch (e: Exception) {
+            Log.w(TAG, "Exception in readFile", e)
             return null
         }
     }
@@ -69,8 +72,8 @@ object FileService {
                     }
                 }
             }
-        } catch (_: Exception) {
-            // returning below
+        } catch (e: Exception) {
+            Log.w(TAG, "Exception in writeFile", e)
         }
 
         return false
