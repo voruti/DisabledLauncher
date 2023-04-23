@@ -7,10 +7,7 @@ import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.*
 import androidx.compose.material.icons.Icons
-import androidx.compose.material.icons.filled.Apps
-import androidx.compose.material.icons.filled.Block
-import androidx.compose.material.icons.filled.Check
-import androidx.compose.material.icons.filled.Settings
+import androidx.compose.material.icons.filled.*
 import androidx.compose.runtime.*
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
@@ -31,8 +28,9 @@ import de.redno.disabledlauncher.ui.theme.DisabledLauncherTheme
 import kotlinx.coroutines.launch
 
 private const val SCREEN_DIRECT_LAUNCHER = 0 // TODO: use nav controller instead
-private const val SCREEN_DISABLE_APPS_ONCE = 1
-private const val SCREEN_ENABLE_APPS_ONCE = 2
+private const val SCREEN_LONG_TERM_LAUNCHER = 1
+private const val SCREEN_DISABLE_APPS_ONCE = 2
+private const val SCREEN_ENABLE_APPS_ONCE = 3
 
 
 @Preview(showBackground = true, showSystemUi = true)
@@ -41,7 +39,8 @@ private fun MainPreview() {
     DisabledLauncherTheme {
         MainScreen(
             onSettingsClick = {},
-            directLauncherPackageNameList = listOf("de.test.1")
+            directLauncherPackageNameList = listOf("de.test.1"),
+            longTermLauncherPackageNameList = listOf("de.test.2")
         )
     }
 }
@@ -51,6 +50,7 @@ private fun MainPreview() {
 fun MainScreen(
     onSettingsClick: () -> Unit,
     directLauncherPackageNameList: List<String>,
+    longTermLauncherPackageNameList: List<String>,
     modifier: Modifier = Modifier
 ) {
     val context = LocalContext.current
@@ -108,6 +108,16 @@ fun MainScreen(
                 selected = currentScreen == SCREEN_DIRECT_LAUNCHER
             )
             DrawerItem(
+                imageVector = Icons.Default.DirectionsRun,
+                contentDescription = stringResource(R.string.long_term_launcher_icon),
+                text = stringResource(R.string.long_term_launcher_title),
+                onClick = {
+                    currentScreen = SCREEN_LONG_TERM_LAUNCHER
+                    toggleDrawer()
+                },
+                selected = currentScreen == SCREEN_LONG_TERM_LAUNCHER
+            )
+            DrawerItem(
                 imageVector = Icons.Default.Block,
                 contentDescription = stringResource(R.string.disable_apps_once_icon),
                 text = stringResource(R.string.disable_apps_once_title),
@@ -147,6 +157,13 @@ fun MainScreen(
                 DirectLauncherScreen(
                     onMenuClick = { toggleDrawer() },
                     packageNameList = directLauncherPackageNameList,
+                    modifier = Modifier.padding(it)
+                )
+
+            SCREEN_LONG_TERM_LAUNCHER ->
+                LongTermLauncherScreen(
+                    onMenuClick = { toggleDrawer() },
+                    packageNameList = longTermLauncherPackageNameList,
                     modifier = Modifier.padding(it)
                 )
 

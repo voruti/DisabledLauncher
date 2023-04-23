@@ -47,4 +47,5 @@
     <string name="direct_launcher_title">Direct Launcher</string>
     <string name="direct_launcher_icon">Apps icon</string>
     <string name="long_term_launcher_title">Long Term Launcher</string>
+    <string name="long_term_launcher_icon">Running icon</string>
 </resources>
