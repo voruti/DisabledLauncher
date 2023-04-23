@@ -118,6 +118,39 @@ private fun SettingsList(modifier: Modifier = Modifier) {
             }
         }
 
+        Box {
+            val addLongTermAppsTitle = stringResource(R.string.add_long_term_apps_title)
+            val addLongTermAppsDialogOpen = remember { mutableStateOf(false) }
+            ListItem(
+                icon = { Icon(Icons.Default.AppRegistration, stringResource(R.string.apps_edit_icon)) },
+                title = addLongTermAppsTitle,
+                description = stringResource(R.string.add_long_term_apps_description),
+                modifier = Modifier.clickable { addLongTermAppsDialogOpen.value = true }
+            )
+            ConditionalDialog(addLongTermAppsDialogOpen) {
+                val addableApps = AppService.getInstalledPackages(context)
+                    .subtract(Datasource.loadAppList(context, Datasource.ListType.LONG_TERM).toSet())
+                    .map { AppService.getDetailsForPackage(context, it) }
+
+                SelectMultipleAppsScreen(
+                    title = addLongTermAppsTitle,
+                    selectableApps = addableApps,
+                    onConfirmSelection = {
+                        addLongTermAppsDialogOpen.value = false
+
+                        if (!Datasource.addPackages(context, it.map(App::packageName), Datasource.ListType.LONG_TERM)) {
+                            AndroidUtil.asyncToastMakeText(
+                                context,
+                                context.getString(R.string.failed_adding_apps),
+                                Toast.LENGTH_SHORT
+                            )
+                        }
+                    },
+                    onBackNavigation = { addLongTermAppsDialogOpen.value = false }
+                )
+            }
+        }
+
         Divider()
 
         Box {

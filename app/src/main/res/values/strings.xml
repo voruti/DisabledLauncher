@@ -27,8 +27,10 @@
     <string name="launchable_apps_file_title">Launchable apps file</string>
     <string name="file_icon">File icon</string>
     <string name="apps_edit_icon">Apps edit icon</string>
-    <string name="add_direct_apps_title">Add apps (to direct)</string>
+    <string name="add_direct_apps_title">Add apps (as direct)</string>
     <string name="add_direct_apps_description">Add apps to the direct launchable apps file</string>
+    <string name="add_long_term_apps_title">Add apps (as long term)</string>
+    <string name="add_long_term_apps_description">Add apps to the long term launchable apps file</string>
     <string name="store_icon">Store icon</string>
     <string name="fallback_googleplay_title">Fallback to Google Play</string>
     <string name="fallback_googleplay_description">Redirect the user to Google Play when ADB/Shizuku isn\'t available</string>

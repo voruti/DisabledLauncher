@@ -29,6 +29,8 @@
     <string name="apps_edit_icon">Apps-Bearbeiten Icon</string>
     <string name="add_direct_apps_title">Sofortstart Apps hinzufügen</string>
     <string name="add_direct_apps_description">Apps zur Datei mit sofort startbaren Apps hinzufügen</string>
+    <string name="add_long_term_apps_title">Langzeit Apps hinzufügen</string>
+    <string name="add_long_term_apps_description">Apps zur Datei mit langfristig startbaren Apps hinzufügen</string>
     <string name="store_icon">Store Icon</string>
     <string name="fallback_googleplay_title">Auf Google Play ausweichen</string>
     <string name="fallback_googleplay_description">Öffne Apps in Google Play, wenn ADB/Shizuku nicht verfügbar ist</string>
