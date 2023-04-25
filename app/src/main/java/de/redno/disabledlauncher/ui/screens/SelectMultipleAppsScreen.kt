@@ -1,13 +1,11 @@
 package de.redno.disabledlauncher.ui.screens
 
 import android.widget.Toast
-import androidx.compose.foundation.Image
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.items
-import androidx.compose.foundation.selection.toggleable
 import androidx.compose.material.*
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Check
@@ -16,16 +14,14 @@ import androidx.compose.runtime.*
 import androidx.compose.runtime.saveable.rememberSaveable
 import androidx.compose.runtime.snapshots.SnapshotStateList
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.graphics.asImageBitmap
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.stringResource
-import androidx.compose.ui.semantics.Role
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.core.graphics.drawable.toBitmap
 import de.redno.disabledlauncher.R
 import de.redno.disabledlauncher.common.AndroidUtil
 import de.redno.disabledlauncher.model.App
-import de.redno.disabledlauncher.ui.components.ListItem
+import de.redno.disabledlauncher.ui.components.AppEntry
 import de.redno.disabledlauncher.ui.components.ToolbarComponent
 import de.redno.disabledlauncher.ui.theme.DisabledLauncherTheme
 
@@ -106,40 +102,6 @@ fun SelectMultipleAppsScreen(
 }
 
 @Composable
-private fun SelectableAppEntry( // TODO: merge with other AppEntry
-    app: App,
-    selectedAppList: SnapshotStateList<App>,
-    modifier: Modifier = Modifier
-) {
-    ListItem(
-        icon = {
-            Image(
-                app.icon.asImageBitmap(),
-                String.format(stringResource(R.string.app_icon), app.name)
-            )
-        },
-        title = app.name,
-        description = app.packageName,
-        italicStyle = !app.isEnabled,
-        disabledStyle = !app.isInstalled,
-        startContent = {
-            Checkbox(checked = selectedAppList.any { it.packageName == app.packageName }, onCheckedChange = null)
-        },
-        modifier = modifier.toggleable(
-            role = Role.Checkbox,
-            value = selectedAppList.any { it.packageName == app.packageName },
-            onValueChange = {
-                if (it) {
-                    selectedAppList.add(app)
-                } else {
-                    selectedAppList.removeIf { it.packageName == app.packageName }
-                }
-            }
-        )
-    )
-}
-
-@Composable
 private fun SelectableAppList(
     appList: List<App>,
     selectedAppList: SnapshotStateList<App>,
@@ -176,7 +138,12 @@ private fun SelectableAppList(
                 .sortedBy { it.name }
                 .sortedBy { !it.isInstalled },
                 key = App::packageName
-            ) { SelectableAppEntry(it, selectedAppList) }
+            ) {
+                AppEntry(
+                    app = it,
+                    selectedAppList = selectedAppList
+                )
+            }
         }
     }
 }
