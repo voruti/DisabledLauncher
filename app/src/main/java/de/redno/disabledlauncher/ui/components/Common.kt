@@ -297,7 +297,8 @@ fun AppEntry(
 fun AppList(
     appList: List<App>,
     modifier: Modifier = Modifier,
-    selectedAppList: SnapshotStateList<App>? = null
+    selectedAppList: SnapshotStateList<App>? = null,
+    sortByName: Boolean = false
 ) {
     val context = LocalContext.current
 
@@ -331,7 +332,7 @@ fun AppList(
                     searchTerms.all { searchReference.contains(it) }
                 }
                 .let {
-                    if (selectedAppList != null) {
+                    if (sortByName) {
                         it.sortedBy { it.name }
                     } else {
                         it

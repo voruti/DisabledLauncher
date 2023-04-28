@@ -93,6 +93,7 @@ fun SelectMultipleAppsScreen(
         AppList(
             appList = selectableApps,
             selectedAppList = selectedAppList,
+            sortByName = true,
             modifier = Modifier.padding(it)
         )
     }
