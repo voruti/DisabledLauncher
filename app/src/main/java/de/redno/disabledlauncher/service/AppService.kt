@@ -10,6 +10,7 @@ import androidx.core.graphics.drawable.toBitmap
 import de.redno.disabledlauncher.R
 import de.redno.disabledlauncher.common.AndroidUtil
 import de.redno.disabledlauncher.model.App
+import de.redno.disabledlauncher.model.ListType
 import de.redno.disabledlauncher.model.exception.DisabledLauncherException
 import de.redno.disabledlauncher.model.exception.RedirectedToGooglePlayException
 
@@ -25,7 +26,11 @@ object AppService {
             .map(PackageInfo::packageName)
     }
 
-    fun getDetailsForPackage(context: Context, packageName: String): App {
+    fun getDetailsForPackage(
+        context: Context,
+        packageName: String,
+        overlyingListType: ListType? = null
+    ): App {
         val packageManager = context.packageManager
 
         try {
@@ -35,7 +40,8 @@ object AppService {
                     it.packageName,
                     it.applicationInfo.enabled,
                     true,
-                    it.applicationInfo.loadIcon(packageManager).toBitmap()
+                    it.applicationInfo.loadIcon(packageManager).toBitmap(),
+                    overlyingListType = overlyingListType
                 )
             }
         } catch (e: PackageManager.NameNotFoundException) {

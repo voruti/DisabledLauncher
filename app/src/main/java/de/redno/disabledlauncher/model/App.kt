@@ -10,5 +10,6 @@ data class App(
     val packageName: String,
     val isEnabled: Boolean,
     val isInstalled: Boolean,
-    val icon: Bitmap
+    val icon: Bitmap,
+    val overlyingListType: ListType? = null
 ) : Parcelable

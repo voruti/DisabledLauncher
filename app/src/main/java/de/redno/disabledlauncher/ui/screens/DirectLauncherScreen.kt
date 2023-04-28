@@ -111,7 +111,7 @@ fun AppList(
         )
         LazyColumn {
             val appList = packageNameList.map {
-                AppService.getDetailsForPackage(context, it)
+                AppService.getDetailsForPackage(context, it, listType)
             } // TODO: prevent being called on every text change
             items(items = appList
                 .filter {
@@ -123,10 +123,7 @@ fun AppList(
                 .sortedBy { !it.isInstalled },
                 key = App::packageName
             ) {
-                AppEntry(
-                    app = it,
-                    overlyingListType = listType
-                )
+                AppEntry(it)
             }
         }
     }

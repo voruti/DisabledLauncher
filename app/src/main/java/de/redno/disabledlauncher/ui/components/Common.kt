@@ -40,7 +40,6 @@ import de.redno.disabledlauncher.MainActivity
 import de.redno.disabledlauncher.R
 import de.redno.disabledlauncher.common.AndroidUtil
 import de.redno.disabledlauncher.model.App
-import de.redno.disabledlauncher.model.ListType
 import de.redno.disabledlauncher.model.exception.DisabledLauncherException
 import de.redno.disabledlauncher.service.AppService
 import de.redno.disabledlauncher.service.Datasource
@@ -180,7 +179,6 @@ fun ListItem(
 fun AppEntry(
     app: App,
     modifier: Modifier = Modifier,
-    overlyingListType: ListType? = null, // TODO: move into App class??
     selectedAppList: SnapshotStateList<App>? = null
 ) {
     val context = LocalContext.current
@@ -233,7 +231,7 @@ fun AppEntry(
                 }) {
                     Text(stringResource(R.string.add_shortcut))
                 }
-                overlyingListType?.let {
+                app.overlyingListType?.let {
                     DropdownMenuItem(onClick = {
                         if (Datasource.removePackage(context, app.packageName, it)) {
                             dropdownExpanded = false
@@ -275,7 +273,7 @@ fun AppEntry(
             onLongClick = { dropdownExpanded = true }
         ).then(
             selectedAppList?.let {
-                Modifier.toggleable( // overrides combinedClickable
+                Modifier.toggleable( // overrides combinedClickable: -> no open app nor dropdown
                     role = Role.Checkbox,
                     value = selectedAppList.any { it.packageName == app.packageName },
                     onValueChange = {
