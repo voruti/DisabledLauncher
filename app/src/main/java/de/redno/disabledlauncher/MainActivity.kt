@@ -17,6 +17,7 @@ import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
 import androidx.navigation.compose.rememberNavController
 import de.redno.disabledlauncher.model.ListType
+import de.redno.disabledlauncher.service.AppService
 import de.redno.disabledlauncher.service.Datasource
 import de.redno.disabledlauncher.ui.screens.MainScreen
 import de.redno.disabledlauncher.ui.screens.SettingsScreen
@@ -81,11 +82,16 @@ fun DisabledLauncherNavHost(
         composable(MainActivity.ROUTE_MAIN) {
             MainScreen(
                 onSettingsClick = { navController.navigate(MainActivity.ROUTE_SETTINGS) },
-                directLauncherPackageNameList = Datasource.loadAppList(context, ListType.DIRECT).toMutableList().apply {
-                    addAll(Datasource.loadAppList(context, ListType.LONG_TERM))
-                    // TODO: removing apps that come from the long term list isn't possible when "injected" here (only possible when seeing them in their own long term list)
+                directLauncherAppList = Datasource.loadAppList(context, ListType.DIRECT).map {
+                    AppService.getDetailsForPackage(context, it, ListType.DIRECT)
+                }.toMutableList().apply {
+                    addAll(Datasource.loadAppList(context, ListType.LONG_TERM).map {
+                        AppService.getDetailsForPackage(context, it, ListType.LONG_TERM)
+                    })
                 },
-                longTermLauncherPackageNameList = Datasource.loadAppList(context, ListType.LONG_TERM)
+                longTermLauncherAppList = Datasource.loadAppList(context, ListType.LONG_TERM).map {
+                    AppService.getDetailsForPackage(context, it, ListType.LONG_TERM)
+                }
             )
         }
         composable(MainActivity.ROUTE_SETTINGS) {

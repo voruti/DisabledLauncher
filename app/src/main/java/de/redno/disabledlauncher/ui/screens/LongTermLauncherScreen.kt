@@ -8,7 +8,7 @@ import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.tooling.preview.Preview
 import de.redno.disabledlauncher.R
-import de.redno.disabledlauncher.model.ListType
+import de.redno.disabledlauncher.model.App
 import de.redno.disabledlauncher.service.AppService
 import de.redno.disabledlauncher.ui.components.AppList
 import de.redno.disabledlauncher.ui.components.ToolbarComponent
@@ -17,10 +17,14 @@ import de.redno.disabledlauncher.ui.theme.DisabledLauncherTheme
 @Preview(showBackground = true, showSystemUi = true)
 @Composable
 private fun LongTermLauncherPreview() {
+    val context = LocalContext.current
+
     DisabledLauncherTheme {
         LongTermLauncherScreen(
             onMenuClick = {},
-            packageNameList = listOf("de.test.1", "de.test.2", "de.test.3")
+            appList = listOf("de.test.1", "de.test.2", "de.test.3").map {
+                AppService.getDetailsForPackage(context, it)
+            }
         )
     }
 }
@@ -29,11 +33,9 @@ private fun LongTermLauncherPreview() {
 @Composable
 fun LongTermLauncherScreen(
     onMenuClick: () -> Unit,
-    packageNameList: List<String>,
+    appList: List<App>,
     modifier: Modifier = Modifier
 ) {
-    val context = LocalContext.current
-
     Scaffold(
         modifier = modifier,
         topBar = {
@@ -44,9 +46,7 @@ fun LongTermLauncherScreen(
         }
     ) {
         AppList(
-            appList = packageNameList.map {
-                AppService.getDetailsForPackage(context, it, ListType.LONG_TERM)
-            },
+            appList = appList,
             modifier = Modifier.padding(it)
         )
     }

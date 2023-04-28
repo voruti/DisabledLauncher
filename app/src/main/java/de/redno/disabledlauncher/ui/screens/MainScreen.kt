@@ -22,6 +22,7 @@ import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import de.redno.disabledlauncher.R
 import de.redno.disabledlauncher.common.AndroidUtil
+import de.redno.disabledlauncher.model.App
 import de.redno.disabledlauncher.model.exception.DisabledLauncherException
 import de.redno.disabledlauncher.service.AppService
 import de.redno.disabledlauncher.ui.theme.DisabledLauncherTheme
@@ -36,11 +37,17 @@ private const val SCREEN_ENABLE_APPS_ONCE = 3
 @Preview(showBackground = true, showSystemUi = true)
 @Composable
 private fun MainPreview() {
+    val context = LocalContext.current
+
     DisabledLauncherTheme {
         MainScreen(
             onSettingsClick = {},
-            directLauncherPackageNameList = listOf("de.test.1"),
-            longTermLauncherPackageNameList = listOf("de.test.2")
+            directLauncherAppList = listOf("de.test.1").map {
+                AppService.getDetailsForPackage(context, it)
+            },
+            longTermLauncherAppList = listOf("de.test.2").map {
+                AppService.getDetailsForPackage(context, it)
+            }
         )
     }
 }
@@ -49,8 +56,8 @@ private fun MainPreview() {
 @Composable
 fun MainScreen(
     onSettingsClick: () -> Unit,
-    directLauncherPackageNameList: List<String>,
-    longTermLauncherPackageNameList: List<String>,
+    directLauncherAppList: List<App>,
+    longTermLauncherAppList: List<App>,
     modifier: Modifier = Modifier
 ) {
     val context = LocalContext.current
@@ -156,14 +163,14 @@ fun MainScreen(
             SCREEN_DIRECT_LAUNCHER ->
                 DirectLauncherScreen(
                     onMenuClick = { toggleDrawer() },
-                    packageNameList = directLauncherPackageNameList,
+                    appList = directLauncherAppList,
                     modifier = Modifier.padding(it)
                 )
 
             SCREEN_LONG_TERM_LAUNCHER ->
                 LongTermLauncherScreen(
                     onMenuClick = { toggleDrawer() },
-                    packageNameList = longTermLauncherPackageNameList,
+                    appList = longTermLauncherAppList,
                     modifier = Modifier.padding(it)
                 )
 
