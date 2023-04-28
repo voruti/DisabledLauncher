@@ -296,7 +296,8 @@ fun AppEntry(
 @Composable
 fun AppList(
     appList: List<App>,
-    modifier: Modifier = Modifier
+    modifier: Modifier = Modifier,
+    selectedAppList: SnapshotStateList<App>? = null
 ) {
     val context = LocalContext.current
 
@@ -319,6 +320,7 @@ fun AppList(
                 }
             }
         )
+
         LazyColumn {
             // TODO: prevent being called on every search text change (; is this still applicable?)
             items(items = appList
@@ -328,10 +330,20 @@ fun AppList(
 
                     searchTerms.all { searchReference.contains(it) }
                 }
+                .let {
+                    if (selectedAppList != null) {
+                        it.sortedBy { it.name }
+                    } else {
+                        it
+                    }
+                }
                 .sortedBy { !it.isInstalled },
                 key = App::packageName
             ) {
-                AppEntry(it)
+                AppEntry(
+                    app = it,
+                    selectedAppList = selectedAppList
+                )
             }
         }
     }
