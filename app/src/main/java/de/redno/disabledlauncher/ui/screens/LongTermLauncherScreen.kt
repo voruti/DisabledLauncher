@@ -10,6 +10,7 @@ import androidx.compose.ui.tooling.preview.Preview
 import de.redno.disabledlauncher.R
 import de.redno.disabledlauncher.model.ListType
 import de.redno.disabledlauncher.service.AppService
+import de.redno.disabledlauncher.ui.components.AppList
 import de.redno.disabledlauncher.ui.components.ToolbarComponent
 import de.redno.disabledlauncher.ui.theme.DisabledLauncherTheme
 

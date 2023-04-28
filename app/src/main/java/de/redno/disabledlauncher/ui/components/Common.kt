@@ -8,13 +8,17 @@ import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
 import androidx.compose.foundation.combinedClickable
 import androidx.compose.foundation.layout.*
+import androidx.compose.foundation.lazy.LazyColumn
+import androidx.compose.foundation.lazy.items
 import androidx.compose.foundation.selection.toggleable
 import androidx.compose.material.*
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.ArrowBack
+import androidx.compose.material.icons.filled.Clear
 import androidx.compose.material.icons.filled.Menu
 import androidx.compose.material.icons.filled.Settings
 import androidx.compose.runtime.*
+import androidx.compose.runtime.saveable.rememberSaveable
 import androidx.compose.runtime.snapshots.SnapshotStateList
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
@@ -287,6 +291,50 @@ fun AppEntry(
             } ?: Modifier
         )
     )
+}
+
+@Composable
+fun AppList(
+    appList: List<App>,
+    modifier: Modifier = Modifier
+) {
+    val context = LocalContext.current
+
+    Column(modifier = modifier) {
+        var text by rememberSaveable { mutableStateOf("") }
+        TextField( // TODO: https://developer.android.com/jetpack/compose/text#enter-modify-text
+            value = text, // TODO: put into toolbar
+            onValueChange = { text = it },
+            label = { Text(stringResource(id = R.string.search)) },
+            singleLine = true,
+            modifier = Modifier.fillMaxWidth(),
+            trailingIcon = {
+                IconButton(
+                    onClick = { text = "" }
+                ) {
+                    Icon(
+                        imageVector = Icons.Default.Clear,
+                        contentDescription = context.getString(R.string.clear_search)
+                    )
+                }
+            }
+        )
+        LazyColumn {
+            // TODO: prevent being called on every search text change (; is this still applicable?)
+            items(items = appList
+                .filter {
+                    val searchTerms = text.trim().lowercase().split(" ")
+                    val searchReference = "${it.name.trim().lowercase()} ${it.packageName.trim().lowercase()}"
+
+                    searchTerms.all { searchReference.contains(it) }
+                }
+                .sortedBy { !it.isInstalled },
+                key = App::packageName
+            ) {
+                AppEntry(it)
+            }
+        }
+    }
 }
 
 @Composable
