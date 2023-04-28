@@ -75,8 +75,9 @@ fun DirectLauncherScreen(
         }
     ) {
         AppList(
-            packageNameList = packageNameList,
-            listType = ListType.DIRECT,
+            appList = packageNameList.map {
+                AppService.getDetailsForPackage(context, it, ListType.DIRECT)
+            },
             modifier = Modifier.padding(it)
         )
     }
@@ -84,8 +85,7 @@ fun DirectLauncherScreen(
 
 @Composable
 fun AppList(
-    packageNameList: List<String>,
-    listType: ListType,
+    appList: List<App>,
     modifier: Modifier = Modifier
 ) {
     val context = LocalContext.current
@@ -110,9 +110,7 @@ fun AppList(
             }
         )
         LazyColumn {
-            val appList = packageNameList.map {
-                AppService.getDetailsForPackage(context, it, listType)
-            } // TODO: prevent being called on every text change
+            // TODO: prevent being called on every search text change (; is this still applicable?)
             items(items = appList
                 .filter {
                     val searchTerms = text.trim().lowercase().split(" ")

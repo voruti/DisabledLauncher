@@ -4,10 +4,12 @@ import androidx.compose.foundation.layout.padding
 import androidx.compose.material.Scaffold
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.tooling.preview.Preview
 import de.redno.disabledlauncher.R
 import de.redno.disabledlauncher.model.ListType
+import de.redno.disabledlauncher.service.AppService
 import de.redno.disabledlauncher.ui.components.ToolbarComponent
 import de.redno.disabledlauncher.ui.theme.DisabledLauncherTheme
 
@@ -29,6 +31,8 @@ fun LongTermLauncherScreen(
     packageNameList: List<String>,
     modifier: Modifier = Modifier
 ) {
+    val context = LocalContext.current
+
     Scaffold(
         modifier = modifier,
         topBar = {
@@ -39,8 +43,9 @@ fun LongTermLauncherScreen(
         }
     ) {
         AppList(
-            packageNameList = packageNameList,
-            listType = ListType.LONG_TERM,
+            appList = packageNameList.map {
+                AppService.getDetailsForPackage(context, it, ListType.LONG_TERM)
+            },
             modifier = Modifier.padding(it)
         )
     }
