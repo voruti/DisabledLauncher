@@ -47,7 +47,7 @@ class ActionReceiverActivity : ComponentActivity() {
         finish()
     }
 
-    private fun error(message: String, openMainActivity: Boolean = true) {
+    private fun error(message: String, openMainActivity: Boolean = false) {
         Toast.makeText(this, message, Toast.LENGTH_LONG).show()
 
         // switch to main activity:
