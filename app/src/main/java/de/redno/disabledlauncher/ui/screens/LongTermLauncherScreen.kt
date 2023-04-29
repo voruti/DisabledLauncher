@@ -3,6 +3,8 @@ package de.redno.disabledlauncher.ui.screens
 import androidx.compose.foundation.layout.padding
 import androidx.compose.material.Scaffold
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.mutableStateListOf
+import androidx.compose.runtime.remember
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.stringResource
@@ -36,6 +38,10 @@ fun LongTermLauncherScreen(
     appList: List<App>,
     modifier: Modifier = Modifier
 ) {
+    val context = LocalContext.current
+
+    val selectedAppList = remember { mutableStateListOf<App>() }
+    selectedAppList.addAll(appList.filter { it.isEnabled })
     Scaffold(
         modifier = modifier,
         topBar = {
@@ -47,6 +53,15 @@ fun LongTermLauncherScreen(
     ) {
         AppList(
             appList = appList,
+            selectedAppList = selectedAppList,
+            onSelectedValueChangeAsWell = { app, checked ->
+                if (checked) {
+                    AppService.openAppLogic(context, app)
+                    // TODO: alternatively only enable app, configurable in settings
+                } else {
+                    AppService.disableApp(context, app, true)
+                }
+            },
             modifier = Modifier.padding(it)
         )
     }

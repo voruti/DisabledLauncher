@@ -183,7 +183,8 @@ fun ListItem(
 fun AppEntry(
     app: App,
     modifier: Modifier = Modifier,
-    selectedAppList: SnapshotStateList<App>? = null
+    selectedAppList: SnapshotStateList<App>? = null,
+    onSelectedValueChangeAsWell: (Boolean) -> Unit = {}
 ) {
     val context = LocalContext.current
     val sharedPreferences = context.getSharedPreferences(context.packageName, Context.MODE_PRIVATE)
@@ -286,6 +287,8 @@ fun AppEntry(
                         } else {
                             selectedAppList.removeIf { it.packageName == app.packageName }
                         }
+
+                        onSelectedValueChangeAsWell(it)
                     }
                 )
             } ?: Modifier
@@ -298,6 +301,7 @@ fun AppList(
     appList: List<App>,
     modifier: Modifier = Modifier,
     selectedAppList: SnapshotStateList<App>? = null,
+    onSelectedValueChangeAsWell: (App, Boolean) -> Unit = { _, _ -> },
     sortByName: Boolean = false
 ) {
     val context = LocalContext.current
@@ -340,10 +344,11 @@ fun AppList(
                 }
                 .sortedBy { !it.isInstalled },
                 key = App::packageName
-            ) {
+            ) { app ->
                 AppEntry(
-                    app = it,
-                    selectedAppList = selectedAppList
+                    app = app,
+                    selectedAppList = selectedAppList,
+                    onSelectedValueChangeAsWell = { checked -> onSelectedValueChangeAsWell(app, checked) }
                 )
             }
         }
