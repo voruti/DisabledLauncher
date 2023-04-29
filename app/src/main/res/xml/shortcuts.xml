@@ -12,8 +12,8 @@
             android:targetClass="de.redno.disabledlauncher.MainActivity"
             android:targetPackage="de.redno.disabledlauncher">
             <extra
-                android:name="initialMainDrawerScreen"
-                android:value="SCREEN_LONG_TERM_LAUNCHER" />
+                android:name="mainDrawerStartDestination"
+                android:value="longtermlauncher" />
         </intent>
         <categories android:name="android.shortcut.category" />
     </shortcut>

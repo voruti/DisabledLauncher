@@ -19,7 +19,9 @@ import androidx.navigation.compose.rememberNavController
 import de.redno.disabledlauncher.model.ListType
 import de.redno.disabledlauncher.service.AppService
 import de.redno.disabledlauncher.service.Datasource
-import de.redno.disabledlauncher.ui.screens.*
+import de.redno.disabledlauncher.ui.screens.MainScreen
+import de.redno.disabledlauncher.ui.screens.Screen
+import de.redno.disabledlauncher.ui.screens.SettingsScreen
 import de.redno.disabledlauncher.ui.theme.DisabledLauncherTheme
 
 class MainActivity : ComponentActivity() { // TODO: faster startup somehow?
@@ -40,15 +42,8 @@ class MainActivity : ComponentActivity() { // TODO: faster startup somehow?
                     color = MaterialTheme.colors.background
                 ) {
                     DisabledLauncherNavHost(
-                        initialMainDrawerScreen = when (intent.getStringExtra("initialMainDrawerScreen")) {
-                            "SCREEN_LONG_TERM_LAUNCHER" -> SCREEN_LONG_TERM_LAUNCHER
-                            "SCREEN_DISABLE_APPS_ONCE" -> SCREEN_DISABLE_APPS_ONCE
-                            "SCREEN_ENABLE_APPS_ONCE" -> SCREEN_ENABLE_APPS_ONCE
-
-                            else -> {
-                                SCREEN_DIRECT_LAUNCHER
-                            }
-                        }
+                        mainDrawerStartDestination = intent.getStringExtra("mainDrawerStartDestination")
+                            ?: Screen.DirectLauncher.route
                     )
                 }
             }
@@ -80,7 +75,7 @@ fun DisabledLauncherNavHost(
     modifier: Modifier = Modifier,
     navController: NavHostController = rememberNavController(),
     startDestination: String = MainActivity.ROUTE_MAIN,
-    initialMainDrawerScreen: Int = SCREEN_DIRECT_LAUNCHER
+    mainDrawerStartDestination: String = Screen.DirectLauncher.route
 ) {
     val context = LocalContext.current
 
@@ -91,7 +86,7 @@ fun DisabledLauncherNavHost(
     ) {
         composable(MainActivity.ROUTE_MAIN) {
             MainScreen(
-                initialDrawerScreen = initialMainDrawerScreen,
+                drawerStartDestination = mainDrawerStartDestination,
                 onSettingsClick = { navController.navigate(MainActivity.ROUTE_SETTINGS) },
                 directLauncherAppList = Datasource.loadAppList(context, ListType.DIRECT).map {
                     AppService.getDetailsForPackage(context, it, ListType.DIRECT)
@@ -105,9 +100,10 @@ fun DisabledLauncherNavHost(
                 }
             )
         }
+
         composable(MainActivity.ROUTE_SETTINGS) {
             SettingsScreen(
-                onBackNavigation = { navController.popBackStack() }
+                onBackNavigation = { navController.navigateUp() }
             )
         }
     }

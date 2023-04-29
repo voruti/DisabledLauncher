@@ -1,6 +1,7 @@
 package de.redno.disabledlauncher.ui.screens
 
 import android.widget.Toast
+import androidx.annotation.StringRes
 import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.*
@@ -8,7 +9,9 @@ import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.*
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.*
-import androidx.compose.runtime.*
+import androidx.compose.runtime.Composable
+import androidx.compose.runtime.getValue
+import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
@@ -20,6 +23,13 @@ import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
+import androidx.navigation.NavDestination.Companion.hierarchy
+import androidx.navigation.NavGraph.Companion.findStartDestination
+import androidx.navigation.NavHostController
+import androidx.navigation.compose.NavHost
+import androidx.navigation.compose.composable
+import androidx.navigation.compose.currentBackStackEntryAsState
+import androidx.navigation.compose.rememberNavController
 import de.redno.disabledlauncher.R
 import de.redno.disabledlauncher.common.AndroidUtil
 import de.redno.disabledlauncher.model.App
@@ -28,10 +38,40 @@ import de.redno.disabledlauncher.service.AppService
 import de.redno.disabledlauncher.ui.theme.DisabledLauncherTheme
 import kotlinx.coroutines.launch
 
-const val SCREEN_DIRECT_LAUNCHER = 0 // TODO: use nav controller instead
-const val SCREEN_LONG_TERM_LAUNCHER = 1
-const val SCREEN_DISABLE_APPS_ONCE = 2
-const val SCREEN_ENABLE_APPS_ONCE = 3
+sealed class Screen(
+    val route: String,
+    val imageVector: ImageVector,
+    @StringRes val iconDescriptionResourceId: Int,
+    @StringRes val labelResourceId: Int
+) {
+    object DirectLauncher : Screen(
+        "directlauncher",
+        Icons.Default.Apps,
+        R.string.direct_launcher_icon,
+        R.string.direct_launcher_title
+    )
+
+    object LongTermLauncher : Screen(
+        "longtermlauncher",
+        Icons.Default.DirectionsRun,
+        R.string.long_term_launcher_icon,
+        R.string.long_term_launcher_title
+    )
+
+    object DisableAppsOnce : Screen(
+        "disableappsonce",
+        Icons.Default.Block,
+        R.string.disable_apps_once_icon,
+        R.string.disable_apps_once_title
+    )
+
+    object EnableAppsOnce : Screen(
+        "enableappsonce",
+        Icons.Default.Check,
+        R.string.enable_apps_once_icon,
+        R.string.enable_apps_once_title
+    )
+}
 
 
 @Preview(showBackground = true, showSystemUi = true)
@@ -59,7 +99,8 @@ fun MainScreen(
     directLauncherAppList: List<App>,
     longTermLauncherAppList: List<App>,
     modifier: Modifier = Modifier,
-    initialDrawerScreen: Int = SCREEN_DIRECT_LAUNCHER
+    drawerNavController: NavHostController = rememberNavController(),
+    drawerStartDestination: String = Screen.DirectLauncher.route
 ) {
     val context = LocalContext.current
 
@@ -85,8 +126,6 @@ fun MainScreen(
         }
     }
 
-    var currentScreen by remember { mutableStateOf(initialDrawerScreen) }
-
     Scaffold(
         modifier = modifier,
         scaffoldState = scaffoldState,
@@ -105,77 +144,72 @@ fun MainScreen(
 
             Divider()
 
-            DrawerItem(
-                imageVector = Icons.Default.Apps,
-                contentDescription = stringResource(R.string.direct_launcher_icon),
-                text = stringResource(R.string.direct_launcher_title),
-                onClick = {
-                    currentScreen = SCREEN_DIRECT_LAUNCHER
-                    toggleDrawer()
-                },
-                selected = currentScreen == SCREEN_DIRECT_LAUNCHER
-            )
-            DrawerItem(
-                imageVector = Icons.Default.DirectionsRun,
-                contentDescription = stringResource(R.string.long_term_launcher_icon),
-                text = stringResource(R.string.long_term_launcher_title),
-                onClick = {
-                    currentScreen = SCREEN_LONG_TERM_LAUNCHER
-                    toggleDrawer()
-                },
-                selected = currentScreen == SCREEN_LONG_TERM_LAUNCHER
-            )
-            DrawerItem(
-                imageVector = Icons.Default.Block,
-                contentDescription = stringResource(R.string.disable_apps_once_icon),
-                text = stringResource(R.string.disable_apps_once_title),
-                onClick = {
-                    currentScreen = SCREEN_DISABLE_APPS_ONCE
-                    toggleDrawer()
-                },
-                selected = currentScreen == SCREEN_DISABLE_APPS_ONCE
-            )
-            DrawerItem(
-                imageVector = Icons.Default.Check,
-                contentDescription = stringResource(R.string.enable_apps_once_icon),
-                text = stringResource(R.string.enable_apps_once_title),
-                onClick = {
-                    currentScreen = SCREEN_ENABLE_APPS_ONCE
-                    toggleDrawer()
-                },
-                selected = currentScreen == SCREEN_ENABLE_APPS_ONCE
-            )
+            val navBackStackEntry by drawerNavController.currentBackStackEntryAsState()
+            val currentDestination = navBackStackEntry?.destination
+
+            listOf(
+                Screen.DirectLauncher,
+                Screen.LongTermLauncher,
+                Screen.DisableAppsOnce,
+                Screen.EnableAppsOnce
+            ).forEach { screen ->
+                DrawerItem(
+                    imageVector = screen.imageVector,
+                    iconDescriptionResourceId = screen.iconDescriptionResourceId,
+                    labelResourceId = screen.labelResourceId,
+                    selected = currentDestination?.hierarchy?.any { it.route == screen.route } == true,
+                    onClick = {
+                        toggleDrawer()
+                        drawerNavController.navigate(screen.route) {
+                            // Pop up to the start destination of the graph to
+                            // avoid building up a large stack of destinations
+                            // on the back stack as users select items
+                            popUpTo(drawerNavController.graph.findStartDestination().id) {
+                                saveState = true
+                            }
+                            // Avoid multiple copies of the same destination when
+                            // reselecting the same item
+                            launchSingleTop = true
+                            // Restore state when reselecting a previously selected item
+                            restoreState = true
+                        }
+                    }
+                )
+            }
 
             Divider()
 
             DrawerItem(
                 imageVector = Icons.Default.Settings,
-                contentDescription = stringResource(R.string.settings),
-                text = stringResource(R.string.settings),
+                iconDescriptionResourceId = R.string.settings,
+                labelResourceId = R.string.settings,
                 onClick = {
                     toggleDrawer()
                     onSettingsClick()
-                },
-                selected = false
+                }
             )
         }
     ) {
-        when (currentScreen) {
-            SCREEN_DIRECT_LAUNCHER ->
+        NavHost( // TODO: combine with other nav controller in MainActivity?
+            navController = drawerNavController,
+            startDestination = drawerStartDestination,
+            modifier = modifier.padding(it)
+        ) {
+            composable(Screen.DirectLauncher.route) {
                 DirectLauncherScreen(
                     onMenuClick = { toggleDrawer() },
-                    appList = directLauncherAppList,
-                    modifier = Modifier.padding(it)
+                    appList = directLauncherAppList
                 )
+            }
 
-            SCREEN_LONG_TERM_LAUNCHER ->
+            composable(Screen.LongTermLauncher.route) {
                 LongTermLauncherScreen(
                     onMenuClick = { toggleDrawer() },
-                    appList = longTermLauncherAppList,
-                    modifier = Modifier.padding(it)
+                    appList = longTermLauncherAppList
                 )
+            }
 
-            SCREEN_DISABLE_APPS_ONCE -> {
+            composable(Screen.DisableAppsOnce.route) {
                 val enabledApps = AppService.getInstalledPackages(context) { it.applicationInfo.enabled }
                     .map { AppService.getDetailsForPackage(context, it) }
 
@@ -193,12 +227,11 @@ fun MainScreen(
                                 AndroidUtil.asyncToastMakeText(context, it, Toast.LENGTH_SHORT)
                             }
                         }
-                    },
-                    modifier = Modifier.padding(it)
+                    }
                 )
             }
 
-            SCREEN_ENABLE_APPS_ONCE -> {
+            composable(Screen.EnableAppsOnce.route) {
                 val disabledApps = AppService.getInstalledPackages(context) { !it.applicationInfo.enabled }
                     .map { AppService.getDetailsForPackage(context, it) }
 
@@ -216,8 +249,7 @@ fun MainScreen(
                                 AndroidUtil.asyncToastMakeText(context, it, Toast.LENGTH_SHORT)
                             }
                         }
-                    },
-                    modifier = Modifier.padding(it)
+                    }
                 )
             }
         }
@@ -227,8 +259,8 @@ fun MainScreen(
 @Composable
 private fun DrawerItem(
     imageVector: ImageVector,
-    contentDescription: String,
-    text: String,
+    @StringRes iconDescriptionResourceId: Int,
+    @StringRes labelResourceId: Int,
     onClick: () -> Unit,
     modifier: Modifier = Modifier,
     selected: Boolean = false
@@ -250,7 +282,7 @@ private fun DrawerItem(
         Row {
             Icon(
                 imageVector = imageVector,
-                contentDescription = contentDescription,
+                contentDescription = stringResource(iconDescriptionResourceId),
                 modifier = Modifier.padding(8.dp)
                     .padding(end = 32.dp),
                 tint = if (selected) MaterialTheme.colors.primary else Color.Gray
@@ -260,7 +292,7 @@ private fun DrawerItem(
                 contentAlignment = Alignment.CenterStart
             ) {
                 Text(
-                    text = text,
+                    text = stringResource(labelResourceId),
                     maxLines = 1,
                     overflow = TextOverflow.Ellipsis,
                     fontWeight = FontWeight.Medium,
