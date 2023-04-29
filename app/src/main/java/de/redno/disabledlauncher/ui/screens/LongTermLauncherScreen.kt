@@ -11,7 +11,9 @@ import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.tooling.preview.Preview
 import de.redno.disabledlauncher.R
 import de.redno.disabledlauncher.model.App
+import de.redno.disabledlauncher.model.ListType
 import de.redno.disabledlauncher.service.AppService
+import de.redno.disabledlauncher.service.Datasource
 import de.redno.disabledlauncher.ui.components.AppList
 import de.redno.disabledlauncher.ui.components.ToolbarComponent
 import de.redno.disabledlauncher.ui.components.clickedApp
@@ -61,6 +63,7 @@ fun LongTermLauncherScreen(
                     // TODO: alternatively only enable app, configurable in settings
                 } else {
                     AppService.disableApp(context, app, true)
+                    Datasource.raisePackage(context, app.packageName, ListType.LONG_TERM)
                 }
             },
             modifier = Modifier.padding(it)
