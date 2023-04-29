@@ -9,4 +9,18 @@
             android:targetClass="de.redno.disabledlauncher.ActionReceiverActivity"
             android:targetPackage="de.redno.disabledlauncher" />
     </shortcut>
+    <shortcut
+        android:icon="@drawable/ic_launcher_foreground"
+        android:shortcutId="longtermlauncher"
+        android:shortcutLongLabel="@string/long_term_launcher_title"
+        android:shortcutShortLabel="@string/long_term_launcher_title">
+        <intent
+            android:action="android.intent.action.VIEW"
+            android:targetClass="de.redno.disabledlauncher.MainActivity"
+            android:targetPackage="de.redno.disabledlauncher">
+            <extra
+                android:name="initialMainDrawerScreen"
+                android:value="SCREEN_LONG_TERM_LAUNCHER" />
+        </intent>
+    </shortcut>
 </shortcuts>

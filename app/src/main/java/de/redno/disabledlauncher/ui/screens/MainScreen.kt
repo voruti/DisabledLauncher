@@ -28,10 +28,10 @@ import de.redno.disabledlauncher.service.AppService
 import de.redno.disabledlauncher.ui.theme.DisabledLauncherTheme
 import kotlinx.coroutines.launch
 
-private const val SCREEN_DIRECT_LAUNCHER = 0 // TODO: use nav controller instead
-private const val SCREEN_LONG_TERM_LAUNCHER = 1
-private const val SCREEN_DISABLE_APPS_ONCE = 2
-private const val SCREEN_ENABLE_APPS_ONCE = 3
+const val SCREEN_DIRECT_LAUNCHER = 0 // TODO: use nav controller instead
+const val SCREEN_LONG_TERM_LAUNCHER = 1
+const val SCREEN_DISABLE_APPS_ONCE = 2
+const val SCREEN_ENABLE_APPS_ONCE = 3
 
 
 @Preview(showBackground = true, showSystemUi = true)
@@ -58,7 +58,8 @@ fun MainScreen(
     onSettingsClick: () -> Unit,
     directLauncherAppList: List<App>,
     longTermLauncherAppList: List<App>,
-    modifier: Modifier = Modifier
+    modifier: Modifier = Modifier,
+    initialDrawerScreen: Int = SCREEN_DIRECT_LAUNCHER
 ) {
     val context = LocalContext.current
 
@@ -84,7 +85,7 @@ fun MainScreen(
         }
     }
 
-    var currentScreen by remember { mutableStateOf(SCREEN_DIRECT_LAUNCHER) }
+    var currentScreen by remember { mutableStateOf(initialDrawerScreen) }
 
     Scaffold(
         modifier = modifier,

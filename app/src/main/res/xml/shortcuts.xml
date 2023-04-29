@@ -6,4 +6,15 @@
             android:targetPackage="de.redno.disabledlauncher" />
         <categories android:name="android.shortcut.category" />
     </shortcut>
+    <shortcut android:icon="@drawable/ic_launcher_foreground">
+        <intent
+            android:action="android.intent.action.VIEW"
+            android:targetClass="de.redno.disabledlauncher.MainActivity"
+            android:targetPackage="de.redno.disabledlauncher">
+            <extra
+                android:name="initialMainDrawerScreen"
+                android:value="SCREEN_LONG_TERM_LAUNCHER" />
+        </intent>
+        <categories android:name="android.shortcut.category" />
+    </shortcut>
 </shortcuts>
