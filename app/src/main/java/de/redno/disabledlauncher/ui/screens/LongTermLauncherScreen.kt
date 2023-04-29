@@ -14,6 +14,7 @@ import de.redno.disabledlauncher.model.App
 import de.redno.disabledlauncher.service.AppService
 import de.redno.disabledlauncher.ui.components.AppList
 import de.redno.disabledlauncher.ui.components.ToolbarComponent
+import de.redno.disabledlauncher.ui.components.clickedApp
 import de.redno.disabledlauncher.ui.theme.DisabledLauncherTheme
 
 @Preview(showBackground = true, showSystemUi = true)
@@ -56,7 +57,7 @@ fun LongTermLauncherScreen(
             selectedAppList = selectedAppList,
             onSelectedValueChangeAsWell = { app, checked ->
                 if (checked) {
-                    AppService.openAppLogic(context, app)
+                    clickedApp(context, app)
                     // TODO: alternatively only enable app, configurable in settings
                 } else {
                     AppService.disableApp(context, app, true)

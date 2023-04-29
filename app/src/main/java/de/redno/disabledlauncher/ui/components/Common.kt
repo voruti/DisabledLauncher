@@ -44,6 +44,7 @@ import de.redno.disabledlauncher.MainActivity
 import de.redno.disabledlauncher.R
 import de.redno.disabledlauncher.common.AndroidUtil
 import de.redno.disabledlauncher.model.App
+import de.redno.disabledlauncher.model.ListType
 import de.redno.disabledlauncher.model.exception.DisabledLauncherException
 import de.redno.disabledlauncher.service.AppService
 import de.redno.disabledlauncher.service.Datasource
@@ -59,6 +60,28 @@ fun clickableIcon(
             Icon(imageVector, contentDescription)
         }
     }
+}
+
+fun clickedApp(context: Context, app: App) {
+    val sharedPreferences = context.getSharedPreferences(context.packageName, Context.MODE_PRIVATE)
+
+    Thread {
+        if (app.isInstalled) {
+            try {
+                AppService.openAppLogic(context, app)
+                if (sharedPreferences.getBoolean("sortAppsByUsage", false)
+                    && app.overlyingListType == ListType.DIRECT // LONG_TERM is raised on disabling
+                ) {
+                    Datasource.raisePackage(context, app.packageName)
+                }
+                MainActivity.lastObject?.finishAndRemoveTask() // TODO: configurable setting to keep app open
+            } catch (e: DisabledLauncherException) {
+                e.getLocalizedMessage(context)?.let {
+                    AndroidUtil.asyncToastMakeText(context, it, Toast.LENGTH_SHORT)
+                }
+            }
+        }
+    }.start()
 }
 
 
@@ -187,7 +210,6 @@ fun AppEntry(
     onSelectedValueChangeAsWell: (Boolean) -> Unit = {}
 ) {
     val context = LocalContext.current
-    val sharedPreferences = context.getSharedPreferences(context.packageName, Context.MODE_PRIVATE)
 
     var dropdownExpanded by remember { mutableStateOf(false) }
     ListItem(
@@ -258,23 +280,7 @@ fun AppEntry(
             }
         },
         modifier = modifier.combinedClickable(
-            onClick = {
-                Thread {
-                    if (app.isInstalled) {
-                        try {
-                            AppService.openAppLogic(context, app)
-                            if (sharedPreferences.getBoolean("sortAppsByUsage", false)) {
-                                Datasource.raisePackage(context, app.packageName)
-                            }
-                            MainActivity.lastObject?.finishAndRemoveTask() // TODO: configurable setting to keep app open
-                        } catch (e: DisabledLauncherException) {
-                            e.getLocalizedMessage(context)?.let {
-                                AndroidUtil.asyncToastMakeText(context, it, Toast.LENGTH_SHORT)
-                            }
-                        }
-                    }
-                }.start()
-            },
+            onClick = { clickedApp(context, app) },
             onLongClick = { dropdownExpanded = true }
         ).then(
             selectedAppList?.let {
