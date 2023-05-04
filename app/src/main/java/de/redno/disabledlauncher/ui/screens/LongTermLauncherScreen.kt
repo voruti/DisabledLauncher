@@ -64,6 +64,7 @@ fun LongTermLauncherScreen(
                 } else {
                     AppService.disableApp(context, app, true)
                     Datasource.raisePackage(context, app.packageName, ListType.LONG_TERM)
+                    // TODO: configurable in settings: exit app here
                 }
             },
             modifier = Modifier.padding(it)
