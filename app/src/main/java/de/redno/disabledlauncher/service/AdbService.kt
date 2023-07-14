@@ -1,7 +1,7 @@
 package de.redno.disabledlauncher.service
 
+import android.content.Context
 import android.content.pm.PackageManager
-import android.content.res.Resources
 import androidx.compose.material.*
 import androidx.compose.runtime.*
 import de.redno.disabledlauncher.R
@@ -33,11 +33,11 @@ object AdbService {
     }
 
     @Throws(DisabledLauncherException::class)
-    fun executeAdbCommand(command: String) {
+    fun executeAdbCommand(context: Context, command: String) {
         checkShizukuPermission()
 
         if (Shizuku.newProcess(arrayOf("sh", "-c", command), null, null).waitFor() != 0) {
-            throw DisabledLauncherException(Resources.getSystem().getString(R.string.process_failure))
+            throw DisabledLauncherException(context.getString(R.string.process_failure))
         }
     }
 }

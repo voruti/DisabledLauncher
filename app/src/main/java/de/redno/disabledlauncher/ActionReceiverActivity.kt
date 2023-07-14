@@ -16,13 +16,18 @@ class ActionReceiverActivity : ComponentActivity() {
             "${packageName}.action.OPEN_APP" -> {
                 val packageNameToOpen = intent.getStringExtra("package_name")
                 if (packageNameToOpen != null && packageNameToOpen.matches(Regex("^\\w+\\.[\\w.]*\\w+$"))) {
-                    try {
-                        AppService.openAppLogic(this, AppService.getDetailsForPackage(this, packageNameToOpen))
-                        setResult(RESULT_OK, Intent())
-                    } catch (e: DisabledLauncherException) {
-                        e.getLocalizedMessage(this)?.let {
-                            error(it, e !is RedirectedToGooglePlayException)
+                    val app = AppService.getDetailsForPackage(this, packageNameToOpen)
+                    if (app.isInstalled) {
+                        try {
+                            AppService.openAppLogic(this, app)
+                            setResult(RESULT_OK, Intent())
+                        } catch (e: DisabledLauncherException) {
+                            e.getLocalizedMessage(this)?.let {
+                                error(it, e !is RedirectedToGooglePlayException)
+                            }
                         }
+                    } else {
+                        error(getString(R.string.app_not_found), true)
                     }
                 } else {
                     error(getString(R.string.intent_extras_incorrect))

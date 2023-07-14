@@ -49,19 +49,20 @@ object AppService {
         }
 
         return App(
-            name = context.getString(R.string.app_not_found),
+            name = context.getString(R.string.unknown_app),
             packageName = packageName,
             icon = context.getDrawable(R.drawable.ic_launcher_background)!!
                 .toBitmap(), // TODO: add proper app icons (+ for static shortcut, etc.)
             isEnabled = false,
-            isInstalled = false
+            isInstalled = false,
+            overlyingListType = overlyingListType
         )
     }
 
     @Throws(DisabledLauncherException::class)
     fun enableApp(context: Context, app: App, showToast: Boolean = false) {
         try {
-            AdbService.executeAdbCommand("pm enable ${app.packageName}")
+            AdbService.executeAdbCommand(context, "pm enable ${app.packageName}")
 
             if (showToast) {
                 AndroidUtil.asyncToastMakeText(
@@ -104,7 +105,7 @@ object AppService {
 
     @Throws(DisabledLauncherException::class)
     fun disableApp(context: Context, app: App, showToast: Boolean = true) {
-        AdbService.executeAdbCommand("pm disable-user --user 0 ${app.packageName}")
+        AdbService.executeAdbCommand(context, "pm disable-user --user 0 ${app.packageName}")
 
         if (showToast) {
             AndroidUtil.asyncToastMakeText(

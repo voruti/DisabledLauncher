@@ -335,6 +335,7 @@ fun AppList(
         LazyColumn {
             // TODO: prevent being called on every search text change (; is this still applicable?)
             items(items = appList
+                .distinctBy { it.packageName + it.overlyingListType } // ensuring unique key in the list
                 .filter {
                     val searchTerms = text.trim().lowercase().split(" ")
                     val searchReference = "${it.name.trim().lowercase()} ${it.packageName.trim().lowercase()}"
@@ -349,7 +350,7 @@ fun AppList(
                     }
                 }
                 .sortedBy { !it.isInstalled },
-                key = App::packageName
+                key = { "${it.packageName}_${it.overlyingListType}" }
             ) { app ->
                 AppEntry(
                     app = app,
