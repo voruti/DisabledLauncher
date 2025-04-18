@@ -210,7 +210,7 @@ fun MainScreen(
             }
 
             composable(Screen.DisableAppsOnce.route) {
-                val enabledApps = AppService.getInstalledPackages(context) { it.applicationInfo.enabled }
+                val enabledApps = AppService.getInstalledPackages(context) { it.applicationInfo!!.enabled }
                     .map { AppService.getDetailsForPackage(context, it) }
 
                 SelectMultipleAppsScreen(
@@ -232,7 +232,7 @@ fun MainScreen(
             }
 
             composable(Screen.EnableAppsOnce.route) {
-                val disabledApps = AppService.getInstalledPackages(context) { !it.applicationInfo.enabled }
+                val disabledApps = AppService.getInstalledPackages(context) { !it.applicationInfo!!.enabled }
                     .map { AppService.getDetailsForPackage(context, it) }
 
                 SelectMultipleAppsScreen(

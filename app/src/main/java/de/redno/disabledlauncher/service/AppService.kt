@@ -34,15 +34,17 @@ object AppService {
         val packageManager = context.packageManager
 
         try {
-            packageManager.getPackageInfo(packageName, 0)?.let {
-                return App(
-                    it.applicationInfo.loadLabel(packageManager).toString(),
-                    it.packageName,
-                    it.applicationInfo.enabled,
-                    true,
-                    it.applicationInfo.loadIcon(packageManager).toBitmap(),
-                    overlyingListType = overlyingListType
-                )
+            packageManager.getPackageInfo(packageName, 0)?.let { packageInfo ->
+                packageInfo.applicationInfo?.let { applicationInfo ->
+                    return App(
+                        applicationInfo.loadLabel(packageManager).toString(),
+                        packageInfo.packageName,
+                        applicationInfo.enabled,
+                        true,
+                        applicationInfo.loadIcon(packageManager).toBitmap(),
+                        overlyingListType = overlyingListType
+                    )
+                }
             }
         } catch (e: PackageManager.NameNotFoundException) {
             e.printStackTrace()
