@@ -14,7 +14,7 @@ jobs:
       - uses: actions/checkout@11bd71901bbe5b1630ceea73d27597364c9af683 # v4
         with:
           fetch-depth: 0
-      - uses: rickstaa/action-contains-tag@19a2343c9b1e2fff8511723409c9afb8f10769ae # v1.2.8
+      - uses: rickstaa/action-contains-tag@a9ff27d505ba2bf074a2ebb48b208e76d35ff308 # v1.2.10
         id: contains_tag
         with:
           reference: "main"
