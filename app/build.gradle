@@ -48,7 +48,7 @@ android {
 }
 
 dependencies {
-    def shizuku_version = "13.1.0"
+    def shizuku_version = "13.1.5"
     def nav_version = "2.5.3"
 
     implementation 'androidx.core:core-ktx:1.9.0'
