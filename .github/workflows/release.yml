@@ -11,10 +11,10 @@ jobs:
     outputs:
       on_main: ${{ steps.contains_tag.outputs.retval }}
     steps:
-      - uses: actions/checkout@v3
+      - uses: actions/checkout@f43a0e5ff2bd294095638e18286ca9a3d1956744 # v3
         with:
           fetch-depth: 0
-      - uses: rickstaa/action-contains-tag@v1.2.8
+      - uses: rickstaa/action-contains-tag@19a2343c9b1e2fff8511723409c9afb8f10769ae # v1.2.8
         id: contains_tag
         with:
           reference: "main"
@@ -37,11 +37,11 @@ jobs:
           java-version: "11"
           distribution: "temurin"
       - name: Setup Gradle
-        uses: gradle/actions/setup-gradle@v4
+        uses: gradle/actions/setup-gradle@06832c7b30a0129d7fb559bcc6e43d26f6374244 # v4
       - name: Build with Gradle
         run: ./gradlew build assembleRelease
       - name: Create APK
-        uses: r0adkll/sign-android-release@v1
+        uses: r0adkll/sign-android-release@349ebdef58775b1e0d8099458af0816dc79b6407 # v1
         id: create_apk
         with:
           releaseDirectory: app/build/outputs/apk/release
@@ -53,7 +53,7 @@ jobs:
           BUILD_TOOLS_VERSION: "30.0.3"
       # --- from gradle.yml ---
 
-      - uses: "marvinpinto/action-automatic-releases@v1.2.1"
+      - uses: "marvinpinto/action-automatic-releases@919008cf3f741b179569b7a6fb4d8860689ab7f0" # v1.2.1
         with:
           repo_token: "${{ secrets.GITHUB_TOKEN }}"
           prerelease: false

@@ -27,11 +27,11 @@ jobs:
           java-version: "11"
           distribution: "temurin"
       - name: Setup Gradle
-        uses: gradle/actions/setup-gradle@v4
+        uses: gradle/actions/setup-gradle@06832c7b30a0129d7fb559bcc6e43d26f6374244 # v4
       - name: Build with Gradle
         run: ./gradlew build assembleRelease
       - name: Create APK
-        uses: r0adkll/sign-android-release@v1
+        uses: r0adkll/sign-android-release@349ebdef58775b1e0d8099458af0816dc79b6407 # v1
         id: create_apk
         with:
           releaseDirectory: app/build/outputs/apk/release
