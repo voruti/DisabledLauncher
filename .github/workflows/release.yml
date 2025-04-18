@@ -11,7 +11,7 @@ jobs:
     outputs:
       on_main: ${{ steps.contains_tag.outputs.retval }}
     steps:
-      - uses: actions/checkout@f43a0e5ff2bd294095638e18286ca9a3d1956744 # v3
+      - uses: actions/checkout@11bd71901bbe5b1630ceea73d27597364c9af683 # v4
         with:
           fetch-depth: 0
       - uses: rickstaa/action-contains-tag@19a2343c9b1e2fff8511723409c9afb8f10769ae # v1.2.8
