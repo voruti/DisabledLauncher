@@ -1,5 +1,5 @@
-# Created by https://www.toptal.com/developers/gitignore/api/java,intellij+all,kotlin,windows,linux,git,gradle,android,androidstudio
-# Edit at https://www.toptal.com/developers/gitignore?templates=java,intellij+all,kotlin,windows,linux,git,gradle,android,androidstudio
+# Created by https://www.toptal.com/developers/gitignore/api/java,intellij+all,kotlin,windows,linux,git,gradle,android,androidstudio,direnv,dotenv,macos
+# Edit at https://www.toptal.com/developers/gitignore?templates=java,intellij+all,kotlin,windows,linux,git,gradle,android,androidstudio,direnv,dotenv,macos
 
 ### Android ###
 # Gradle files
@@ -41,6 +41,13 @@ gen-external-apklibs
 
 # Replacement of .externalNativeBuild directories introduced
 # with Android Studio 3.5.
+
+### direnv ###
+.direnv
+# .envrc
+
+### dotenv ###
+.env
 
 ### Git ###
 # Created by git for backups. To disable backups in Git:
@@ -197,6 +204,39 @@ replay_pid*
 
 # .nfs files are created when an open file is removed but is still being accessed
 .nfs*
+
+### macOS ###
+# General
+.DS_Store
+.AppleDouble
+.LSOverride
+
+# Icon must end with two \r
+Icon
+
+
+# Thumbnails
+._*
+
+# Files that might appear in the root of a volume
+.DocumentRevisions-V100
+.fseventsd
+.Spotlight-V100
+.TemporaryItems
+.Trashes
+.VolumeIcon.icns
+.com.apple.timemachine.donotpresent
+
+# Directories potentially created on remote AFP share
+.AppleDB
+.AppleDesktop
+Network Trash Folder
+Temporary Items
+.apdisk
+
+### macOS Patch ###
+# iCloud generated files
+*.icloud
 
 ### Windows ###
 # Windows thumbnail cache files
@@ -355,4 +395,4 @@ obj/
 
 !/gradle/wrapper/gradle-wrapper.jar
 
-# End of https://www.toptal.com/developers/gitignore/api/java,intellij+all,kotlin,windows,linux,git,gradle,android,androidstudio
+# End of https://www.toptal.com/developers/gitignore/api/java,intellij+all,kotlin,windows,linux,git,gradle,android,androidstudio,direnv,dotenv,macos
