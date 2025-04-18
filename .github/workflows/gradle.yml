@@ -31,7 +31,7 @@ jobs:
       - name: Build with Gradle
         run: ./gradlew build assembleRelease
       - name: Create APK
-        uses: r0adkll/sign-android-release@349ebdef58775b1e0d8099458af0816dc79b6407 # v1
+        uses: filippoLeporati93/android-release-signer@v1
         id: create_apk
         with:
           releaseDirectory: app/build/outputs/apk/release
@@ -41,12 +41,8 @@ jobs:
           keyPassword: ${{ secrets.KEY_PASSWORD }}
         env:
           BUILD_TOOLS_VERSION: "30.0.3"
-      - name: Set short git commit SHA
-        run: |
-          calculatedSha=$(git rev-parse --short ${{ github.sha }})
-          echo "COMMIT_SHORT_SHA=$calculatedSha" >> $GITHUB_ENV
-      - name: Upload Build Artifact
+      - name: Upload build artifact
         uses: actions/upload-artifact@ea165f8d65b6e75b540449e92b4886f43607fa02 # v4.6.2
         with:
-          name: DisabledLauncher-${{ env.COMMIT_SHORT_SHA }}.apk
+          name: DisabledLauncher-${{ github.sha }}
           path: ${{ steps.create_apk.outputs.signedReleaseFile }}

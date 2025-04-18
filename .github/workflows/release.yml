@@ -41,7 +41,7 @@ jobs:
       - name: Build with Gradle
         run: ./gradlew build assembleRelease
       - name: Create APK
-        uses: r0adkll/sign-android-release@349ebdef58775b1e0d8099458af0816dc79b6407 # v1
+        uses: filippoLeporati93/android-release-signer@v1
         id: create_apk
         with:
           releaseDirectory: app/build/outputs/apk/release
