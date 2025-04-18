@@ -1,6 +1,10 @@
 {
   "$schema": "https://docs.renovatebot.com/renovate-schema.json",
   "description": "See all configuration options at https://docs.renovatebot.com/configuration-options/.",
-  "extends": ["config:best-practices", ":pinVersions"],
+  "extends": [
+    "config:best-practices",
+    ":pinVersions",
+    ":separateMultipleMajorReleases"
+  ],
   "osvVulnerabilityAlerts": true
 }
