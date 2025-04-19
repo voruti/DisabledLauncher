@@ -39,7 +39,7 @@
     <string name="sort_by_usage_title">Sortiere Apps nach Nutzung</string>
     <string name="sort_by_usage_description">Bewege Apps in der Liste aufwärts, wenn sie geöffnet werden</string>
     <string name="couldnt_load_app_list">App-Liste konnte nicht geladen werden</string>
-    <string name="success_added_x_apps">Erfolgreich %s Apps hinzugefügt</string>
+    <string name="success_added_x_apps">Erfolgreich %d Apps hinzugefügt</string>
     <string name="disable_apps_once_icon">Blockieren Icon</string>
     <string name="disable_apps_once_title">Apps einmalig deaktivieren</string>
     <string name="enable_apps_once_title">Apps einmalig aktivieren</string>
