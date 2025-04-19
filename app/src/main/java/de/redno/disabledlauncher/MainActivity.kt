@@ -8,6 +8,7 @@ import androidx.activity.compose.setContent
 import androidx.activity.result.contract.ActivityResultContracts
 import androidx.activity.enableEdgeToEdge
 import androidx.compose.foundation.layout.fillMaxSize
+import androidx.compose.foundation.layout.padding
 import androidx.compose.material.Scaffold
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
@@ -38,10 +39,9 @@ class MainActivity : ComponentActivity() { // TODO: faster startup somehow?
         enableEdgeToEdge()
         setContent {
             DisabledLauncherTheme {
-                Scaffold(
-                    modifier = Modifier.fillMaxSize()
-                ) {
+                Scaffold(modifier = Modifier.fillMaxSize()) { innerPadding ->
                     DisabledLauncherNavHost(
+                        modifier = Modifier.padding(innerPadding),
                         mainDrawerStartDestination = intent.getStringExtra("mainDrawerStartDestination")
                             ?: Screen.DirectLauncher.route
                     )
