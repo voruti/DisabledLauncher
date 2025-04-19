@@ -118,6 +118,7 @@ fun ToolbarComponent(
 ) {
     TopAppBar(
         modifier = modifier,
+        windowInsets = WindowInsets.safeDrawing,
         navigationIcon = onMenuClick?.let {
             clickableIcon(Icons.Default.Menu, stringResource(id = R.string.menu_icon), it)
         } ?: onBackNavigation?.let {

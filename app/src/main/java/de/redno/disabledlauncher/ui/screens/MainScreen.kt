@@ -131,7 +131,7 @@ fun MainScreen(
         scaffoldState = scaffoldState,
         drawerContent = {
             Box(
-                modifier = Modifier.height(64.dp),
+                modifier = Modifier.safeDrawingPadding().height(64.dp),
                 contentAlignment = Alignment.CenterStart
             ) {
                 Text(
