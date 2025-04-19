@@ -37,7 +37,11 @@ object AdbService {
     fun executeAdbCommand(context: Context, command: String) {
         checkShizukuPermission()
 
-        if (Shizuku.newProcess(arrayOf("sh", "-c", command), null, null).waitFor() != 0) {
+        try {
+            if (Shizuku.newProcess(arrayOf("sh", "-c", command), null, null).waitFor() != 0) {
+                throw DisabledLauncherException(context.getString(R.string.process_failure))
+            }
+        } catch (e: IllegalStateException) {
             throw DisabledLauncherException(context.getString(R.string.process_failure))
         }
     }

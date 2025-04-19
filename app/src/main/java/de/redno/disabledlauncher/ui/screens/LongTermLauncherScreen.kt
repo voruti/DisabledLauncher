@@ -1,5 +1,6 @@
 package de.redno.disabledlauncher.ui.screens
 
+import android.widget.Toast
 import androidx.compose.foundation.layout.padding
 import androidx.compose.material.Scaffold
 import androidx.compose.runtime.Composable
@@ -10,8 +11,10 @@ import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.tooling.preview.Preview
 import de.redno.disabledlauncher.R
+import de.redno.disabledlauncher.common.AndroidUtil
 import de.redno.disabledlauncher.model.App
 import de.redno.disabledlauncher.model.ListType
+import de.redno.disabledlauncher.model.exception.DisabledLauncherException
 import de.redno.disabledlauncher.service.AppService
 import de.redno.disabledlauncher.service.Datasource
 import de.redno.disabledlauncher.ui.components.AppList
@@ -62,9 +65,15 @@ fun LongTermLauncherScreen(
                     clickedApp(context, app)
                     // TODO: alternatively only enable app, configurable in settings
                 } else {
-                    AppService.disableApp(context, app, true)
-                    Datasource.raisePackage(context, app.packageName, ListType.LONG_TERM)
-                    // TODO: configurable in settings: exit app here
+                    try {
+                        AppService.disableApp(context, app, true)
+                        Datasource.raisePackage(context, app.packageName, ListType.LONG_TERM)
+                        // TODO: configurable in settings: exit app here
+                    } catch (e: DisabledLauncherException) {
+                        e.getLocalizedMessage(context)?.let {
+                            AndroidUtil.asyncToastMakeText(context, it, Toast.LENGTH_SHORT)
+                        }
+                    }
                 }
             },
             modifier = Modifier.padding(it)
