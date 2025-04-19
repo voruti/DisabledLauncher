@@ -7,18 +7,41 @@ import androidx.compose.foundation.ExperimentalFoundationApi
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
 import androidx.compose.foundation.combinedClickable
-import androidx.compose.foundation.layout.*
+import androidx.compose.foundation.layout.Box
+import androidx.compose.foundation.layout.BoxScope
+import androidx.compose.foundation.layout.Column
+import androidx.compose.foundation.layout.PaddingValues
+import androidx.compose.foundation.layout.Row
+import androidx.compose.foundation.layout.WindowInsets
+import androidx.compose.foundation.layout.fillMaxWidth
+import androidx.compose.foundation.layout.padding
+import androidx.compose.foundation.layout.safeDrawing
+import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.items
 import androidx.compose.foundation.selection.toggleable
-import androidx.compose.material.*
+import androidx.compose.material.Checkbox
+import androidx.compose.material.DropdownMenu
+import androidx.compose.material.DropdownMenuItem
+import androidx.compose.material.Icon
+import androidx.compose.material.IconButton
+import androidx.compose.material.MaterialTheme
+import androidx.compose.material.Switch
+import androidx.compose.material.Text
+import androidx.compose.material.TextField
+import androidx.compose.material.TopAppBar
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.automirrored.filled.ArrowBack
 import androidx.compose.material.icons.filled.Clear
 import androidx.compose.material.icons.filled.Menu
 import androidx.compose.material.icons.filled.Settings
-import androidx.compose.runtime.*
+import androidx.compose.runtime.Composable
+import androidx.compose.runtime.MutableState
+import androidx.compose.runtime.getValue
+import androidx.compose.runtime.mutableStateOf
+import androidx.compose.runtime.remember
 import androidx.compose.runtime.saveable.rememberSaveable
+import androidx.compose.runtime.setValue
 import androidx.compose.runtime.snapshots.SnapshotStateList
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
@@ -122,13 +145,20 @@ fun ToolbarComponent(
         navigationIcon = onMenuClick?.let {
             clickableIcon(Icons.Default.Menu, stringResource(id = R.string.menu_icon), it)
         } ?: onBackNavigation?.let {
-            clickableIcon(Icons.AutoMirrored.Filled.ArrowBack, stringResource(id = R.string.back_icon), it)
+            clickableIcon(
+                Icons.AutoMirrored.Filled.ArrowBack,
+                stringResource(id = R.string.back_icon),
+                it
+            )
         },
         title = { Text(text = title) },
         actions = {
             onSettingsClick?.let {
                 IconButton(onClick = onSettingsClick) {
-                    Icon(Icons.Default.Settings, contentDescription = stringResource(id = R.string.settings))
+                    Icon(
+                        Icons.Default.Settings,
+                        contentDescription = stringResource(id = R.string.settings)
+                    )
                 }
             }
         }
@@ -163,7 +193,8 @@ fun ListItem(
                 }
             }
             Box(
-                modifier = Modifier.size(64.dp)
+                modifier = Modifier
+                    .size(64.dp)
                     .padding(PaddingValues(end = 16.dp)),
                 contentAlignment = Alignment.Center,
                 content = icon
@@ -226,7 +257,10 @@ fun AppEntry(
         disabledStyle = !app.isInstalled,
         startContent = selectedAppList?.let {
             {
-                Checkbox(checked = it.any { it.packageName == app.packageName }, onCheckedChange = null)
+                Checkbox(
+                    checked = it.any { it.packageName == app.packageName },
+                    onCheckedChange = null
+                )
             }
         },
         contextContent = {
@@ -243,7 +277,11 @@ fun AppEntry(
                         val shortcutInfo = ShortcutInfoCompat.Builder(context, app.packageName)
                             .setShortLabel(app.name)
                             .setLongLabel(app.name)
-                            .setIcon(IconCompat.createWithBitmap(app.icon.asImageBitmap().asAndroidBitmap()))
+                            .setIcon(
+                                IconCompat.createWithBitmap(
+                                    app.icon.asImageBitmap().asAndroidBitmap()
+                                )
+                            )
                             .setIntent(intent)
                             .build()
                         ShortcutManagerCompat.requestPinShortcut(context, shortcutInfo, null)
@@ -271,7 +309,11 @@ fun AppEntry(
                             )
                             // TODO: refresh app list (+ there are other actions/code locations that need to trigger a list refresh)
                         } else {
-                            Toast.makeText(context, context.getString(R.string.couldnt_remove_app), Toast.LENGTH_LONG)
+                            Toast.makeText(
+                                context,
+                                context.getString(R.string.couldnt_remove_app),
+                                Toast.LENGTH_LONG
+                            )
                                 .show()
                         }
                     }) {
@@ -280,26 +322,28 @@ fun AppEntry(
                 }
             }
         },
-        modifier = modifier.combinedClickable(
-            onClick = { clickedApp(context, app) },
-            onLongClick = { dropdownExpanded = true }
-        ).then(
-            selectedAppList?.let {
-                Modifier.toggleable( // overrides combinedClickable: -> no open app nor dropdown
-                    role = Role.Checkbox,
-                    value = selectedAppList.any { it.packageName == app.packageName },
-                    onValueChange = {
-                        if (it) {
-                            selectedAppList.add(app)
-                        } else {
-                            selectedAppList.removeIf { it.packageName == app.packageName }
-                        }
+        modifier = modifier
+            .combinedClickable(
+                onClick = { clickedApp(context, app) },
+                onLongClick = { dropdownExpanded = true }
+            )
+            .then(
+                selectedAppList?.let {
+                    Modifier.toggleable( // overrides combinedClickable: -> no open app nor dropdown
+                        role = Role.Checkbox,
+                        value = selectedAppList.any { it.packageName == app.packageName },
+                        onValueChange = {
+                            if (it) {
+                                selectedAppList.add(app)
+                            } else {
+                                selectedAppList.removeIf { it.packageName == app.packageName }
+                            }
 
-                        onSelectedValueChangeAsWell(it)
-                    }
-                )
-            } ?: Modifier
-        )
+                            onSelectedValueChangeAsWell(it)
+                        }
+                    )
+                } ?: Modifier
+            )
     )
 }
 
@@ -335,28 +379,35 @@ fun AppList(
 
         LazyColumn {
             // TODO: prevent being called on every search text change (; is this still applicable?)
-            items(items = appList
-                .distinctBy { it.packageName + it.overlyingListType } // ensuring unique key in the list
-                .filter {
-                    val searchTerms = text.trim().lowercase().split(" ")
-                    val searchReference = "${it.name.trim().lowercase()} ${it.packageName.trim().lowercase()}"
+            items(
+                items = appList
+                    .distinctBy { it.packageName + it.overlyingListType } // ensuring unique key in the list
+                    .filter {
+                        val searchTerms = text.trim().lowercase().split(" ")
+                        val searchReference =
+                            "${it.name.trim().lowercase()} ${it.packageName.trim().lowercase()}"
 
-                    searchTerms.all { searchReference.contains(it) }
-                }
-                .let {
-                    if (sortByName) {
-                        it.sortedBy { it.name }
-                    } else {
-                        it
+                        searchTerms.all { searchReference.contains(it) }
                     }
-                }
-                .sortedBy { !it.isInstalled },
+                    .let {
+                        if (sortByName) {
+                            it.sortedBy { it.name }
+                        } else {
+                            it
+                        }
+                    }
+                    .sortedBy { !it.isInstalled },
                 key = { "${it.packageName}_${it.overlyingListType}" }
             ) { app ->
                 AppEntry(
                     app = app,
                     selectedAppList = selectedAppList,
-                    onSelectedValueChangeAsWell = { checked -> onSelectedValueChangeAsWell(app, checked) }
+                    onSelectedValueChangeAsWell = { checked ->
+                        onSelectedValueChangeAsWell(
+                            app,
+                            checked
+                        )
+                    }
                 )
             }
         }

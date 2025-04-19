@@ -4,12 +4,26 @@ import android.widget.Toast
 import androidx.annotation.StringRes
 import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
-import androidx.compose.foundation.layout.*
+import androidx.compose.foundation.layout.Box
+import androidx.compose.foundation.layout.Row
+import androidx.compose.foundation.layout.fillMaxHeight
+import androidx.compose.foundation.layout.fillMaxWidth
+import androidx.compose.foundation.layout.height
+import androidx.compose.foundation.layout.padding
+import androidx.compose.foundation.layout.safeDrawingPadding
 import androidx.compose.foundation.shape.RoundedCornerShape
-import androidx.compose.material.*
+import androidx.compose.material.Divider
+import androidx.compose.material.Icon
+import androidx.compose.material.MaterialTheme
+import androidx.compose.material.Scaffold
+import androidx.compose.material.Text
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.automirrored.filled.DirectionsRun
-import androidx.compose.material.icons.filled.*
+import androidx.compose.material.icons.filled.Apps
+import androidx.compose.material.icons.filled.Block
+import androidx.compose.material.icons.filled.Check
+import androidx.compose.material.icons.filled.Settings
+import androidx.compose.material.rememberScaffoldState
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.rememberCoroutineScope
@@ -132,7 +146,9 @@ fun MainScreen(
         scaffoldState = scaffoldState,
         drawerContent = {
             Box(
-                modifier = Modifier.safeDrawingPadding().height(64.dp),
+                modifier = Modifier
+                    .safeDrawingPadding()
+                    .height(64.dp),
                 contentAlignment = Alignment.CenterStart
             ) {
                 Text(
@@ -211,8 +227,9 @@ fun MainScreen(
             }
 
             composable(Screen.DisableAppsOnce.route) {
-                val enabledApps = AppService.getInstalledPackages(context) { it.applicationInfo!!.enabled }
-                    .map { AppService.getDetailsForPackage(context, it) }
+                val enabledApps =
+                    AppService.getInstalledPackages(context) { it.applicationInfo!!.enabled }
+                        .map { AppService.getDetailsForPackage(context, it) }
                 // TODO: don't getInstalledPackages, throw everything but the package name away, and then get the details again - instead: use the data that is already there
 
                 SelectMultipleAppsScreen(
@@ -234,8 +251,9 @@ fun MainScreen(
             }
 
             composable(Screen.EnableAppsOnce.route) {
-                val disabledApps = AppService.getInstalledPackages(context) { !it.applicationInfo!!.enabled }
-                    .map { AppService.getDetailsForPackage(context, it) }
+                val disabledApps =
+                    AppService.getInstalledPackages(context) { !it.applicationInfo!!.enabled }
+                        .map { AppService.getDetailsForPackage(context, it) }
 
                 SelectMultipleAppsScreen(
                     onMenuClick = { toggleDrawer() },
@@ -268,7 +286,8 @@ private fun DrawerItem(
     selected: Boolean = false
 ) {
     Box(
-        modifier = modifier.height(48.dp)
+        modifier = modifier
+            .height(48.dp)
             .padding(horizontal = 8.dp, vertical = 4.dp)
             .fillMaxWidth()
             .clickable { onClick() }
@@ -285,7 +304,8 @@ private fun DrawerItem(
             Icon(
                 imageVector = imageVector,
                 contentDescription = stringResource(iconDescriptionResourceId),
-                modifier = Modifier.padding(8.dp)
+                modifier = Modifier
+                    .padding(8.dp)
                     .padding(end = 32.dp),
                 tint = if (selected) MaterialTheme.colors.primary else Color.Gray
             )

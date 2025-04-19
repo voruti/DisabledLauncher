@@ -3,7 +3,8 @@ package de.redno.disabledlauncher.model.exception
 import android.content.Context
 import de.redno.disabledlauncher.R
 
-open class DisabledLauncherException(message: String?, cause: Throwable?) : Exception(message, cause) {
+open class DisabledLauncherException(message: String?, cause: Throwable?) :
+    Exception(message, cause) {
     constructor(message: String?) : this(message, null)
     constructor(cause: Throwable) : this(null, cause)
 

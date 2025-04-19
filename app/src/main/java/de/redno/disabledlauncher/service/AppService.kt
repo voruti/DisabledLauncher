@@ -74,12 +74,14 @@ object AppService {
                 )
             }
         } catch (e: DisabledLauncherException) {
-            val sharedPreferences = context.getSharedPreferences(context.packageName, Context.MODE_PRIVATE)
+            val sharedPreferences =
+                context.getSharedPreferences(context.packageName, Context.MODE_PRIVATE)
             val fallbackToGooglePlay = sharedPreferences.getBoolean("fallbackToGooglePlay", false)
 
             if (fallbackToGooglePlay) {
                 val intent = Intent(Intent.ACTION_VIEW).apply {
-                    data = Uri.parse("https://play.google.com/store/apps/details?id=${app.packageName}")
+                    data =
+                        Uri.parse("https://play.google.com/store/apps/details?id=${app.packageName}")
                 }
                 context.startActivity(intent)
                 throw RedirectedToGooglePlayException(e)
@@ -96,7 +98,11 @@ object AppService {
             .filter { it.isEnabled }
 
         if (appsToDisable.isEmpty()) {
-            AndroidUtil.asyncToastMakeText(context, context.getString(R.string.nothing_to_disable), Toast.LENGTH_SHORT)
+            AndroidUtil.asyncToastMakeText(
+                context,
+                context.getString(R.string.nothing_to_disable),
+                Toast.LENGTH_SHORT
+            )
             return
         }
 

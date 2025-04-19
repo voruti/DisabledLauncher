@@ -19,7 +19,11 @@ import androidx.compose.material.icons.automirrored.filled.Sort
 import androidx.compose.material.icons.filled.AppRegistration
 import androidx.compose.material.icons.filled.Description
 import androidx.compose.material.icons.filled.Shop
-import androidx.compose.runtime.*
+import androidx.compose.runtime.Composable
+import androidx.compose.runtime.getValue
+import androidx.compose.runtime.mutableStateOf
+import androidx.compose.runtime.remember
+import androidx.compose.runtime.setValue
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.stringResource
@@ -55,7 +59,12 @@ fun SettingsScreen(
 ) {
     Scaffold(
         modifier = modifier,
-        topBar = { ToolbarComponent(title = stringResource(R.string.settings), onBackNavigation = onBackNavigation) }
+        topBar = {
+            ToolbarComponent(
+                title = stringResource(R.string.settings),
+                onBackNavigation = onBackNavigation
+            )
+        }
     ) {
         SettingsList(Modifier.padding(it))
     }
@@ -90,7 +99,12 @@ private fun SettingsList(modifier: Modifier = Modifier) {
             val addDirectAppsTitle = stringResource(R.string.add_direct_apps_title)
             val addDirectAppsDialogOpen = remember { mutableStateOf(false) }
             ListItem(
-                icon = { Icon(Icons.Default.AppRegistration, stringResource(R.string.apps_edit_icon)) },
+                icon = {
+                    Icon(
+                        Icons.Default.AppRegistration,
+                        stringResource(R.string.apps_edit_icon)
+                    )
+                },
                 title = addDirectAppsTitle,
                 description = stringResource(R.string.add_direct_apps_description),
                 modifier = Modifier.clickable { addDirectAppsDialogOpen.value = true }
@@ -106,7 +120,12 @@ private fun SettingsList(modifier: Modifier = Modifier) {
                     onConfirmSelection = {
                         addDirectAppsDialogOpen.value = false
 
-                        if (!Datasource.addPackages(context, it.map(App::packageName), ListType.DIRECT)) {
+                        if (!Datasource.addPackages(
+                                context,
+                                it.map(App::packageName),
+                                ListType.DIRECT
+                            )
+                        ) {
                             AndroidUtil.asyncToastMakeText(
                                 context,
                                 context.getString(R.string.failed_adding_apps),
@@ -123,7 +142,12 @@ private fun SettingsList(modifier: Modifier = Modifier) {
             val addLongTermAppsTitle = stringResource(R.string.add_long_term_apps_title)
             val addLongTermAppsDialogOpen = remember { mutableStateOf(false) }
             ListItem(
-                icon = { Icon(Icons.Default.AppRegistration, stringResource(R.string.apps_edit_icon)) },
+                icon = {
+                    Icon(
+                        Icons.Default.AppRegistration,
+                        stringResource(R.string.apps_edit_icon)
+                    )
+                },
                 title = addLongTermAppsTitle,
                 description = stringResource(R.string.add_long_term_apps_description),
                 modifier = Modifier.clickable { addLongTermAppsDialogOpen.value = true }
@@ -139,7 +163,12 @@ private fun SettingsList(modifier: Modifier = Modifier) {
                     onConfirmSelection = {
                         addLongTermAppsDialogOpen.value = false
 
-                        if (!Datasource.addPackages(context, it.map(App::packageName), ListType.LONG_TERM)) {
+                        if (!Datasource.addPackages(
+                                context,
+                                it.map(App::packageName),
+                                ListType.LONG_TERM
+                            )
+                        ) {
                             AndroidUtil.asyncToastMakeText(
                                 context,
                                 context.getString(R.string.failed_adding_apps),
@@ -155,7 +184,8 @@ private fun SettingsList(modifier: Modifier = Modifier) {
         Divider()
 
         Box {
-            val initialFallbackToGooglePlay = sharedPreferences.getBoolean("fallbackToGooglePlay", false)
+            val initialFallbackToGooglePlay =
+                sharedPreferences.getBoolean("fallbackToGooglePlay", false)
             var fallbackToGooglePlay by remember { mutableStateOf(initialFallbackToGooglePlay) }
             ListItem(
                 icon = { Icon(Icons.Default.Shop, stringResource(R.string.store_icon)) },

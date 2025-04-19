@@ -24,11 +24,19 @@ object Datasource {
                 }
         }
 
-        AndroidUtil.asyncToastMakeText(context, context.getString(R.string.couldnt_load_app_list), Toast.LENGTH_SHORT)
+        AndroidUtil.asyncToastMakeText(
+            context,
+            context.getString(R.string.couldnt_load_app_list),
+            Toast.LENGTH_SHORT
+        )
         return emptyList()
     }
 
-    fun raisePackage(context: Context, packageName: String, listType: ListType = ListType.DIRECT): Boolean {
+    fun raisePackage(
+        context: Context,
+        packageName: String,
+        listType: ListType = ListType.DIRECT
+    ): Boolean {
         getLaunchableAppsFileUri(context).let { uri ->
 
             FileService.readFile(context, uri, MainFile::class.java)?.let {
@@ -68,7 +76,11 @@ object Datasource {
         return false
     }
 
-    fun removePackage(context: Context, packageName: String, listType: ListType = ListType.DIRECT): Boolean {
+    fun removePackage(
+        context: Context,
+        packageName: String,
+        listType: ListType = ListType.DIRECT
+    ): Boolean {
         getLaunchableAppsFileUri(context).let { uri ->
 
             FileService.readFile(context, uri, MainFile::class.java)?.let {
@@ -99,7 +111,11 @@ object Datasource {
         return false
     }
 
-    fun addPackages(context: Context, packageNameList: List<String>, listType: ListType = ListType.DIRECT): Boolean {
+    fun addPackages(
+        context: Context,
+        packageNameList: List<String>,
+        listType: ListType = ListType.DIRECT
+    ): Boolean {
         getLaunchableAppsFileUri(context).let { uri ->
 
             FileService.readFile(context, uri, MainFile::class.java)?.let {
@@ -118,7 +134,10 @@ object Datasource {
                 if (success) {
                     AndroidUtil.asyncToastMakeText(
                         context,
-                        String.format(context.getString(R.string.success_added_x_apps), packageNameList.size),
+                        String.format(
+                            context.getString(R.string.success_added_x_apps),
+                            packageNameList.size
+                        ),
                         Toast.LENGTH_SHORT
                     )
                 }

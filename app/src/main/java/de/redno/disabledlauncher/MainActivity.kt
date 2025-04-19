@@ -5,8 +5,8 @@ import android.content.Intent
 import android.os.Bundle
 import androidx.activity.ComponentActivity
 import androidx.activity.compose.setContent
-import androidx.activity.result.contract.ActivityResultContracts
 import androidx.activity.enableEdgeToEdge
+import androidx.activity.result.contract.ActivityResultContracts
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.padding
 import androidx.compose.material.Scaffold
@@ -60,7 +60,7 @@ class MainActivity : ComponentActivity() { // TODO: faster startup somehow?
                                 Intent.FLAG_GRANT_WRITE_URI_PERMISSION
                     )
 
-                    getSharedPreferences(packageName, Context.MODE_PRIVATE)
+                    getSharedPreferences(packageName, MODE_PRIVATE)
                         .edit()
                         .putString("launchableAppsFile", it.toString())
                         .apply()

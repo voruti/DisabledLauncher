@@ -28,7 +28,10 @@ private val LightColorPalette = lightColors(
 )
 
 @Composable
-fun DisabledLauncherTheme(darkTheme: Boolean = isSystemInDarkTheme(), content: @Composable () -> Unit) {
+fun DisabledLauncherTheme(
+    darkTheme: Boolean = isSystemInDarkTheme(),
+    content: @Composable () -> Unit
+) {
     val colors = if (darkTheme) {
         DarkColorPalette
     } else {
