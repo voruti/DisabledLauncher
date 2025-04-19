@@ -32,31 +32,26 @@ private fun LongTermLauncherPreview() {
             onMenuClick = {},
             appList = listOf("de.test.1", "de.test.2", "de.test.3").map {
                 AppService.getDetailsForPackage(context, it)
-            }
-        )
+            })
     }
 }
 
 
 @Composable
 fun LongTermLauncherScreen(
-    onMenuClick: () -> Unit,
-    appList: List<App>,
-    modifier: Modifier = Modifier
+    onMenuClick: () -> Unit, appList: List<App>, modifier: Modifier = Modifier
 ) {
     val context = LocalContext.current
 
     val selectedAppList = remember { mutableStateListOf<App>() }
     selectedAppList.addAll(appList.filter { it.isEnabled })
     Scaffold(
-        modifier = modifier,
-        topBar = {
+        modifier = modifier, topBar = {
             ToolbarComponent(
                 title = stringResource(id = R.string.long_term_launcher_title),
                 onMenuClick = onMenuClick
             )
-        }
-    ) {
+        }) {
         AppList(
             appList = appList,
             selectedAppList = selectedAppList,
