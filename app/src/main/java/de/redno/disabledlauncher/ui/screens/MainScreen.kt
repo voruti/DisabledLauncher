@@ -8,6 +8,7 @@ import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.*
 import androidx.compose.material.icons.Icons
+import androidx.compose.material.icons.automirrored.filled.DirectionsRun
 import androidx.compose.material.icons.filled.*
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
@@ -53,7 +54,7 @@ sealed class Screen(
 
     object LongTermLauncher : Screen(
         "longtermlauncher",
-        Icons.Default.DirectionsRun,
+        Icons.AutoMirrored.Filled.DirectionsRun,
         R.string.long_term_launcher_icon,
         R.string.long_term_launcher_title
     )

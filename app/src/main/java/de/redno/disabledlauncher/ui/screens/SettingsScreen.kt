@@ -15,10 +15,10 @@ import androidx.compose.material.Icon
 import androidx.compose.material.Scaffold
 import androidx.compose.material.Switch
 import androidx.compose.material.icons.Icons
+import androidx.compose.material.icons.automirrored.filled.Sort
 import androidx.compose.material.icons.filled.AppRegistration
 import androidx.compose.material.icons.filled.Description
 import androidx.compose.material.icons.filled.Shop
-import androidx.compose.material.icons.filled.Sort
 import androidx.compose.runtime.*
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.platform.LocalContext
@@ -180,7 +180,7 @@ private fun SettingsList(modifier: Modifier = Modifier) {
             val initialSortAppsByUsage = sharedPreferences.getBoolean("sortAppsByUsage", false)
             var sortAppsByUsage by remember { mutableStateOf(initialSortAppsByUsage) }
             ListItem(
-                icon = { Icon(Icons.Default.Sort, stringResource(R.string.sort_icon)) },
+                icon = { Icon(Icons.AutoMirrored.Filled.Sort, stringResource(R.string.sort_icon)) },
                 title = stringResource(R.string.sort_by_usage_title),
                 description = stringResource(R.string.sort_by_usage_description),
                 endContent = { Switch(checked = sortAppsByUsage, onCheckedChange = null) },

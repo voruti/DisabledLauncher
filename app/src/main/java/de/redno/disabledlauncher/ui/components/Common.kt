@@ -13,7 +13,7 @@ import androidx.compose.foundation.lazy.items
 import androidx.compose.foundation.selection.toggleable
 import androidx.compose.material.*
 import androidx.compose.material.icons.Icons
-import androidx.compose.material.icons.filled.ArrowBack
+import androidx.compose.material.icons.automirrored.filled.ArrowBack
 import androidx.compose.material.icons.filled.Clear
 import androidx.compose.material.icons.filled.Menu
 import androidx.compose.material.icons.filled.Settings
@@ -122,7 +122,7 @@ fun ToolbarComponent(
         navigationIcon = onMenuClick?.let {
             clickableIcon(Icons.Default.Menu, stringResource(id = R.string.menu_icon), it)
         } ?: onBackNavigation?.let {
-            clickableIcon(Icons.Default.ArrowBack, stringResource(id = R.string.back_icon), it)
+            clickableIcon(Icons.AutoMirrored.Filled.ArrowBack, stringResource(id = R.string.back_icon), it)
         },
         title = { Text(text = title) },
         actions = {
