@@ -37,4 +37,4 @@ fasterxml-jackson-module-kotlin = { group = "com.fasterxml.jackson.module", name
 android-application = { id = "com.android.application", version.ref = "agp" }
 kotlin-android = { id = "org.jetbrains.kotlin.android", version.ref = "kotlin" }
 kotlin-compose = { id = "org.jetbrains.kotlin.plugin.compose", version.ref = "kotlin" }
-kotlin-parcelize = { id = "kotlin-parcelize" } # TODO: version?!?
+kotlin-parcelize = { id = "kotlin-parcelize" }
