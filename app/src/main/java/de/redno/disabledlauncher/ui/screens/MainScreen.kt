@@ -212,6 +212,7 @@ fun MainScreen(
             composable(Screen.DisableAppsOnce.route) {
                 val enabledApps = AppService.getInstalledPackages(context) { it.applicationInfo!!.enabled }
                     .map { AppService.getDetailsForPackage(context, it) }
+                // TODO: don't getInstalledPackages, throw everything but the package name away, and then get the details again - instead: use the data that is already there
 
                 SelectMultipleAppsScreen(
                     onMenuClick = { toggleDrawer() },
