@@ -11,6 +11,10 @@ jobs:
     outputs:
       on_main: ${{ steps.contains_tag.outputs.retval }}
     steps:
+      # Step added as a workaround for https://github.com/rickstaa/action-contains-tag/pull/18
+      # TODO: bump version of action-contains-tag and remove this workaround step after PR above is merged
+      - name: Workaround regression action-contains-tag due to git update
+        run: git config --global remote.origin.followRemoteHEAD never
       - uses: actions/checkout@11bd71901bbe5b1630ceea73d27597364c9af683 # v4
         with:
           fetch-depth: 0
