@@ -53,6 +53,8 @@ jobs:
           keyPassword: ${{ secrets.KEY_PASSWORD }}
         env:
           BUILD_TOOLS_VERSION: "35.0.1"
+      - name: Rename release APK
+        run: mv ${{ steps.create_apk.outputs.signedReleaseFile }} DisabledLauncher.apk
       # --- from gradle.yml ---
 
       - uses: "marvinpinto/action-automatic-releases@919008cf3f741b179569b7a6fb4d8860689ab7f0" # v1.2.1
@@ -60,4 +62,4 @@ jobs:
           repo_token: "${{ secrets.GITHUB_TOKEN }}"
           prerelease: true
           files: |
-            ${{ steps.create_apk.outputs.signedReleaseFile }}
+            DisabledLauncher.apk

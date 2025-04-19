@@ -39,8 +39,10 @@ jobs:
           keyPassword: ${{ secrets.KEY_PASSWORD }}
         env:
           BUILD_TOOLS_VERSION: "35.0.1"
+      - name: Rename release APK
+        run: mv ${{ steps.create_apk.outputs.signedReleaseFile }} DisabledLauncher.apk
       - name: Upload build artifact
         uses: actions/upload-artifact@ea165f8d65b6e75b540449e92b4886f43607fa02 # v4.6.2
         with:
           name: DisabledLauncher-${{ github.sha }}
-          path: ${{ steps.create_apk.outputs.signedReleaseFile }}
+          path: DisabledLauncher.apk
