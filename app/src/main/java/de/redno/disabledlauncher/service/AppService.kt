@@ -16,20 +16,16 @@ import de.redno.disabledlauncher.model.exception.RedirectedToGooglePlayException
 
 object AppService {
     fun getInstalledPackages(
-        context: Context,
-        packageInfoFilter: (PackageInfo) -> Boolean = { true }
+        context: Context, packageInfoFilter: (PackageInfo) -> Boolean = { true }
     ): List<String> {
         val packageManager = context.packageManager
 
         return packageManager.getInstalledPackages(PackageManager.GET_META_DATA)
-            .filter(packageInfoFilter)
-            .map(PackageInfo::packageName)
+            .filter(packageInfoFilter).map(PackageInfo::packageName)
     }
 
     fun getDetailsForPackage(
-        context: Context,
-        packageName: String,
-        overlyingListType: ListType? = null
+        context: Context, packageName: String, overlyingListType: ListType? = null
     ): App {
         val packageManager = context.packageManager
 
@@ -93,15 +89,13 @@ object AppService {
 
     @Throws(DisabledLauncherException::class)
     fun disableAllApps(context: Context) {
-        val appsToDisable = Datasource.loadAppList(context)
-            .map { getDetailsForPackage(context, it) }
-            .filter { it.isEnabled }
+        val appsToDisable =
+            Datasource.loadAppList(context).map { getDetailsForPackage(context, it) }
+                .filter { it.isEnabled }
 
         if (appsToDisable.isEmpty()) {
             AndroidUtil.asyncToastMakeText(
-                context,
-                context.getString(R.string.nothing_to_disable),
-                Toast.LENGTH_SHORT
+                context, context.getString(R.string.nothing_to_disable), Toast.LENGTH_SHORT
             )
             return
         }

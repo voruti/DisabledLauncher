@@ -46,26 +46,21 @@ import de.redno.disabledlauncher.ui.theme.DisabledLauncherTheme
 private fun SettingsPreview() {
     DisabledLauncherTheme {
         SettingsScreen(
-            onBackNavigation = {}
-        )
+            onBackNavigation = {})
     }
 }
 
 
 @Composable
 fun SettingsScreen(
-    onBackNavigation: () -> Unit,
-    modifier: Modifier = Modifier
+    onBackNavigation: () -> Unit, modifier: Modifier = Modifier
 ) {
     Scaffold(
-        modifier = modifier,
-        topBar = {
+        modifier = modifier, topBar = {
             ToolbarComponent(
-                title = stringResource(R.string.settings),
-                onBackNavigation = onBackNavigation
+                title = stringResource(R.string.settings), onBackNavigation = onBackNavigation
             )
-        }
-    ) {
+        }) {
         SettingsList(Modifier.padding(it))
     }
 }
@@ -91,8 +86,7 @@ private fun SettingsList(modifier: Modifier = Modifier) {
                     }
 
                     MainActivity.lastObject?.pickLaunchableAppsFileResultLauncher?.launch(intent)
-                }
-            )
+                })
         }
 
         Box {
@@ -101,14 +95,12 @@ private fun SettingsList(modifier: Modifier = Modifier) {
             ListItem(
                 icon = {
                     Icon(
-                        Icons.Default.AppRegistration,
-                        stringResource(R.string.apps_edit_icon)
+                        Icons.Default.AppRegistration, stringResource(R.string.apps_edit_icon)
                     )
                 },
                 title = addDirectAppsTitle,
                 description = stringResource(R.string.add_direct_apps_description),
-                modifier = Modifier.clickable { addDirectAppsDialogOpen.value = true }
-            )
+                modifier = Modifier.clickable { addDirectAppsDialogOpen.value = true })
             ConditionalDialog(addDirectAppsDialogOpen) {
                 val addableApps = AppService.getInstalledPackages(context)
                     .subtract(Datasource.loadAppList(context, ListType.DIRECT).toSet())
@@ -121,9 +113,7 @@ private fun SettingsList(modifier: Modifier = Modifier) {
                         addDirectAppsDialogOpen.value = false
 
                         if (!Datasource.addPackages(
-                                context,
-                                it.map(App::packageName),
-                                ListType.DIRECT
+                                context, it.map(App::packageName), ListType.DIRECT
                             )
                         ) {
                             AndroidUtil.asyncToastMakeText(
@@ -133,8 +123,7 @@ private fun SettingsList(modifier: Modifier = Modifier) {
                             )
                         }
                     },
-                    onBackNavigation = { addDirectAppsDialogOpen.value = false }
-                )
+                    onBackNavigation = { addDirectAppsDialogOpen.value = false })
             }
         }
 
@@ -144,14 +133,12 @@ private fun SettingsList(modifier: Modifier = Modifier) {
             ListItem(
                 icon = {
                     Icon(
-                        Icons.Default.AppRegistration,
-                        stringResource(R.string.apps_edit_icon)
+                        Icons.Default.AppRegistration, stringResource(R.string.apps_edit_icon)
                     )
                 },
                 title = addLongTermAppsTitle,
                 description = stringResource(R.string.add_long_term_apps_description),
-                modifier = Modifier.clickable { addLongTermAppsDialogOpen.value = true }
-            )
+                modifier = Modifier.clickable { addLongTermAppsDialogOpen.value = true })
             ConditionalDialog(addLongTermAppsDialogOpen) {
                 val addableApps = AppService.getInstalledPackages(context)
                     .subtract(Datasource.loadAppList(context, ListType.LONG_TERM).toSet())
@@ -164,9 +151,7 @@ private fun SettingsList(modifier: Modifier = Modifier) {
                         addLongTermAppsDialogOpen.value = false
 
                         if (!Datasource.addPackages(
-                                context,
-                                it.map(App::packageName),
-                                ListType.LONG_TERM
+                                context, it.map(App::packageName), ListType.LONG_TERM
                             )
                         ) {
                             AndroidUtil.asyncToastMakeText(
@@ -176,8 +161,7 @@ private fun SettingsList(modifier: Modifier = Modifier) {
                             )
                         }
                     },
-                    onBackNavigation = { addLongTermAppsDialogOpen.value = false }
-                )
+                    onBackNavigation = { addLongTermAppsDialogOpen.value = false })
             }
         }
 
@@ -193,16 +177,11 @@ private fun SettingsList(modifier: Modifier = Modifier) {
                 description = stringResource(R.string.fallback_googleplay_description),
                 endContent = { Switch(checked = fallbackToGooglePlay, onCheckedChange = null) },
                 modifier = Modifier.toggleable(
-                    role = Role.Switch,
-                    value = fallbackToGooglePlay,
-                    onValueChange = {
-                        sharedPreferences.edit()
-                            .putBoolean("fallbackToGooglePlay", it)
-                            .apply()
+                    role = Role.Switch, value = fallbackToGooglePlay, onValueChange = {
+                        sharedPreferences.edit().putBoolean("fallbackToGooglePlay", it).apply()
 
                         fallbackToGooglePlay = it
-                    }
-                )
+                    })
             )
         }
 
@@ -210,21 +189,20 @@ private fun SettingsList(modifier: Modifier = Modifier) {
             val initialSortAppsByUsage = sharedPreferences.getBoolean("sortAppsByUsage", false)
             var sortAppsByUsage by remember { mutableStateOf(initialSortAppsByUsage) }
             ListItem(
-                icon = { Icon(Icons.AutoMirrored.Filled.Sort, stringResource(R.string.sort_icon)) },
+                icon = {
+                    Icon(
+                        Icons.AutoMirrored.Filled.Sort, stringResource(R.string.sort_icon)
+                    )
+                },
                 title = stringResource(R.string.sort_by_usage_title),
                 description = stringResource(R.string.sort_by_usage_description),
                 endContent = { Switch(checked = sortAppsByUsage, onCheckedChange = null) },
                 modifier = Modifier.toggleable(
-                    role = Role.Switch,
-                    value = sortAppsByUsage,
-                    onValueChange = {
-                        sharedPreferences.edit()
-                            .putBoolean("sortAppsByUsage", it)
-                            .apply()
+                    role = Role.Switch, value = sortAppsByUsage, onValueChange = {
+                        sharedPreferences.edit().putBoolean("sortAppsByUsage", it).apply()
 
                         sortAppsByUsage = it
-                    }
-                )
+                    })
             )
         }
     }

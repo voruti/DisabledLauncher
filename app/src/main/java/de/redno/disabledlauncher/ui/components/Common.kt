@@ -74,9 +74,7 @@ import de.redno.disabledlauncher.service.Datasource
 import de.redno.disabledlauncher.ui.theme.DisabledLauncherTheme
 
 fun clickableIcon(
-    imageVector: ImageVector,
-    contentDescription: String,
-    onClick: () -> Unit
+    imageVector: ImageVector, contentDescription: String, onClick: () -> Unit
 ): @Composable () -> Unit {
     return {
         IconButton(onClick = onClick) {
@@ -92,8 +90,10 @@ fun clickedApp(context: Context, app: App) {
         if (app.isInstalled) {
             try {
                 AppService.openAppLogic(context, app)
-                if (sharedPreferences.getBoolean("sortAppsByUsage", false)
-                    && app.overlyingListType == ListType.DIRECT // LONG_TERM is raised on disabling
+                if (sharedPreferences.getBoolean(
+                        "sortAppsByUsage",
+                        false
+                    ) && app.overlyingListType == ListType.DIRECT // LONG_TERM is raised on disabling
                 ) {
                     Datasource.raisePackage(context, app.packageName)
                 }
@@ -116,16 +116,11 @@ fun DefaultPreview() {
             ToolbarComponent(title = "Preview", onBackNavigation = {}, onSettingsClick = {})
 
             var test by remember { mutableStateOf(true) }
-            ListItem(
-                title = "Title",
-                description = "Desc",
-                startContent = {
-                    Checkbox(checked = false, onCheckedChange = null)
-                },
-                endContent = {
-                    Switch(checked = test, onCheckedChange = null)
-                }
-            )
+            ListItem(title = "Title", description = "Desc", startContent = {
+                Checkbox(checked = false, onCheckedChange = null)
+            }, endContent = {
+                Switch(checked = test, onCheckedChange = null)
+            })
         }
     }
 }
@@ -146,9 +141,7 @@ fun ToolbarComponent(
             clickableIcon(Icons.Default.Menu, stringResource(id = R.string.menu_icon), it)
         } ?: onBackNavigation?.let {
             clickableIcon(
-                Icons.AutoMirrored.Filled.ArrowBack,
-                stringResource(id = R.string.back_icon),
-                it
+                Icons.AutoMirrored.Filled.ArrowBack, stringResource(id = R.string.back_icon), it
             )
         },
         title = { Text(text = title) },
@@ -161,8 +154,7 @@ fun ToolbarComponent(
                     )
                 }
             }
-        }
-    )
+        })
 }
 
 @Composable
@@ -177,9 +169,8 @@ fun ListItem(
     italicStyle: Boolean = false,
     disabledStyle: Boolean = false,
 ) {
-    val boxModifier = if (disabledStyle)
-        modifier.background(MaterialTheme.colors.onSurface.copy(alpha = 0.12f)) else
-        modifier
+    val boxModifier =
+        if (disabledStyle) modifier.background(MaterialTheme.colors.onSurface.copy(alpha = 0.12f)) else modifier
     Box(
         modifier = boxModifier.fillMaxWidth()
     ) {
@@ -201,9 +192,7 @@ fun ListItem(
             )
             Column(modifier = Modifier.weight(1F)) {
                 val titleStyle = MaterialTheme.typography.h6.merge(
-                    if (disabledStyle)
-                        TextStyle(textDecoration = TextDecoration.LineThrough) else
-                        TextStyle()
+                    if (disabledStyle) TextStyle(textDecoration = TextDecoration.LineThrough) else TextStyle()
                 )
                 Text(
                     text = title,
@@ -246,11 +235,10 @@ fun AppEntry(
     var dropdownExpanded by remember { mutableStateOf(false) }
     ListItem(
         icon = {
-            Image(
-                app.icon.asImageBitmap(),
-                String.format(stringResource(R.string.app_icon), app.name)
-            )
-        },
+        Image(
+            app.icon.asImageBitmap(), String.format(stringResource(R.string.app_icon), app.name)
+        )
+    },
         title = app.name,
         description = app.packageName,
         italicStyle = !app.isEnabled,
@@ -258,32 +246,27 @@ fun AppEntry(
         startContent = selectedAppList?.let {
             {
                 Checkbox(
-                    checked = it.any { it.packageName == app.packageName },
-                    onCheckedChange = null
+                    checked = it.any { it.packageName == app.packageName }, onCheckedChange = null
                 )
             }
         },
         contextContent = {
             DropdownMenu(
-                expanded = dropdownExpanded,
-                onDismissRequest = { dropdownExpanded = false }
-            ) {
+                expanded = dropdownExpanded, onDismissRequest = { dropdownExpanded = false }) {
                 DropdownMenuItem(onClick = {
                     if (ShortcutManagerCompat.isRequestPinShortcutSupported(context)) {
-                        val intent = Intent(context, ActionReceiverActivity::class.java)
-                            .setFlags(Intent.FLAG_ACTIVITY_NEW_TASK)
+                        val intent = Intent(
+                            context,
+                            ActionReceiverActivity::class.java
+                        ).setFlags(Intent.FLAG_ACTIVITY_NEW_TASK)
                             .setAction("${context.packageName}.action.OPEN_APP")
                             .putExtra("package_name", app.packageName)
                         val shortcutInfo = ShortcutInfoCompat.Builder(context, app.packageName)
-                            .setShortLabel(app.name)
-                            .setLongLabel(app.name)
-                            .setIcon(
+                            .setShortLabel(app.name).setLongLabel(app.name).setIcon(
                                 IconCompat.createWithBitmap(
                                     app.icon.asImageBitmap().asAndroidBitmap()
                                 )
-                            )
-                            .setIntent(intent)
-                            .build()
+                            ).setIntent(intent).build()
                         ShortcutManagerCompat.requestPinShortcut(context, shortcutInfo, null)
                     } else {
                         Toast.makeText(
@@ -313,8 +296,7 @@ fun AppEntry(
                                 context,
                                 context.getString(R.string.couldnt_remove_app),
                                 Toast.LENGTH_LONG
-                            )
-                                .show()
+                            ).show()
                         }
                     }) {
                         Text(stringResource(R.string.remove_app))
@@ -325,26 +307,21 @@ fun AppEntry(
         modifier = modifier
             .combinedClickable(
                 onClick = { clickedApp(context, app) },
-                onLongClick = { dropdownExpanded = true }
-            )
-            .then(
-                selectedAppList?.let {
-                    Modifier.toggleable( // overrides combinedClickable: -> no open app nor dropdown
-                        role = Role.Checkbox,
-                        value = selectedAppList.any { it.packageName == app.packageName },
-                        onValueChange = {
-                            if (it) {
-                                selectedAppList.add(app)
-                            } else {
-                                selectedAppList.removeIf { it.packageName == app.packageName }
-                            }
-
-                            onSelectedValueChangeAsWell(it)
+                onLongClick = { dropdownExpanded = true })
+            .then(selectedAppList?.let {
+                Modifier.toggleable( // overrides combinedClickable: -> no open app nor dropdown
+                    role = Role.Checkbox,
+                    value = selectedAppList.any { it.packageName == app.packageName },
+                    onValueChange = {
+                        if (it) {
+                            selectedAppList.add(app)
+                        } else {
+                            selectedAppList.removeIf { it.packageName == app.packageName }
                         }
-                    )
-                } ?: Modifier
-            )
-    )
+
+                        onSelectedValueChangeAsWell(it)
+                    })
+            } ?: Modifier))
 }
 
 @Composable
@@ -367,48 +344,40 @@ fun AppList(
             modifier = Modifier.fillMaxWidth(),
             trailingIcon = {
                 IconButton(
-                    onClick = { text = "" }
-                ) {
+                    onClick = { text = "" }) {
                     Icon(
                         imageVector = Icons.Default.Clear,
                         contentDescription = context.getString(R.string.clear_search)
                     )
                 }
-            }
-        )
+            })
 
         LazyColumn {
             // TODO: prevent being called on every search text change (; is this still applicable?)
             items(
-                items = appList
-                    .distinctBy { it.packageName + it.overlyingListType } // ensuring unique key in the list
-                    .filter {
-                        val searchTerms = text.trim().lowercase().split(" ")
-                        val searchReference =
-                            "${it.name.trim().lowercase()} ${it.packageName.trim().lowercase()}"
+                items = appList.distinctBy { it.packageName + it.overlyingListType } // ensuring unique key in the list
+                .filter {
+                    val searchTerms = text.trim().lowercase().split(" ")
+                    val searchReference =
+                        "${it.name.trim().lowercase()} ${it.packageName.trim().lowercase()}"
 
-                        searchTerms.all { searchReference.contains(it) }
+                    searchTerms.all { searchReference.contains(it) }
+                }.let {
+                    if (sortByName) {
+                        it.sortedBy { it.name }
+                    } else {
+                        it
                     }
-                    .let {
-                        if (sortByName) {
-                            it.sortedBy { it.name }
-                        } else {
-                            it
-                        }
-                    }
-                    .sortedBy { !it.isInstalled },
-                key = { "${it.packageName}_${it.overlyingListType}" }
-            ) { app ->
+                }.sortedBy { !it.isInstalled },
+                key = { "${it.packageName}_${it.overlyingListType}" }) { app ->
                 AppEntry(
                     app = app,
                     selectedAppList = selectedAppList,
                     onSelectedValueChangeAsWell = { checked ->
                         onSelectedValueChangeAsWell(
-                            app,
-                            checked
+                            app, checked
                         )
-                    }
-                )
+                    })
             }
         }
     }
@@ -416,13 +385,11 @@ fun AppList(
 
 @Composable
 fun ConditionalDialog(
-    showDialog: MutableState<Boolean>,
-    content: @Composable () -> Unit
+    showDialog: MutableState<Boolean>, content: @Composable () -> Unit
 ) {
     if (showDialog.value) { // TODO: loading animation
         Dialog(
-            onDismissRequest = { showDialog.value = false },
-            content = content
+            onDismissRequest = { showDialog.value = false }, content = content
         )
     }
 }

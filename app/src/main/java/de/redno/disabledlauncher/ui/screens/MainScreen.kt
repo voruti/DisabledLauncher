@@ -95,15 +95,11 @@ private fun MainPreview() {
     val context = LocalContext.current
 
     DisabledLauncherTheme {
-        MainScreen(
-            onSettingsClick = {},
-            directLauncherAppList = listOf("de.test.1").map {
-                AppService.getDetailsForPackage(context, it)
-            },
-            longTermLauncherAppList = listOf("de.test.2").map {
-                AppService.getDetailsForPackage(context, it)
-            }
-        )
+        MainScreen(onSettingsClick = {}, directLauncherAppList = listOf("de.test.1").map {
+            AppService.getDetailsForPackage(context, it)
+        }, longTermLauncherAppList = listOf("de.test.2").map {
+            AppService.getDetailsForPackage(context, it)
+        })
     }
 }
 
@@ -142,9 +138,7 @@ fun MainScreen(
     }
 
     Scaffold(
-        modifier = modifier,
-        scaffoldState = scaffoldState,
-        drawerContent = {
+        modifier = modifier, scaffoldState = scaffoldState, drawerContent = {
             Box(
                 modifier = Modifier
                     .safeDrawingPadding()
@@ -190,8 +184,7 @@ fun MainScreen(
                             // Restore state when reselecting a previously selected item
                             restoreState = true
                         }
-                    }
-                )
+                    })
             }
 
             Divider()
@@ -203,10 +196,8 @@ fun MainScreen(
                 onClick = {
                     toggleDrawer()
                     onSettingsClick()
-                }
-            )
-        }
-    ) {
+                })
+        }) {
         NavHost( // TODO: combine with other nav controller in MainActivity?
             navController = drawerNavController,
             startDestination = drawerStartDestination,
@@ -214,15 +205,13 @@ fun MainScreen(
         ) {
             composable(Screen.DirectLauncher.route) {
                 DirectLauncherScreen(
-                    onMenuClick = { toggleDrawer() },
-                    appList = directLauncherAppList
+                    onMenuClick = { toggleDrawer() }, appList = directLauncherAppList
                 )
             }
 
             composable(Screen.LongTermLauncher.route) {
                 LongTermLauncherScreen(
-                    onMenuClick = { toggleDrawer() },
-                    appList = longTermLauncherAppList
+                    onMenuClick = { toggleDrawer() }, appList = longTermLauncherAppList
                 )
             }
 
@@ -246,8 +235,7 @@ fun MainScreen(
                                 AndroidUtil.asyncToastMakeText(context, it, Toast.LENGTH_SHORT)
                             }
                         }
-                    }
-                )
+                    })
             }
 
             composable(Screen.EnableAppsOnce.route) {
@@ -269,8 +257,7 @@ fun MainScreen(
                                 AndroidUtil.asyncToastMakeText(context, it, Toast.LENGTH_SHORT)
                             }
                         }
-                    }
-                )
+                    })
             }
         }
     }
@@ -292,14 +279,12 @@ private fun DrawerItem(
             .fillMaxWidth()
             .clickable { onClick() }
             .then(
-                if (selected)
-                    Modifier.background(
-                        color = MaterialTheme.colors.onSurface.copy(alpha = 0.12f),
-                        shape = RoundedCornerShape(4.dp)
-                    )
+                if (selected) Modifier.background(
+                    color = MaterialTheme.colors.onSurface.copy(alpha = 0.12f),
+                    shape = RoundedCornerShape(4.dp)
+                )
                 else Modifier
-            )
-    ) {
+            )) {
         Row {
             Icon(
                 imageVector = imageVector,
@@ -310,8 +295,7 @@ private fun DrawerItem(
                 tint = if (selected) MaterialTheme.colors.primary else Color.Gray
             )
             Box(
-                modifier = Modifier.fillMaxHeight(),
-                contentAlignment = Alignment.CenterStart
+                modifier = Modifier.fillMaxHeight(), contentAlignment = Alignment.CenterStart
             ) {
                 Text(
                     text = stringResource(labelResourceId),

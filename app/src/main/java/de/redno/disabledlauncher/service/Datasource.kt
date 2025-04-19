@@ -14,8 +14,7 @@ object Datasource {
     fun loadAppList(context: Context, listType: ListType = ListType.DIRECT): List<String> {
         getLaunchableAppsFileUri(context).let {
 
-            FileService.readFile(context, it, MainFile::class.java)
-                ?.let {
+            FileService.readFile(context, it, MainFile::class.java)?.let {
                     return if (listType == ListType.DIRECT) {
                         it.packages
                     } else {
@@ -25,17 +24,13 @@ object Datasource {
         }
 
         AndroidUtil.asyncToastMakeText(
-            context,
-            context.getString(R.string.couldnt_load_app_list),
-            Toast.LENGTH_SHORT
+            context, context.getString(R.string.couldnt_load_app_list), Toast.LENGTH_SHORT
         )
         return emptyList()
     }
 
     fun raisePackage(
-        context: Context,
-        packageName: String,
-        listType: ListType = ListType.DIRECT
+        context: Context, packageName: String, listType: ListType = ListType.DIRECT
     ): Boolean {
         getLaunchableAppsFileUri(context).let { uri ->
 
@@ -43,20 +38,18 @@ object Datasource {
                 var packages = it.packages
                 var longTermPackages = it.longTermPackages ?: emptyList()
 
-                val oldIndex = (if (listType == ListType.DIRECT) packages else longTermPackages)
-                    .indexOf(packageName)
+                val oldIndex =
+                    (if (listType == ListType.DIRECT) packages else longTermPackages).indexOf(
+                            packageName
+                        )
                 if (oldIndex <= 0) {
                     return false
                 }
 
                 fun moveToIndex(list: List<String>): List<String> {
-                    return list
-                        .filter { it != packageName }
-                        .toMutableList()
-                        .also {
+                    return list.filter { it != packageName }.toMutableList().also {
                             it.add(
-                                floor((oldIndex * 2) / 3f).toInt(),
-                                packageName
+                                floor((oldIndex * 2) / 3f).toInt(), packageName
                             )
                         }
                 }
@@ -77,9 +70,7 @@ object Datasource {
     }
 
     fun removePackage(
-        context: Context,
-        packageName: String,
-        listType: ListType = ListType.DIRECT
+        context: Context, packageName: String, listType: ListType = ListType.DIRECT
     ): Boolean {
         getLaunchableAppsFileUri(context).let { uri ->
 
@@ -88,9 +79,9 @@ object Datasource {
                 var longTermPackages = it.longTermPackages ?: emptyList()
 
                 // test for existence beforehand:
-                if (!
-                    (if (listType == ListType.DIRECT) packages else longTermPackages)
-                        .contains(packageName)
+                if (!(if (listType == ListType.DIRECT) packages else longTermPackages).contains(
+                            packageName
+                        )
                 ) {
                     return false
                 }
@@ -112,9 +103,7 @@ object Datasource {
     }
 
     fun addPackages(
-        context: Context,
-        packageNameList: List<String>,
-        listType: ListType = ListType.DIRECT
+        context: Context, packageNameList: List<String>, listType: ListType = ListType.DIRECT
     ): Boolean {
         getLaunchableAppsFileUri(context).let { uri ->
 
@@ -122,8 +111,7 @@ object Datasource {
                 val packages = it.packages.toMutableList()
                 val longTermPackages = (it.longTermPackages ?: emptyList()).toMutableList()
 
-                (if (listType == ListType.DIRECT) packages else longTermPackages)
-                    .also {
+                (if (listType == ListType.DIRECT) packages else longTermPackages).also {
                         it.addAll(packageNameList)
                     }
 
@@ -133,12 +121,9 @@ object Datasource {
 
                 if (success) {
                     AndroidUtil.asyncToastMakeText(
-                        context,
-                        String.format(
-                            context.getString(R.string.success_added_x_apps),
-                            packageNameList.size
-                        ),
-                        Toast.LENGTH_SHORT
+                        context, String.format(
+                            context.getString(R.string.success_added_x_apps), packageNameList.size
+                        ), Toast.LENGTH_SHORT
                     )
                 }
 
