@@ -2,6 +2,7 @@ package de.redno.disabledlauncher.ui.screens
 
 import android.widget.Toast
 import androidx.compose.foundation.layout.padding
+import androidx.compose.foundation.layout.safeDrawingPadding
 import androidx.compose.material.FloatingActionButton
 import androidx.compose.material.Icon
 import androidx.compose.material.Scaffold
@@ -54,7 +55,7 @@ fun DirectLauncherScreen(
             )
         },
         floatingActionButton = {
-            FloatingActionButton(onClick = Thread {
+            FloatingActionButton(modifier = Modifier.safeDrawingPadding(), onClick = Thread {
                 try {
                     AppService.disableAllApps(context)
                 } catch (e: DisabledLauncherException) {
