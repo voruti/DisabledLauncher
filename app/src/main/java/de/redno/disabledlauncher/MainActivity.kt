@@ -5,7 +5,6 @@ import android.content.Intent
 import android.os.Bundle
 import androidx.activity.ComponentActivity
 import androidx.activity.compose.setContent
-import androidx.activity.enableEdgeToEdge
 import androidx.activity.result.contract.ActivityResultContracts
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.padding
@@ -36,7 +35,6 @@ class MainActivity : ComponentActivity() { // TODO: faster startup somehow?
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         lastObject = this
-        enableEdgeToEdge()
         setContent {
             DisabledLauncherTheme {
                 Scaffold(modifier = Modifier.fillMaxSize()) { innerPadding ->

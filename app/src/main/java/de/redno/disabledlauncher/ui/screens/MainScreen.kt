@@ -10,7 +10,6 @@ import androidx.compose.foundation.layout.fillMaxHeight
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
-import androidx.compose.foundation.layout.safeDrawingPadding
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.Divider
 import androidx.compose.material.Icon
@@ -141,7 +140,6 @@ fun MainScreen(
         modifier = modifier, scaffoldState = scaffoldState, drawerContent = {
             Box(
                 modifier = Modifier
-                    .safeDrawingPadding()
                     .height(64.dp),
                 contentAlignment = Alignment.CenterStart
             ) {
