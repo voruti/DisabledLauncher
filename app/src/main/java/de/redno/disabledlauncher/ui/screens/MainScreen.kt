@@ -11,8 +11,8 @@ import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.shape.RoundedCornerShape
-import androidx.compose.material3.Divider
 import androidx.compose.material3.DrawerValue
+import androidx.compose.material3.HorizontalDivider
 import androidx.compose.material3.Icon
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.ModalDrawerSheet
@@ -155,7 +155,7 @@ fun MainScreen(
                     )
                 }
 
-                Divider()
+                HorizontalDivider()
 
                 val navBackStackEntry by drawerNavController.currentBackStackEntryAsState()
                 val currentDestination = navBackStackEntry?.destination
@@ -189,7 +189,7 @@ fun MainScreen(
                         })
                 }
 
-                Divider()
+                HorizontalDivider()
 
                 DrawerItem(
                     imageVector = Icons.Default.Settings,
