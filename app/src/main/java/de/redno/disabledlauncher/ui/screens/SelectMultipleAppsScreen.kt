@@ -2,7 +2,6 @@ package de.redno.disabledlauncher.ui.screens
 
 import android.widget.Toast
 import androidx.compose.foundation.layout.padding
-import androidx.compose.foundation.layout.safeDrawingPadding
 import androidx.compose.material3.FloatingActionButton
 import androidx.compose.material3.Icon
 import androidx.compose.material3.Scaffold
@@ -70,7 +69,7 @@ fun SelectMultipleAppsScreen(
             )
         },
         floatingActionButton = {
-            FloatingActionButton(modifier = Modifier.safeDrawingPadding(), onClick = {
+            FloatingActionButton(onClick = {
                 Thread {
                     if (selectedAppList.isEmpty()) {
                         AndroidUtil.asyncToastMakeText(
