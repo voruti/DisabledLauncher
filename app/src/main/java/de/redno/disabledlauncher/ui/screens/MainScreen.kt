@@ -6,10 +6,12 @@ import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Row
+import androidx.compose.foundation.layout.consumeWindowInsets
 import androidx.compose.foundation.layout.fillMaxHeight
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
+import androidx.compose.foundation.layout.safeDrawingPadding
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material3.DrawerValue
 import androidx.compose.material3.HorizontalDivider
@@ -101,7 +103,9 @@ private fun MainPreview() {
             AppService.getDetailsForPackage(context, it)
         }, longTermLauncherAppList = listOf("de.test.2").map {
             AppService.getDetailsForPackage(context, it)
-        })
+        },
+            modifier = Modifier.safeDrawingPadding()
+        )
     }
 }
 
@@ -201,11 +205,11 @@ fun MainScreen(
                     })
             }
         }) {
-        Scaffold(modifier = modifier) {
+        Scaffold {
             NavHost( // TODO: combine with other nav controller in MainActivity?
                 navController = drawerNavController,
                 startDestination = drawerStartDestination,
-                modifier = modifier.padding(it)
+                modifier = Modifier.consumeWindowInsets(it)
             ) {
                 composable(Screen.DirectLauncher.route) {
                     DirectLauncherScreen(
