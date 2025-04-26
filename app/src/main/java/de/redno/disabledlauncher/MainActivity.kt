@@ -13,6 +13,7 @@ import androidx.compose.material3.Scaffold
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.platform.LocalContext
+import androidx.core.content.edit
 import androidx.navigation.NavHostController
 import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
@@ -60,10 +61,15 @@ class MainActivity : ComponentActivity() { // TODO: faster startup somehow?
                                 Intent.FLAG_GRANT_WRITE_URI_PERMISSION
                     )
 
-                    getSharedPreferences(packageName, MODE_PRIVATE)
-                        .edit()
-                        .putString("launchableAppsFile", it.toString())
-                        .apply()
+                    getSharedPreferences(
+                        packageName,
+                        MODE_PRIVATE
+                    ).edit {
+                        putString(
+                            "launchableAppsFile",
+                            it.toString()
+                        )
+                    }
                 }
             }
         }
