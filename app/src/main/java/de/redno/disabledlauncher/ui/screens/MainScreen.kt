@@ -11,18 +11,21 @@ import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.shape.RoundedCornerShape
-import androidx.compose.material.Divider
-import androidx.compose.material.Icon
-import androidx.compose.material.MaterialTheme
-import androidx.compose.material.Scaffold
-import androidx.compose.material.Text
+import androidx.compose.material3.Divider
+import androidx.compose.material3.DrawerValue
+import androidx.compose.material3.Icon
+import androidx.compose.material3.MaterialTheme
+import androidx.compose.material3.ModalDrawerSheet
+import androidx.compose.material3.ModalNavigationDrawer
+import androidx.compose.material3.Scaffold
+import androidx.compose.material3.Text
+import androidx.compose.material3.rememberDrawerState
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.automirrored.filled.DirectionsRun
 import androidx.compose.material.icons.filled.Apps
 import androidx.compose.material.icons.filled.Block
 import androidx.compose.material.icons.filled.Check
 import androidx.compose.material.icons.filled.Settings
-import androidx.compose.material.rememberScaffoldState
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.rememberCoroutineScope
@@ -114,12 +117,12 @@ fun MainScreen(
 ) {
     val context = LocalContext.current
 
-    val scaffoldState = rememberScaffoldState()
+    val drawerState = rememberDrawerState(DrawerValue.Closed)
     val scope = rememberCoroutineScope()
 
     fun toggleDrawer() {
         scope.launch {
-            scaffoldState.drawerState.apply {
+            drawerState.apply {
                 if (isClosed) open() else close()
                 // TODO: close on back gesture
             }
@@ -130,132 +133,136 @@ fun MainScreen(
     // TODO: negative side effect: also closed on screen rotation
     run {
         scope.launch {
-            scaffoldState.drawerState.apply {
+            drawerState.apply {
                 if (isOpen) close()
             }
         }
     }
 
-    Scaffold(
-        modifier = modifier, scaffoldState = scaffoldState, drawerContent = {
-            Box(
-                modifier = Modifier
-                    .height(64.dp),
-                contentAlignment = Alignment.CenterStart
-            ) {
-                Text(
-                    text = stringResource(id = R.string.app_name),
-                    modifier = Modifier.padding(horizontal = 16.dp),
-                    fontSize = 20.sp,
-                    fontWeight = FontWeight.Bold
-                )
-            }
+    ModalNavigationDrawer(
+        modifier = modifier, drawerState = drawerState, drawerContent = {
+            ModalDrawerSheet {
+                Box(
+                    modifier = Modifier
+                        .height(64.dp),
+                    contentAlignment = Alignment.CenterStart
+                ) {
+                    Text(
+                        text = stringResource(id = R.string.app_name),
+                        modifier = Modifier.padding(horizontal = 16.dp),
+                        fontSize = 20.sp,
+                        fontWeight = FontWeight.Bold
+                    )
+                }
 
-            Divider()
+                Divider()
 
-            val navBackStackEntry by drawerNavController.currentBackStackEntryAsState()
-            val currentDestination = navBackStackEntry?.destination
+                val navBackStackEntry by drawerNavController.currentBackStackEntryAsState()
+                val currentDestination = navBackStackEntry?.destination
 
-            listOf(
-                Screen.DirectLauncher,
-                Screen.LongTermLauncher,
-                Screen.DisableAppsOnce,
-                Screen.EnableAppsOnce
-            ).forEach { screen ->
+                listOf(
+                    Screen.DirectLauncher,
+                    Screen.LongTermLauncher,
+                    Screen.DisableAppsOnce,
+                    Screen.EnableAppsOnce
+                ).forEach { screen ->
+                    DrawerItem(
+                        imageVector = screen.imageVector,
+                        iconDescriptionResourceId = screen.iconDescriptionResourceId,
+                        labelResourceId = screen.labelResourceId,
+                        selected = currentDestination?.hierarchy?.any { it.route == screen.route } == true,
+                        onClick = {
+                            toggleDrawer()
+                            drawerNavController.navigate(screen.route) {
+                                // Pop up to the start destination of the graph to
+                                // avoid building up a large stack of destinations
+                                // on the back stack as users select items
+                                popUpTo(drawerNavController.graph.findStartDestination().id) {
+                                    saveState = true
+                                }
+                                // Avoid multiple copies of the same destination when
+                                // reselecting the same item
+                                launchSingleTop = true
+                                // Restore state when reselecting a previously selected item
+                                restoreState = true
+                            }
+                        })
+                }
+
+                Divider()
+
                 DrawerItem(
-                    imageVector = screen.imageVector,
-                    iconDescriptionResourceId = screen.iconDescriptionResourceId,
-                    labelResourceId = screen.labelResourceId,
-                    selected = currentDestination?.hierarchy?.any { it.route == screen.route } == true,
+                    imageVector = Icons.Default.Settings,
+                    iconDescriptionResourceId = R.string.settings,
+                    labelResourceId = R.string.settings,
                     onClick = {
                         toggleDrawer()
-                        drawerNavController.navigate(screen.route) {
-                            // Pop up to the start destination of the graph to
-                            // avoid building up a large stack of destinations
-                            // on the back stack as users select items
-                            popUpTo(drawerNavController.graph.findStartDestination().id) {
-                                saveState = true
-                            }
-                            // Avoid multiple copies of the same destination when
-                            // reselecting the same item
-                            launchSingleTop = true
-                            // Restore state when reselecting a previously selected item
-                            restoreState = true
-                        }
+                        onSettingsClick()
                     })
             }
-
-            Divider()
-
-            DrawerItem(
-                imageVector = Icons.Default.Settings,
-                iconDescriptionResourceId = R.string.settings,
-                labelResourceId = R.string.settings,
-                onClick = {
-                    toggleDrawer()
-                    onSettingsClick()
-                })
         }) {
-        NavHost( // TODO: combine with other nav controller in MainActivity?
-            navController = drawerNavController,
-            startDestination = drawerStartDestination,
-            modifier = modifier.padding(it)
-        ) {
-            composable(Screen.DirectLauncher.route) {
-                DirectLauncherScreen(
-                    onMenuClick = { toggleDrawer() }, appList = directLauncherAppList
-                )
-            }
+        Scaffold(modifier = modifier) {
+            NavHost( // TODO: combine with other nav controller in MainActivity?
+                navController = drawerNavController,
+                startDestination = drawerStartDestination,
+                modifier = modifier.padding(it)
+            ) {
+                composable(Screen.DirectLauncher.route) {
+                    DirectLauncherScreen(
+                        onMenuClick = { toggleDrawer() }, appList = directLauncherAppList
+                    )
+                }
 
-            composable(Screen.LongTermLauncher.route) {
-                LongTermLauncherScreen(
-                    onMenuClick = { toggleDrawer() }, appList = longTermLauncherAppList
-                )
-            }
+                composable(Screen.LongTermLauncher.route) {
+                    LongTermLauncherScreen(
+                        onMenuClick = { toggleDrawer() }, appList = longTermLauncherAppList
+                    )
+                }
 
-            composable(Screen.DisableAppsOnce.route) {
-                val enabledApps =
-                    AppService.getInstalledPackages(context) { it.applicationInfo!!.enabled }
-                        .map { AppService.getDetailsForPackage(context, it) }
-                // TODO: don't getInstalledPackages, throw everything but the package name away, and then get the details again - instead: use the data that is already there
+                composable(Screen.DisableAppsOnce.route) {
+                    val enabledApps =
+                        AppService.getInstalledPackages(context) { it.applicationInfo!!.enabled }
+                            .map { AppService.getDetailsForPackage(context, it) }
+                    // TODO: don't getInstalledPackages, throw everything but the package name away, and then get the details again - instead: use the data that is already there
 
-                SelectMultipleAppsScreen(
-                    onMenuClick = { toggleDrawer() },
-                    title = stringResource(R.string.disable_apps_once_title),
-                    selectableApps = enabledApps,
-                    onConfirmSelection = {
-                        try {
-                            it.forEach {
-                                AppService.disableApp(context, it, true)
+                    SelectMultipleAppsScreen(
+                        onMenuClick = { toggleDrawer() },
+                        title = stringResource(R.string.disable_apps_once_title),
+                        selectableApps = enabledApps,
+                        onConfirmSelection = {
+                            try {
+                                it.forEach {
+                                    AppService.disableApp(context, it, true)
+                                }
+                            } catch (e: DisabledLauncherException) {
+                                e.getLocalizedMessage(context)?.let {
+                                    AndroidUtil.asyncToastMakeText(context, it, Toast.LENGTH_SHORT)
+                                }
                             }
-                        } catch (e: DisabledLauncherException) {
-                            e.getLocalizedMessage(context)?.let {
-                                AndroidUtil.asyncToastMakeText(context, it, Toast.LENGTH_SHORT)
-                            }
-                        }
-                    })
-            }
+                        })
+                }
 
-            composable(Screen.EnableAppsOnce.route) {
-                val disabledApps =
-                    AppService.getInstalledPackages(context) { !it.applicationInfo!!.enabled }
-                        .map { AppService.getDetailsForPackage(context, it) }
+                composable(Screen.EnableAppsOnce.route) {
+                    val disabledApps =
+                        AppService.getInstalledPackages(context) { !it.applicationInfo!!.enabled }
+                            .map { AppService.getDetailsForPackage(context, it) }
 
-                SelectMultipleAppsScreen(
-                    onMenuClick = { toggleDrawer() },
-                    title = stringResource(R.string.enable_apps_once_title),
-                    selectableApps = disabledApps,
-                    onConfirmSelection = {
-                        try {
-                            it.forEach {
-                                AppService.enableApp(context, it, true)
+                    SelectMultipleAppsScreen(
+                        onMenuClick = { toggleDrawer() },
+                        title = stringResource(R.string.enable_apps_once_title),
+                        selectableApps = disabledApps,
+                        onConfirmSelection = {
+                            try {
+                                it.forEach {
+                                    AppService.enableApp(context, it, true)
+                                }
+                            } catch (e: DisabledLauncherException) {
+                                e.getLocalizedMessage(context)?.let {
+                                    AndroidUtil.asyncToastMakeText(context, it, Toast.LENGTH_SHORT)
+                                }
                             }
-                        } catch (e: DisabledLauncherException) {
-                            e.getLocalizedMessage(context)?.let {
-                                AndroidUtil.asyncToastMakeText(context, it, Toast.LENGTH_SHORT)
-                            }
-                        }
-                    })
+                        })
+                }
             }
         }
     }
@@ -278,7 +285,7 @@ private fun DrawerItem(
             .clickable { onClick() }
             .then(
                 if (selected) Modifier.background(
-                    color = MaterialTheme.colors.onSurface.copy(alpha = 0.12f),
+                    color = MaterialTheme.colorScheme.onSurface.copy(alpha = 0.12f),
                     shape = RoundedCornerShape(4.dp)
                 )
                 else Modifier
@@ -290,7 +297,7 @@ private fun DrawerItem(
                 modifier = Modifier
                     .padding(8.dp)
                     .padding(end = 32.dp),
-                tint = if (selected) MaterialTheme.colors.primary else Color.Gray
+                tint = if (selected) MaterialTheme.colorScheme.primary else Color.Gray
             )
             Box(
                 modifier = Modifier.fillMaxHeight(), contentAlignment = Alignment.CenterStart
@@ -300,7 +307,7 @@ private fun DrawerItem(
                     maxLines = 1,
                     overflow = TextOverflow.Ellipsis,
                     fontWeight = FontWeight.Medium,
-                    color = if (selected) MaterialTheme.colors.primary else Color.Unspecified
+                    color = if (selected) MaterialTheme.colorScheme.primary else Color.Unspecified
                 )
             }
         }

@@ -3,7 +3,6 @@ package de.redno.disabledlauncher.ui.components
 import android.content.Context
 import android.content.Intent
 import android.widget.Toast
-import androidx.compose.foundation.ExperimentalFoundationApi
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
 import androidx.compose.foundation.combinedClickable
@@ -18,16 +17,17 @@ import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.items
 import androidx.compose.foundation.selection.toggleable
-import androidx.compose.material.Checkbox
-import androidx.compose.material.DropdownMenu
-import androidx.compose.material.DropdownMenuItem
-import androidx.compose.material.Icon
-import androidx.compose.material.IconButton
-import androidx.compose.material.MaterialTheme
-import androidx.compose.material.Switch
-import androidx.compose.material.Text
-import androidx.compose.material.TextField
-import androidx.compose.material.TopAppBar
+import androidx.compose.material3.Checkbox
+import androidx.compose.material3.DropdownMenu
+import androidx.compose.material3.DropdownMenuItem
+import androidx.compose.material3.ExperimentalMaterial3Api
+import androidx.compose.material3.Icon
+import androidx.compose.material3.IconButton
+import androidx.compose.material3.MaterialTheme
+import androidx.compose.material3.Switch
+import androidx.compose.material3.Text
+import androidx.compose.material3.TextField
+import androidx.compose.material3.TopAppBar
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.automirrored.filled.ArrowBack
 import androidx.compose.material.icons.filled.Clear
@@ -124,6 +124,7 @@ fun DefaultPreview() {
 }
 
 
+@OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun ToolbarComponent(
     title: String,
@@ -140,7 +141,7 @@ fun ToolbarComponent(
             clickableIcon(
                 Icons.AutoMirrored.Filled.ArrowBack, stringResource(id = R.string.back_icon), it
             )
-        },
+        } ?: {},
         title = { Text(text = title) },
         actions = {
             onSettingsClick?.let {
@@ -167,7 +168,7 @@ fun ListItem(
     disabledStyle: Boolean = false,
 ) {
     val boxModifier =
-        if (disabledStyle) modifier.background(MaterialTheme.colors.onSurface.copy(alpha = 0.12f)) else modifier
+        if (disabledStyle) modifier.background(MaterialTheme.colorScheme.onSurface.copy(alpha = 0.12f)) else modifier
     Box(
         modifier = boxModifier.fillMaxWidth()
     ) {
@@ -188,7 +189,7 @@ fun ListItem(
                 content = icon
             )
             Column(modifier = Modifier.weight(1F)) {
-                val titleStyle = MaterialTheme.typography.h6.merge(
+                val titleStyle = MaterialTheme.typography.titleLarge.merge(
                     if (disabledStyle) TextStyle(textDecoration = TextDecoration.LineThrough) else TextStyle()
                 )
                 Text(
@@ -203,7 +204,7 @@ fun ListItem(
                     text = description,
                     maxLines = 3,
                     overflow = TextOverflow.Ellipsis,
-                    style = MaterialTheme.typography.body2,
+                    style = MaterialTheme.typography.bodyMedium,
                     color = Color(0xFF808080)
                 )
             }
@@ -219,7 +220,6 @@ fun ListItem(
     }
 }
 
-@OptIn(ExperimentalFoundationApi::class)
 @Composable
 fun AppEntry(
     app: App,
@@ -250,54 +250,58 @@ fun AppEntry(
         contextContent = {
             DropdownMenu(
                 expanded = dropdownExpanded, onDismissRequest = { dropdownExpanded = false }) {
-                DropdownMenuItem(onClick = {
-                    if (ShortcutManagerCompat.isRequestPinShortcutSupported(context)) {
-                        val intent = Intent(
-                            context,
-                            ActionReceiverActivity::class.java
-                        ).setFlags(Intent.FLAG_ACTIVITY_NEW_TASK)
-                            .setAction("${context.packageName}.action.OPEN_APP")
-                            .putExtra("package_name", app.packageName)
-                        val shortcutInfo = ShortcutInfoCompat.Builder(context, app.packageName)
-                            .setShortLabel(app.name).setLongLabel(app.name).setIcon(
-                                IconCompat.createWithBitmap(
-                                    app.icon.asImageBitmap().asAndroidBitmap()
-                                )
-                            ).setIntent(intent).build()
-                        ShortcutManagerCompat.requestPinShortcut(context, shortcutInfo, null)
-                    } else {
-                        Toast.makeText(
-                            context,
-                            context.getString(R.string.launcher_not_support_pinned),
-                            Toast.LENGTH_LONG
-                        ).show()
-                    }
-
-                    dropdownExpanded = false
-                }) {
-                    Text(stringResource(R.string.add_shortcut))
-                }
-                app.overlyingListType?.let {
-                    DropdownMenuItem(onClick = {
-                        if (Datasource.removePackage(context, app.packageName, it)) {
-                            dropdownExpanded = false
-
-                            AndroidUtil.asyncToastMakeText(
+                DropdownMenuItem(
+                    onClick = {
+                        if (ShortcutManagerCompat.isRequestPinShortcutSupported(context)) {
+                            val intent = Intent(
                                 context,
-                                String.format(context.getString(R.string.app_removed), app.name),
-                                Toast.LENGTH_SHORT
-                            )
-                            // TODO: refresh app list (+ there are other actions/code locations that need to trigger a list refresh)
+                                ActionReceiverActivity::class.java
+                            ).setFlags(Intent.FLAG_ACTIVITY_NEW_TASK)
+                                .setAction("${context.packageName}.action.OPEN_APP")
+                                .putExtra("package_name", app.packageName)
+                            val shortcutInfo = ShortcutInfoCompat.Builder(context, app.packageName)
+                                .setShortLabel(app.name).setLongLabel(app.name).setIcon(
+                                    IconCompat.createWithBitmap(
+                                        app.icon.asImageBitmap().asAndroidBitmap()
+                                    )
+                                ).setIntent(intent).build()
+                            ShortcutManagerCompat.requestPinShortcut(context, shortcutInfo, null)
                         } else {
                             Toast.makeText(
                                 context,
-                                context.getString(R.string.couldnt_remove_app),
+                                context.getString(R.string.launcher_not_support_pinned),
                                 Toast.LENGTH_LONG
                             ).show()
                         }
-                    }) {
-                        Text(stringResource(R.string.remove_app))
-                    }
+
+                        dropdownExpanded = false
+                    },
+                    text = {
+                        Text(stringResource(R.string.add_shortcut))
+                    })
+                app.overlyingListType?.let {
+                    DropdownMenuItem(
+                        onClick = {
+                            if (Datasource.removePackage(context, app.packageName, it)) {
+                                dropdownExpanded = false
+
+                                AndroidUtil.asyncToastMakeText(
+                                    context,
+                                    String.format(context.getString(R.string.app_removed), app.name),
+                                    Toast.LENGTH_SHORT
+                                )
+                                // TODO: refresh app list (+ there are other actions/code locations that need to trigger a list refresh)
+                            } else {
+                                Toast.makeText(
+                                    context,
+                                    context.getString(R.string.couldnt_remove_app),
+                                    Toast.LENGTH_LONG
+                                ).show()
+                            }
+                        },
+                        text = {
+                            Text(stringResource(R.string.remove_app))
+                        })
                 }
             }
         },
