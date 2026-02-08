@@ -15,7 +15,7 @@ jobs:
       # TODO: bump version of action-contains-tag and remove this workaround step after PR above is merged
       - name: Workaround regression action-contains-tag due to git update
         run: git config --global remote.origin.followRemoteHEAD never
-      - uses: actions/checkout@34e114876b0b11c390a56381ad16ebd13914f8d5 # v4
+      - uses: actions/checkout@de0fac2e4500dabe0009e67214ff5f5447ce83dd # v6
         with:
           fetch-depth: 0
       - uses: rickstaa/action-contains-tag@a9ff27d505ba2bf074a2ebb48b208e76d35ff308 # v1.2.10
@@ -32,7 +32,7 @@ jobs:
 
       # --- from gradle.yml ---
       - name: Checkout
-        uses: actions/checkout@34e114876b0b11c390a56381ad16ebd13914f8d5 # v4
+        uses: actions/checkout@de0fac2e4500dabe0009e67214ff5f5447ce83dd # v6
       - name: Set up JDK
         uses: actions/setup-java@c1e323688fd81a25caa38c78aa6df2d33d3e20d9 # v4
         with:
