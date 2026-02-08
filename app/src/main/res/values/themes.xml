@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
 
-    <style name="Theme.DisabledLauncher" parent="android:Theme.Material.Light.NoActionBar">
+    <style name="Theme.DisabledLauncher" parent="android:Theme.Material.NoActionBar">
         <item name="android:background">@android:color/background_dark</item>
 
         <item name="android:dialogTheme">@style/Theme.DialogFullScreen</item>
