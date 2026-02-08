@@ -4,9 +4,9 @@ import android.content.Context
 import android.content.Intent
 import android.content.pm.PackageInfo
 import android.content.pm.PackageManager
-import android.net.Uri
 import android.widget.Toast
 import androidx.core.graphics.drawable.toBitmap
+import androidx.core.net.toUri
 import de.redno.disabledlauncher.R
 import de.redno.disabledlauncher.common.AndroidUtil
 import de.redno.disabledlauncher.model.App
@@ -77,7 +77,7 @@ object AppService {
             if (fallbackToGooglePlay) {
                 val intent = Intent(Intent.ACTION_VIEW).apply {
                     data =
-                        Uri.parse("https://play.google.com/store/apps/details?id=${app.packageName}")
+                        "https://play.google.com/store/apps/details?id=${app.packageName}".toUri()
                 }
                 context.startActivity(intent)
                 throw RedirectedToGooglePlayException(e)
