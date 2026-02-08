@@ -20,4 +20,4 @@ dependencyResolutionManagement {
 }
 
 rootProject.name = "Disabled Launcher"
-include ':app'
+include(":app")
