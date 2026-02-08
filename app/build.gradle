@@ -5,7 +5,7 @@ plugins {
 }
 
 android {
-    namespace 'de.redno.disabledlauncher'
+    namespace = 'de.redno.disabledlauncher'
     compileSdk {
         version = release(36)
     }
@@ -31,7 +31,7 @@ android {
         targetCompatibility JavaVersion.VERSION_11
     }
     buildFeatures {
-        compose true
+        compose = true
     }
 }
 
