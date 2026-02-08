@@ -25,7 +25,7 @@ jobs:
           java-version: "17"
           distribution: "temurin"
       - name: Setup Gradle
-        uses: gradle/actions/setup-gradle@ed408507eac070d1f99cc633dbcf757c94c7933a # v4
+        uses: gradle/actions/setup-gradle@f29f5a9d7b09a7c6b29859002d29d24e1674c884 # v5
       - name: Build with Gradle
         run: ./gradlew build assembleRelease
       - name: Create APK
