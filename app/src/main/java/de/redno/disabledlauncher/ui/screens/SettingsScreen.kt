@@ -90,6 +90,7 @@ private fun SettingsList(modifier: Modifier = Modifier) {
                 })
         }
 
+        val textFailedAddingApps: String = stringResource(R.string.failed_adding_apps)
         Box {
             val addDirectAppsTitle = stringResource(R.string.add_direct_apps_title)
             val addDirectAppsDialogOpen = remember { mutableStateOf(false) }
@@ -119,7 +120,7 @@ private fun SettingsList(modifier: Modifier = Modifier) {
                         ) {
                             AndroidUtil.asyncToastMakeText(
                                 context,
-                                context.getString(R.string.failed_adding_apps),
+                                textFailedAddingApps,
                                 Toast.LENGTH_SHORT
                             )
                         }
@@ -157,7 +158,7 @@ private fun SettingsList(modifier: Modifier = Modifier) {
                         ) {
                             AndroidUtil.asyncToastMakeText(
                                 context,
-                                context.getString(R.string.failed_adding_apps),
+                                textFailedAddingApps,
                                 Toast.LENGTH_SHORT
                             )
                         }
