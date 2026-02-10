@@ -39,7 +39,10 @@
     <string name="sort_by_usage_title">Sort apps by usage</string>
     <string name="sort_by_usage_description">Move apps up in the list when they are opened</string>
     <string name="couldnt_load_app_list">Couldn\'t load app list</string>
-    <string name="success_added_x_apps">Successfully added %d app/s</string>
+    <plurals name="success_added_x_apps">
+        <item quantity="one">Successfully added one app</item>
+        <item quantity="other">Successfully added %d apps</item>
+    </plurals>
     <string name="disable_apps_once_icon">Block icon</string>
     <string name="disable_apps_once_title">Disable apps once</string>
     <string name="enable_apps_once_title">Enable apps once</string>

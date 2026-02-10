@@ -121,9 +121,13 @@ object Datasource {
 
                 if (success) {
                     AndroidUtil.asyncToastMakeText(
-                        context, String.format(
-                            context.getString(R.string.success_added_x_apps), packageNameList.size
-                        ), Toast.LENGTH_SHORT
+                        context,
+                        context.resources.getQuantityString(
+                            R.plurals.success_added_x_apps,
+                            packageNameList.size,
+                            packageNameList.size
+                        ),
+                        Toast.LENGTH_SHORT
                     )
                 }
 
