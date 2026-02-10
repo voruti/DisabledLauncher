@@ -12,6 +12,7 @@ import androidx.compose.runtime.mutableStateListOf
 import androidx.compose.runtime.remember
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.platform.LocalContext
+import androidx.compose.ui.platform.LocalResources
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.core.graphics.drawable.toBitmap
@@ -25,7 +26,7 @@ import de.redno.disabledlauncher.ui.theme.DisabledLauncherTheme
 @Preview(showBackground = true, showSystemUi = true)
 @Composable
 private fun SelectMultipleAppsPreview() {
-    val context = LocalContext.current
+    val resources = LocalResources.current
 
     DisabledLauncherTheme {
         SelectMultipleAppsScreen(
@@ -36,7 +37,10 @@ private fun SelectMultipleAppsPreview() {
                     packageName = "test.p1",
                     isEnabled = true,
                     isInstalled = true,
-                    icon = context.getDrawable(R.drawable.ic_launcher_background)!!
+                    icon = resources.getDrawable(
+                        R.drawable.ic_launcher_background,
+                        null
+                    )!!
                         .toBitmap()
                 )
             ),
@@ -69,12 +73,13 @@ fun SelectMultipleAppsScreen(
             )
         },
         floatingActionButton = {
+            val textNoAppsSelected: String = stringResource(R.string.no_apps_selected)
             FloatingActionButton(onClick = {
                 Thread {
                     if (selectedAppList.isEmpty()) {
                         AndroidUtil.asyncToastMakeText(
                             context,
-                            context.getString(R.string.no_apps_selected),
+                            textNoAppsSelected,
                             Toast.LENGTH_SHORT
                         )
                     } else {

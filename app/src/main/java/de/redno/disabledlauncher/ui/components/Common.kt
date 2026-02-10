@@ -250,6 +250,8 @@ fun AppEntry(
         contextContent = {
             DropdownMenu(
                 expanded = dropdownExpanded, onDismissRequest = { dropdownExpanded = false }) {
+                val textLauncherNotSupportPinned: String =
+                    stringResource(R.string.launcher_not_support_pinned)
                 DropdownMenuItem(
                     onClick = {
                         if (ShortcutManagerCompat.isRequestPinShortcutSupported(context)) {
@@ -269,7 +271,7 @@ fun AppEntry(
                         } else {
                             Toast.makeText(
                                 context,
-                                context.getString(R.string.launcher_not_support_pinned),
+                                textLauncherNotSupportPinned,
                                 Toast.LENGTH_LONG
                             ).show()
                         }
@@ -280,6 +282,8 @@ fun AppEntry(
                         Text(stringResource(R.string.add_shortcut))
                     })
                 app.overlyingListType?.let {
+                    val appRemovedFormat: String = stringResource(R.string.app_removed)
+                    val textCouldntRemoveApp: String = stringResource(R.string.couldnt_remove_app)
                     DropdownMenuItem(
                         onClick = {
                             if (Datasource.removePackage(context, app.packageName, it)) {
@@ -287,14 +291,14 @@ fun AppEntry(
 
                                 AndroidUtil.asyncToastMakeText(
                                     context,
-                                    String.format(context.getString(R.string.app_removed), app.name),
+                                    String.format(appRemovedFormat, app.name),
                                     Toast.LENGTH_SHORT
                                 )
                                 // TODO: refresh app list (+ there are other actions/code locations that need to trigger a list refresh)
                             } else {
                                 Toast.makeText(
                                     context,
-                                    context.getString(R.string.couldnt_remove_app),
+                                    textCouldntRemoveApp,
                                     Toast.LENGTH_LONG
                                 ).show()
                             }
@@ -333,8 +337,6 @@ fun AppList(
     onSelectedValueChangeAsWell: (App, Boolean) -> Unit = { _, _ -> },
     sortByName: Boolean = false
 ) {
-    val context = LocalContext.current
-
     Column(modifier = modifier) {
         var text by rememberSaveable { mutableStateOf("") }
         TextField( // TODO: https://developer.android.com/jetpack/compose/text#enter-modify-text
@@ -348,7 +350,7 @@ fun AppList(
                     onClick = { text = "" }) {
                     Icon(
                         imageVector = Icons.Default.Clear,
-                        contentDescription = context.getString(R.string.clear_search)
+                        contentDescription = stringResource(R.string.clear_search)
                     )
                 }
             })
