@@ -29,6 +29,7 @@ import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.semantics.Role
 import androidx.compose.ui.tooling.preview.Preview
+import androidx.core.content.edit
 import de.redno.disabledlauncher.MainActivity
 import de.redno.disabledlauncher.R
 import de.redno.disabledlauncher.common.AndroidUtil
@@ -178,7 +179,12 @@ private fun SettingsList(modifier: Modifier = Modifier) {
                 endContent = { Switch(checked = fallbackToGooglePlay, onCheckedChange = null) },
                 modifier = Modifier.toggleable(
                     role = Role.Switch, value = fallbackToGooglePlay, onValueChange = {
-                        sharedPreferences.edit().putBoolean("fallbackToGooglePlay", it).apply()
+                        sharedPreferences.edit {
+                            putBoolean(
+                                "fallbackToGooglePlay",
+                                it
+                            )
+                        }
 
                         fallbackToGooglePlay = it
                     })
@@ -199,7 +205,12 @@ private fun SettingsList(modifier: Modifier = Modifier) {
                 endContent = { Switch(checked = sortAppsByUsage, onCheckedChange = null) },
                 modifier = Modifier.toggleable(
                     role = Role.Switch, value = sortAppsByUsage, onValueChange = {
-                        sharedPreferences.edit().putBoolean("sortAppsByUsage", it).apply()
+                        sharedPreferences.edit {
+                            putBoolean(
+                                "sortAppsByUsage",
+                                it
+                            )
+                        }
 
                         sortAppsByUsage = it
                     })

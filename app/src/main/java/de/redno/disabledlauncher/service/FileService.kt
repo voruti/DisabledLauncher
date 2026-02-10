@@ -1,8 +1,8 @@
 package de.redno.disabledlauncher.service
 
 import android.content.Context
-import android.net.Uri
 import android.util.Log
+import androidx.core.net.toUri
 import com.fasterxml.jackson.databind.SerializationFeature
 import com.fasterxml.jackson.module.kotlin.jacksonObjectMapper
 import java.io.FileNotFoundException
@@ -27,7 +27,7 @@ object FileService {
                         it.readText()
                     }
             } else {
-                context.contentResolver.openInputStream(Uri.parse(uri))?.use {
+                context.contentResolver.openInputStream(uri.toUri())?.use {
                     it.bufferedReader().use {
                         it.readText()
                     }
@@ -65,7 +65,7 @@ object FileService {
                     return true
                 }
             } else {
-                context.contentResolver.openOutputStream(Uri.parse(uri), "wt")?.use {
+                context.contentResolver.openOutputStream(uri.toUri(), "wt")?.use {
                     it.bufferedWriter().use {
                         it.write(jsonString)
                         return true
