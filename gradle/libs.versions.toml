@@ -8,7 +8,7 @@ lifecycleRuntimeKtx = "2.10.0"
 activityCompose = "1.12.4"
 kotlin = "2.3.10"
 composeBom = "2026.02.00"
-navVersion = "2.9.7"
+navVersion = "2.10.1"
 shizukuVersion = "13.1.0"
 jacksonVersion = "2.19.4"
 
